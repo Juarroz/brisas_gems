@@ -18,12 +18,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if ($resultado->num_rows === 1) {
     $usuario = $resultado->fetch_assoc();
 
-    // Verifica contraseña
-    if (!password_verify($password, $usuario['usu_password'])) {
+
+    // Verifica contraseña cuando este encriptada
+    // if (!password_verify($password, $usuario['usu_password'])) {
+    //   echo "<script>alert('Contraseña incorrecta.'); window.history.back();</script>";
+    //   exit;
+    // }
+
+
+    // Verifica contraseña Temporalmente solo para pruebas
+    if ($password !== $usuario['usu_password']) {
       echo "<script>alert('Contraseña incorrecta.'); window.history.back();</script>";
       exit;
     }
-
     // Verifica si la cuenta está activa
     if (!$usuario['usu_activo']) {
       echo "<script>alert('Tu cuenta aún no está activada.'); window.history.back();</script>";
