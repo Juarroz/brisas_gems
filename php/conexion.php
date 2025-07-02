@@ -1,11 +1,11 @@
 <?php
 $host = "localhost";
 $user = "root";
-$password = "5964";
+$password = "";
 $database = "brisas_gems";
-$port = 3307; 
+ 
 
-$conn = new mysqli($host, $user, $password, $database, $port);
+$conn = new mysqli($host, $user, $password, $database);
 
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
