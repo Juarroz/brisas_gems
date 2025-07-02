@@ -1,6 +1,6 @@
 <?php
 // procesar_recuperacion.php
-require_once '../conexion.php';
+require_once('C:/xampp/htdocs/brisas_gems/php/conexion.php');
 require_once '../funciones/token_generator.php'; // o puedes usar random_bytes directamente
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -1,5 +1,5 @@
 <?php
-require_once '../conexion.php';
+require_once('C:/xampp/htdocs/brisas_gems/php/conexion.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $token = $_POST['token'];

@@ -1,12 +1,16 @@
 <?php
+session_start();
 require_once 'conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $correo = trim($_POST['correo']);
   $password = $_POST['password'];
 
-  // 1. Buscar al usuario por correo
-  $stmt = $conn->prepare("SELECT usu_id, usu_password, usu_activo FROM usuarios WHERE usu_correo = ?");
+  // Buscar al usuario por correo
+  $stmt = $conn->prepare("SELECT u.usu_id, u.usu_nombre, u.usu_password, u.usu_activo, u.rol_id, r.rol_nombre 
+                          FROM usuarios u
+                          JOIN rol r ON u.rol_id = r.rol_id
+                          WHERE u.usu_correo = ?");
   $stmt->bind_param("s", $correo);
   $stmt->execute();
   $resultado = $stmt->get_result();
@@ -14,20 +18,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if ($resultado->num_rows === 1) {
     $usuario = $resultado->fetch_assoc();
 
-    // 2. Verificar contraseña
+    // Verifica contraseña
     if (!password_verify($password, $usuario['usu_password'])) {
       echo "<script>alert('Contraseña incorrecta.'); window.history.back();</script>";
       exit;
     }
 
-    // 3. Verificar si la cuenta está activa
+    // Verifica si la cuenta está activa
     if (!$usuario['usu_activo']) {
       echo "<script>alert('Tu cuenta aún no está activada.'); window.history.back();</script>";
       exit;
     }
 
-    // 4. Simulación de sesión iniciada
-    echo "<script>alert('Inicio de sesión exitoso.'); window.location.href='../index.html';</script>";
+    // Iniciar sesión
+    $_SESSION['usu_id'] = $usuario['usu_id'];
+    $_SESSION['usu_nombre'] = $usuario['usu_nombre'];
+    $_SESSION['rol_id'] = $usuario['rol_id'];
+    $_SESSION['rol_nombre'] = $usuario['rol_nombre'];
+
+    // Redireccionar por rol
+    switch ($usuario['rol_id']) {
+      case 1: // Usuario
+        header("Location: ../usuario/mi-perfil.html");
+        break;
+      case 2: // Administrador
+        header("Location: ../admin/gestion-usuarios-1.html");
+        break;
+      case 3: // Diseñador
+        header("Location: ../admin/gestion-inspiracion.html");
+        break;
+      default:
+        header("Location: ../index.html");
+    }
+    exit;
 
   } else {
     echo "<script>alert('Correo no registrado.'); window.history.back();</script>";
