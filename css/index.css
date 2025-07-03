@@ -65,6 +65,7 @@ body >*:not(footer) {
     font-size: var(--font-size-lg);
     margin-bottom: 6px;
     font-weight:350;
+    font-style: italic;
 }
 
 

@@ -26,7 +26,7 @@
   position: relative;
   background: transparent;
   border: none;
-  box-shadow: none;
+  box-shadow:none;
 }
 
 .cara {
@@ -42,7 +42,7 @@
   transition: transform 0.8s;
   padding: 15px;
   background: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px rgba(36, 70, 80, 0.959);
 }
 
 .card-img-container {
