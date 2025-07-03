@@ -1,7 +1,6 @@
 <?php
-// procesar_registro.php
 
-require_once 'conexion.php'; // Conexión a la base de datos
+require_once('C:/xampp/htdocs/brisas_gems/php/conexion.php'); // Conexión a la base de datos
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // 1. Capturar datos del formulario
