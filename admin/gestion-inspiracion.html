@@ -49,8 +49,8 @@
 </header>
 
   <script>
-  const iconoUsuario = document.getElementById('icono-usuario');
-  const menuUsuario = document.getElementById('menu-usuario');
+  const iconousuario = document.getElementById('icono-usuario');
+  const menuusuario = document.getElementById('menu-usuario');
 
   iconoUsuario.addEventListener('click', () => {
     menuUsuario.classList.toggle('activo');
@@ -123,13 +123,126 @@
         ¿Estás seguro de que deseas eliminar este diseño?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Aceptar</button>
+        <button type="button" class="btn btn-secondary boton-cancelar" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger boton-aceptar" data-bs-dismiss="modal">Aceptar</button>
       </div>
     </div>
   </div>
 </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
+<div class="col-md-4 mb-4">
+  <div class="card carta">
+    
+    <!-- Frente de la card -->
+    <div class="cara card-body frente">
+      <div class="card-img-container">
+        <img src="../img/Portafolio/anillo3.jpg" alt="Joyería">
+      </div>
+      <h5 class="card-title"><strong>Anillo de Compromiso</strong></h5>
+      <p class="card-text">Diseño exclusivo, elegante y con un toque juvenil.</p>
+    </div>
+
+    <!-- Parte trasera de la card -->
+    <div class="cara card-body atras">
+      <h5 class="card-title"><strong>Detalles del Anillo</strong></h5>
+      <ul class="list-unstyled">
+        <li>○ Material: Oro amarillo</li>
+        <li>○ Gema: Rubí</li>
+        <li>○ Forma gema: Ovalada</li>
+        <li>○ Tamaño gema: 7mm</li>
+      </ul>
+      <div class="d-flex justify-content-between gap-3 mt-3">
+        <a href="formulario-catalogo.html" class="btn btn-warning btn-sm boton-editar">
+          <i class="bi bi-pencil-square"></i> Editar
+        </a>
+        <button class="btn btn-danger btn-sm boton-eliminar" data-bs-toggle="modal" data-bs-target="#modalEliminar">
+          <i class="bi bi-trash"></i> Eliminar
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Confirmación para Eliminar -->
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEliminarLabel">Eliminar Diseño</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que deseas eliminar este diseño?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary boton-cancelar" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger boton-aceptar" data-bs-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+  <footer class="footer-joyeria">
+    <div class="contenedor-footer">
+      
+      <div class="columna-footer">
+        <h4>Brisas Gems</h4>
+        <p>🟢 Joyería fina y personalizada con los más altos estándares de calidad.</p>
+        <div class="redes-sociales">
+          <a href="#" target="_blank" rel="noopener" aria-label="Facebook Brisas Gems">
+            <img src="../img/icono-whatsApp.png" alt="Facebook Brisas Gems">
+          </a>
+          <a href="#" target="_blank" rel="noopener" aria-label="Instagram Brisas Gems">
+            <img src="../img/icono instagram.png" alt="Instagram Brisas Gems">
+          </a>
+          <a href="#" target="_blank" rel="noopener" aria-label="WhatsApp Brisas Gems">
+            <img src="../img/icono-facebook.png" alt="WhatsApp Brisas Gems">
+          </a>
+        </div>
+      </div>
+  
+      <div class="columna-footer">
+        <h4>Contacto</h4>
+        <p><span class="icono-footer">🟢</span> Av Jiménez #5-43, Emerald Trade Center, Bogotá</p>
+        <p><span class="icono-footer">🟢</span> +57 6017654312</p>
+        <p><span class="icono-footer">🟢</span> info@brisasgem.com</p>
+      </div>
+  
+      <div class="columna-footer">
+        <h4>Enlaces</h4>
+        <nav aria-label="Enlaces rápidos">
+          <ul class="enlaces-footer">
+            <li><a href="./Gestionar-U-R.html">Gestión de Usuarios y Roles</a></li>
+            <li><a href="#"> My Perfil</a></li>
+          </ul>
+        </nav>
+      </div>
+  
+    </div>
+  
+    <div class="derechos-footer">
+      <p>© 2025 Brisas Gems - Todos los derechos reservados</p>
+      <p>Desarrollado por SENA CEET - Ficha 2996176 ADSO</p>
+    </div>
+  </footer>
+    <!-- Script para el menú de usuario -->
+  <script>
+  const iconoUsuario = document.getElementById('icono-usuario');
+  const menuUsuario = document.getElementById('menu-usuario');
+  iconoUsuario.addEventListener('click', () => {
+    menuUsuario.classList.toggle('activo');
+  });
+
+  // Cierra el menú al hacer clic fuera
+  document.addEventListener('click', (e) => {
+    if (!iconoUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
+      menuUsuario.classList.remove('activo');
+    }
+  });
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 </body>
+</html>
