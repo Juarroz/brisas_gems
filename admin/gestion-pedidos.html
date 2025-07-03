@@ -13,24 +13,57 @@
   <link rel="stylesheet" href="../css/pedidos.css">
   </head>
   <body>
-    <header class="encabezado">
-        <div class="contenedor-header">
-          <a href="#" class="logo">
-            <img src="../img/logo.png" alt="Logo Brisas Gems">
-          </a>
-      
-          <nav class="nav-principal">
-            <a href="#">Personalización</a>
-            <a href="./mis-pedidos.html">Mis Pedidos</a>
-            <a href="#">Inspiración</a>
-          </nav>
-      
-          <a href="./perfil.html"  class="boton-login active">
-            <img src="../img/icono-perfil.svg" alt="Icono Iniciar Sesión" class="icono-login">My Perfil
-          </a>
-          
+    <!-- ---- -->
+<!--HEADER-->
+<!-- ---- -->
+
+<header class="encabezado">
+  <div class="contenedor-header">
+
+    <!-- Logo centrado -->
+    <div class="logo-centro">
+        <img src="../img/logo.png" alt="Logo Brisas Gems">
+      </a>
+    </div>
+
+    <!-- Menú izquierdo -->
+    <nav class="nav-izquierda">
+      <a href="./gestion-usuarios-1.html">GESTIÓN USUARIO</a>
+      <a href="./gestion-inspiracion.html">GESTIÓN INSPIRACIÓN</a>
+      <a href="./gestion-opciones.html">GESTIÓN PERSONALIZACIÓN</a>
+      <a href="./gestion-pedidos.html">GESTIÓN PEDIDOS</a>
+    </nav>
+
+
+    <!-- Íconos a la derecha -->
+    <div class="menu-derecha">
+      <div class="perfil-wrapper">
+        <img src="../img/person.svg" alt="Perfil" class="icono" id="icono-usuario">
+        <div class="menu-usuario" id="menu-usuario">
+          <a href="#">Mi Perfil</a>
+          <a href="../index.html">Cerrar Sesion</a>
         </div>
-      </header>
+      </div>
+    </div>
+  </div>
+</header>
+
+  <script>
+  const iconoUsuario = document.getElementById('icono-usuario');
+  const menuUsuario = document.getElementById('menu-usuario');
+
+  iconoUsuario.addEventListener('click', () => {
+    menuUsuario.classList.toggle('activo');
+  });
+
+  // Cierra el menú al hacer clic fuera
+  document.addEventListener('click', (e) => {
+    if (!iconoUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
+      menuUsuario.classList.remove('activo');
+    }
+  });
+</script>
+
       <!-- CONTENIDO DEL MÓDULO: Gestión de Diseños y Progreso de Pedidos -->
 <main class="container my-5 separador">
     <!-- 1. Selección de pedido -->
@@ -131,7 +164,7 @@
       <h2 class="h4 mb-3">5. Historial de pedidos</h2>
       <div id="historial-list" class="row gy-4">
         <!-- Cada tarjeta representa un pedido -->
-        <!-- Ejemplo:
+  
         <div class="col-md-6">
           <div class="card shadow-sm">
             <div class="card-body">
@@ -146,7 +179,7 @@
                   </div>
                 </div>
               </div>
-              <!-- (Solo para administradores) Actualizar estado
+              <!-- (Solo para administradores) Actualizar estado  -->
               <form action="/pedido/progreso" method="POST" class="d-flex align-items-center">
                 <input type="hidden" name="ped_id" value="1">
                 <select name="est_id" class="form-select me-2" required>
@@ -159,7 +192,7 @@
             </div>
           </div>
         </div>
-        -->
+      
       </div>
     </section>
   </main>

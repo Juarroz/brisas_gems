@@ -1,0 +1,102 @@
+.nav-izquierda{
+    display: flex;
+    gap: 60px;
+}
+
+.boton-agregar {
+    
+  color: black;
+  border-color: black;
+  background-color: rgb(252, 252, 252);
+}
+
+.boton-agregar:hover {
+  background-color: rgb(115, 184, 123);
+  border-color: black;
+  color: black;
+}
+
+.carta {
+  width: 350px;
+  height: 400px;
+  perspective: 1000px;
+  position: relative;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.cara {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  transition: transform 0.8s;
+}
+
+.card-img-container {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.card-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.frente h5, .frente p {
+  text-align: center;
+}
+
+.atras {
+  transform: rotateY(180deg);
+  justify-content: flex-start;
+}
+
+.atras h5 {
+  margin-bottom: 15px;
+}
+
+.atras ul {
+  padding: 0;
+  width: 100%;
+  list-style: none;
+}
+
+.atras li {
+  margin: 8px 0;
+}
+
+.carta:hover .frente {
+  transform: rotateY(180deg);
+}
+
+.carta:hover .atras {
+  transform: rotateY(0deg);
+}
+
+.boton-editar, .boton-eliminar, .boton-cancelar, .boton-aceptar {
+  width: 100px;
+  text-align: center;
+  color: black;
+  border-color: black;
+  background-color: rgb(252, 252, 252);
+}
+
+.boton-editar:hover, .boton-eliminar:hover, .boton-cancelar:hover, .boton-aceptar:hover {
+  background-color: rgb(115, 184, 123);
+  border-color: black;
+  color: black;
+}
+
