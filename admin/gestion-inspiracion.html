@@ -48,23 +48,6 @@
   </div>
 </header>
 
-  <script>
-  const iconoUsuario = document.getElementById('icono-usuario');
-  const menuUsuario = document.getElementById('menu-usuario');
-
-  iconoUsuario.addEventListener('click', () => {
-    menuUsuario.classList.toggle('activo');
-  });
-
-  // Cierra el menú al hacer clic fuera
-  document.addEventListener('click', (e) => {
-    if (!iconoUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
-      menuUsuario.classList.remove('activo');
-    }
-  });
-</script>
-
-
 
 <div class="container py-5">
   <!-- Botón Agregar Diseño -->
@@ -130,6 +113,24 @@
   </div>
 </div>
 </div>
+
+  <script>
+  const iconoUsuario = document.getElementById('icono-usuario');
+  const menuUsuario = document.getElementById('menu-usuario');
+
+  iconoUsuario.addEventListener('click', () => {
+    menuUsuario.classList.toggle('activo');
+  });
+
+  // Cierra el menú al hacer clic fuera
+  document.addEventListener('click', (e) => {
+    if (!iconoUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
+      menuUsuario.classList.remove('activo');
+    }
+  });
+</script>
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
 
 </body>
