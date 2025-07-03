@@ -1,57 +1,107 @@
-
-/* Estado activo: restaura hover permanentemente */
-.nav-principal a.active {
-  color: var(--color-primary);            /* mismo color que en hover */
-}
-
-
-.nav-principal a.active::before,
-.nav-principal a.active::after {
-  transform: scaleX(1);                  /* líneas expandidas como en hover */
-
-}
 /* ============================= */
-/* Estilos específicos de Seguimiento de Pedidos */
+/* Estilos específicos de Seguimiento de Pedidos - Brisas Gems */
 /* ============================= */
+
+/* Título del módulo */
 #seguimiento-pedidos h2 {
   font-size: var(--font-size-xl);
   font-weight: 600;
   color: var(--color-primary);
+  margin-bottom: 2rem;
 }
 
-/* Ajuste de altura de botones en tabla */
+/* Tabla de pedidos: botones de acción */
 #seguimiento-pedidos .table .btn {
   width: 2.5rem;
   height: 2.5rem;
   padding: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Iconos centrados */
 #seguimiento-pedidos .btn i {
   font-size: 1.1rem;
 }
 
-/* Modales: sección de imagen */
-#seguimiento-pedidos .modal-body img {
+/* Barra de progreso */
+#seguimiento-pedidos .progress {
+  height: 1rem;
+}
+
+/* Modales: imagen y 3D */
+#seguimiento-pedidos .modal-body img,
+#seguimiento-pedidos model-viewer {
   max-height: 60vh;
   object-fit: contain;
+  width: 100%;
+  border-radius: 0.5rem;
 }
 
+/* Espaciado del módulo principal */
 #seguimiento-pedidos {
-  margin-bottom: 3rem; /* O ajusta según el espaciado que quieras */
+  margin-bottom: 3rem;
 }
 .seguimiento-pedidos {
-  margin-top: 8rem; /* O ajusta según el espaciado que quieras */
+  margin-top: 8rem;
 }
 
-div h5{
+/* Títulos de modales */
+.modal-title {
   color: var(--color-primary);
 }
 
-.img-fluid{
+/* Imágenes fluidas */
+.img-fluid {
   width: 100%;
-  height: 300px;
+  height: auto;
+  max-height: 300px;
+}
 
+/* Estado activo en navegación principal */
+.nav-principal a.active {
+  color: var(--color-primary);
+}
+.nav-principal a.active::before,
+.nav-principal a.active::after {
+  transform: scaleX(1);
+}
+
+/* Acciones de pedido: diseño llamativo e intuitivo */
+.acciones-pedido .btn {
+  transition: transform 0.15s, box-shadow 0.15s;
+  margin-right: 0.3rem;
+  margin-left: 0.3rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.acciones-pedido .btn:last-child {
+  margin-right: 0;
+}
+.acciones-pedido .btn:hover, .acciones-pedido .btn:focus {
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  z-index: 2;
+}
+.acciones-pedido i {
+  display: block;
+  margin-bottom: 0.1rem;
+}
+.acciones-pedido .small {
+  font-size: 0.8rem;
+  color: #444;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Ajuste de ancho y alto del contenedor principal para mayor presencia visual, sin media queries */
+#seguimiento-pedidos.container {
+  max-width: 1400px;
+  width: 98vw;
+  min-height: 80vh;
+  margin: 2rem auto 2rem auto;
+  padding: 3rem 2rem;
+  display: block;
+  box-sizing: border-box;
 }
 
 
