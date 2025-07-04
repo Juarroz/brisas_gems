@@ -5,7 +5,8 @@ $query = "SELECT u.usu_id, u.usu_nombre, u.usu_correo, u.usu_telefono, u.usu_doc
                  r.rol_id, r.rol_nombre, t.tipdoc_nombre
           FROM usuarios u
           INNER JOIN rol r ON u.rol_id = r.rol_id
-          INNER JOIN tipo_de_documento t ON u.tipdoc_id = t.tipdoc_id";
+          INNER JOIN tipo_de_documento t ON u.tipdoc_id = t.tipdoc_id
+          ORDER BY u.usu_id";
 
 $result = $conn->query($query);
 $contador = 1;
