@@ -11,7 +11,6 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
   <link rel="stylesheet" href="../css/bootstrap.min.css">
   <link rel="stylesheet" href="../css/assets/css-global/main.css">
-  
   <link rel="stylesheet" href="../css/mis-pedidos.css">
   </head>
 <body>
@@ -29,7 +28,7 @@
 
     <!-- Menú izquierdo -->
     <nav class="nav-izquierda">
-      <a href="./gestion-usuarios-1.html">GESTIÓN USUARIO</a>
+      <a href="./gestion-usuarios.php">GESTIÓN USUARIO</a>
       <a href="./gestion-inspiracion.html">GESTIÓN INSPIRACIÓN</a>
       <a href="./gestion-opciones.html">GESTIÓN PERSONALIZACIÓN</a>
       <a href="./gestion-pedidos.html">GESTIÓN PEDIDOS</a>
@@ -77,7 +76,7 @@
         </tr>
       </thead>
       <tbody id="tabla-usuarios">
-        <!-- Aquí se generan dinámicamente los usuarios con PHP -->
+        <?php include '../php/usuarios/listar_usuarios.php'; ?>
       </tbody>
     </table>
   </div>
@@ -87,7 +86,7 @@
 <!-- Modal: Agregar Usuario -->
 <div class="modal fade" id="modalAgregar" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
-    <form action="../php/usuarios/agregar_usuario.php" method="POST" class="modal-content">
+    <form action="/brisas_gems/php/usuarios/agregar_usuario.php" method="POST" class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Agregar nuevo usuario</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
@@ -101,7 +100,7 @@
 
         <div class="col-md-6">
           <label class="form-label">Correo electrónico</label>
-          <input type="email" class="form-control" name="usu_email" required>
+          <input type="email" class="form-control" name="usu_correo" required>
         </div>
 
         <div class="col-md-6">
@@ -171,8 +170,8 @@
           <select class="form-select" name="rol_id" required>
             <option value="">Seleccione un rol</option>
             <option value="1">Cliente</option>
-            <option value="2">Diseñador</option>
-            <option value="3">Administrador</option>
+            <option value="2">Administrador</option>
+            <option value="3">Diseñador</option>
           </select>
         </div>
       </div>
@@ -249,27 +248,24 @@
 
 
 <script>
-  // Espera a que cargue todo el DOM
   document.addEventListener('DOMContentLoaded', () => {
-
-    // Buscar todos los botones de editar rol
     const botonesEditarRol = document.querySelectorAll('.btn-editar-rol');
 
     botonesEditarRol.forEach(boton => {
       boton.addEventListener('click', () => {
         const userId = boton.getAttribute('data-user-id');
         const userName = boton.getAttribute('data-user-name');
-        const userRole = boton.getAttribute('data-user-role');
+        const rolId = boton.getAttribute('data-user-role-id');
 
-        // Coloca los datos dentro del modal
         document.getElementById('editar-usu-id').value = userId;
         document.getElementById('nombre-usuario-rol').textContent = userName;
+
+        const selectRol = document.querySelector('#modalEditarRol select[name="rol_id"]');
+        selectRol.value = rolId;
       });
     });
-
   });
 </script>
-
 
 
 </body>

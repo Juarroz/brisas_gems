@@ -1,5 +1,5 @@
 <?php
-include '../conexion.php';
+include __DIR__ . '/../conexion.php';
 
 if (isset($_GET['id']) && isset($_GET['estado'])) {
     $usu_id = $_GET['id'];
@@ -10,7 +10,7 @@ if (isset($_GET['id']) && isset($_GET['estado'])) {
     $stmt->bind_param("ii", $nuevo_estado, $usu_id);
 
     if ($stmt->execute()) {
-        header("Location: ../vistas/gestion-usuarios.php?mensaje=Estado+cambiado+correctamente");
+        header("Location: ../../admin/gestion-usuarios.php?mensaje=Estado+cambiado+correctamente");
         exit();
     } else {
         echo "Error al cambiar el estado: " . $conn->error;
