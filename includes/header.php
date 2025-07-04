@@ -46,6 +46,7 @@ $usu_nombre = $_SESSION['usu_nombre'] ?? null;
           <?php elseif ($rol_id === 2): ?>
             <p class="px-3 fw-bold"><?= htmlspecialchars($usu_nombre) ?></p>
             <a href="/brisas_gems/admin/gestion-usuarios.php">Gestión usuarios</a>
+            <a href="/brisas_gems/admin/gestion-pedidos.php">Gestión pedidos</a>
             <a href="/brisas_gems/php/logout.php">Cerrar sesión</a>
 
           <?php else: ?>
