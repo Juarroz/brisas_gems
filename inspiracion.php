@@ -20,141 +20,60 @@
 <div class="main-content">
   <div class="portafolio">
     <h3><strong>CREACIONES DESTACADAS</strong></h3>
-    <!-- Tarjetas de portafolio -->
-    <div class="card carta">
-      <div class="cara card-body frente">
-        <div class="card-img-container">
-          <img src="./img/Portafolio/anillo1.jpg" alt="Joyería">
+    <div id="contenedor-inspiraciones">
+      <?php
+      require_once 'php/conexion.php';
+      $sql = "SELECT por_id, por_titulo, por_descripcion, por_imagen, por_video, por_categoria FROM portafolio_inspiracion ORDER BY por_fecha DESC";
+      $result = $conn->query($sql);
+      if ($result && $result->num_rows > 0):
+        while ($row = $result->fetch_assoc()):
+          $titulo = htmlspecialchars($row['por_titulo']);
+          $descripcion = htmlspecialchars($row['por_descripcion']);
+          $imagen = htmlspecialchars($row['por_imagen']);
+          $categoria = htmlspecialchars($row['por_categoria']);
+      ?>
+      <div class="carta">
+        <div class="card-body cara frente">
+          <div class="card-img-container">
+            <img src="<?= $imagen ?>" alt="Joyería" loading="lazy">
+          </div>
+          <h5 class="card-title"><strong><?= $titulo ?></strong></h5>
+          <p class="card-text"><?= $descripcion ?></p>
         </div>
-        <h5 class="card-title"><strong>Anillo de Compromiso</strong></h5>
-        <p class="card-text">Diseño exclusivo, elegante y con un toque juvenil.</p>
-      </div>
-      <div class="cara card-body atras">
-        <h5 class="card-title"><strong>Detalles del Anillo</strong></h5>
-        <ul class="list-unstyled">
-          <li>○ Material: Plata</li>
-          <li>○ Gema: Tanzanita</li>
-          <li>○ Forma gema: Cuadrada</li>
-          <li>○ Tamaño gema: 3mm</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card carta">
-      <div class="cara card-body frente">
-        <div class="card-img-container">
-        <img src="./img/Portafolio/anillo2.png" alt="Joyería">
+        <div class="card-body cara atras">
+          <h5 class="card-title"><strong>Detalles del Diseño</strong></h5>
+          <ul class="list-unstyled">
+            <li>○ Categoría: <?= $categoria ?></li>
+            <!-- Puedes agregar aquí más detalles si los agregas en la base de datos -->
+          </ul>
         </div>
-        <h5 class="card-title"><strong>Anillo de Sello</strong></h5>
-        <p class="card-text">Diseño sofisticado, único y con tradición incrustada.</p>
       </div>
-      <div class="cara card-body atras">
-        <h5 class="card-title"><strong>Detalles del Anillo</strong></h5>
-        <ul class="list-unstyled">
-          <li>○ Material: Plata</li>
-          <li>○ Gema: Esmeralda</li>
-          <li>○ Forma gema: Ovalada</li>
-          <li>○ Tamaño gema: 10mm</li>
-        </ul>
-      </div>
+      <?php endwhile; else: ?>
+        <p class="text-center">No hay inspiraciones registradas aún.</p>
+      <?php endif; ?>
     </div>
-
-    <div class="card carta">
-      <div class="cara card-body frente">
-        <div class="card-img-container">
-        <img src="./img/Portafolio/anillo3.jpg" alt="Joyería">
-        </div>
-        <h5 class="card-title"><strong>Anillo de Promesa</strong></h5>
-        <p class="card-text">Diseño inspirado en el mar, en la calidad del amor y la elegancia.</p>
-      </div>
-      <div class="cara card-body atras">
-        <h5 class="card-title"><strong>Detalles del Anillo</strong></h5>
-        <ul class="list-unstyled">
-          <li>○ Material: Oro amarillo</li>
-          <li>○ Gema:Zafiro </li>
-          <li>○ Forma gema: Ovalada</li>
-          <li>○ Tamaño gema: 5mm</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card carta">
-      <div class="cara card-body frente">
-        <div class="card-img-container">
-        <img src="./img/Portafolio/anillo4.jpg" alt="Joyería">
-        </div>
-        <h5 class="card-title"><strong>Anillo de 15 Años</strong></h5>
-        <p class="card-text">Diseño extravagante, único, con un llamado a las nuevas etapas.</p>
-      </div>
-      <div class="cara card-body atras">
-        <h5 class="card-title"><strong>Detalles del Anillo</strong></h5>
-        <ul class="list-unstyled">
-          <li>○ Material: Plata</li>
-          <li>○ Gema: Rubí</li>
-          <li>○ Forma gema: Ovalada</li>
-          <li>○ Tamaño gema: 10mm</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card carta">
-      <div class="cara card-body frente">
-        <div class="card-img-container">
-        <img src="./img/Portafolio/anillo2.png" alt="Joyería">
-        </div>
-        <h5 class="card-title"><strong>Anillo de Compromiso</strong></h5>
-        <p class="card-text">Diseño exclusivo, elegante y con un toque juvenil.</p>
-      </div>
-      <div class="cara card-body atras">
-        <h5 class="card-title"><strong>Detalles del Anillo</strong></h5>
-        <ul class="list-unstyled">
-          <li>○ Material: Oro amarillo</li>
-          <li>○ Gema: Rubí</li>
-          <li>○ Forma gema: Ovalada</li>
-          <li>○ Tamaño gema: 7mm</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card carta">
-      <div class="cara card-body frente">
-        <div class="card-img-container">
-        <img src="./img/Portafolio/anillo2.png" alt="Joyería">
-        </div>
-        <h5 class="card-title"><strong>Anillo de Compromiso</strong></h5>
-        <p class="card-text">Diseño exclusivo, elegante y con un toque juvenil.</p>
-      </div>
-      <div class="cara card-body atras">
-        <h5 class="card-title"><strong>Detalles del Anillo</strong></h5>
-        <ul class="list-unstyled">
-          <li>○ Material: Oro amarillo</li>
-          <li>○ Gema: Rubí</li>
-          <li>○ Forma gema: Ovalada</li>
-          <li>○ Tamaño gema: 7mm</li>
-        </ul>
-      </div>
-    </div>
+  </div>
 </div>
-</div>
-
-
-  <!-- Script para el menú de usuario -->
-  <script>
-  const iconoUsuario = document.getElementById('icono-usuario');
-  const menuUsuario = document.getElementById('menu-usuario');
-
-  iconoUsuario.addEventListener('click', () => {
-    menuUsuario.classList.toggle('activo');
-  });
-
-  // Cierra el menú al hacer clic fuera
-  document.addEventListener('click', (e) => {
-    if (!iconoUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
-      menuUsuario.classList.remove('activo');
-    }
-  });
-  </script>
 
 <?php include 'includes/footer.php'; ?>
+
+<script>
+  // Script para menú usuario (evita conflicto si se incluye varias veces)
+  document.addEventListener('DOMContentLoaded', function() {
+    const iconoUsuario = document.getElementById('icono-usuario');
+    const menuUsuario = document.getElementById('menu-usuario');
+    if (iconoUsuario && menuUsuario) {
+      iconoUsuario.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menuUsuario.classList.toggle('activo');
+      });
+      document.addEventListener('click', (e) => {
+        if (!iconoUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
+          menuUsuario.classList.remove('activo');
+        }
+      });
+    }
+  });
+</script>
 </body>
 </html>

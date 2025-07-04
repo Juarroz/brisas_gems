@@ -61,5 +61,19 @@ $resultado = $conn->query($sql);
 </main>
 
 <?php include '../includes/footer.php'; ?>
+<script>
+  const iconoUsuario = document.getElementById('icono-usuario');
+  const menuUsuario = document.getElementById('menu-usuario');
+  if (iconoUsuario && menuUsuario) {
+    iconoUsuario.addEventListener('click', () => {
+      menuUsuario.classList.toggle('activo');
+    });
+    document.addEventListener('click', (e) => {
+      if (!iconoUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
+        menuUsuario.classList.remove('activo');
+      }
+    });
+  }
+</script>
 </body>
 </html>
