@@ -17,10 +17,6 @@
 
   <!-- Contenido principal del módulo -->
   <main class="contenedor-soporte">
-    <h1 class="titulo-principal">
-      <img src="../brisas_gems/img/logo.png" alt="Brisas Gems" class="logo-titulo">
-      Soporte y Comunicación
-    </h1>
     
     <section class="seccion-formulario">
       <h2><i class="fas fa-envelope icono-seccion"></i> Formulario de Contacto</h2>

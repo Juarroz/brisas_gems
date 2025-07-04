@@ -103,10 +103,10 @@ create table pedido (
     ped_comentarios 	varchar(250),
     est_id 				int,
     per_id 				int,
-    usu_id_empleado 	int,
+    usu_id			 	int,
     foreign key (est_id) references estado_pedido (est_id),
     foreign key (per_id) references personalizacion (per_id),
-    foreign key (usu_id_empleado) references usuarios (usu_id)
+    foreign key (usu_id) references usuarios (usu_id)
 );
 
 -- Imagen final del producto terminado

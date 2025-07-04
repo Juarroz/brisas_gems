@@ -236,7 +236,7 @@ values
 	(5, 'finalizado');
 
 -- tabla pedido 
-insert into pedido (ped_id, ped_codigo, ped_fecha_creacion, ped_comentarios, est_id, per_id, usu_id_empleado) 
+insert into pedido (ped_id, ped_codigo, ped_fecha_creacion, ped_comentarios, est_id, per_id, usu_id) 
 values
 	(1,  'p-20250601-001', '2025-06-01', 'pedido de ana',            1,  1,  1),
 	(2,  'p-20250602-002', '2025-06-02', 'pedido de luis',           2,  2,  2),
