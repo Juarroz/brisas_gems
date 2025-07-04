@@ -9,8 +9,6 @@
 </head>
 <body>
 
-  <body>
-
   <?php include 'includes/header.php'; ?>
 
   <!-- ---- -->
@@ -37,12 +35,12 @@
       </div>
 
       <div class="mt-3 text-end">
-        <a href="recuperar.html" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+        <a href="recuperar.php" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
       </div>
     </form>
 
     <p class="mt-4 text-center">
-      ¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a>
+      ¿No tienes cuenta? <a href="registro.php">Regístrate aquí</a>
     </p>
   </section>
 </main>

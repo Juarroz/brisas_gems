@@ -46,16 +46,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Redireccionar por rol
     switch ($usuario['rol_id']) {
       case 1: // Usuario
-        header("Location: ../usuario/mi-perfil.html");
+        header("Location: ../usuario/mi-perfil.php");
         break;
       case 2: // Administrador
-        header("Location: ../admin/gestion-usuarios-1.html");
+        header("Location: ../admin/gestion-usuarios.php");
         break;
       case 3: // Diseñador
-        header("Location: ../admin/gestion-inspiracion.html");
+        header("Location: ../admin/gestion-inspiracion.php");
         break;
       default:
-        header("Location: ../index.html");
+        header("Location: ../index.php");
     }
     exit;
 
@@ -66,6 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $stmt->close();
   $conn->close();
 } else {
-  header("Location: ../login.html");
+  header("Location: ../login.php");
   exit;
 }

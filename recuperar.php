@@ -38,7 +38,7 @@
       </form>
 
       <p class="text-center mt-4">
-        ¿Ya tienes una cuenta? <a href="login.html">Inicia sesión aquí</a>
+        ¿Ya tienes una cuenta? <a href="login.php">Inicia sesión aquí</a>
       </p>
     </section>
   </main>

@@ -38,7 +38,7 @@
 
     <!-- Columna derecha: Opciones -->
     <div class="col-md-6 container-opciones">
-      <form action="contacto.html" method="POST" id="form-personalizacion">
+      <form action="contacto.php" method="POST" id="form-personalizacion">
         
         <!-- Hidden inputs -->
         <input type="hidden" name="piedra" id="input-piedra">
