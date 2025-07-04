@@ -13,42 +13,8 @@
  </head>
  <body>
 
-<!-- ------ -->
-<!-- HEADER -->
-<!-- ------ -->
+<?php include 'includes/header.php'; ?>
 
-<header class= "encabezado">
-  <div class="contenedor-header">
-
-    <!-- Menú izquierdo -->
-    <nav class="nav-izquierda">
-      <a href="personalizar.html">PERSONALIZACION</a>
-      <a href="inspiracion.html">INSPIRACION</a>
-    </nav>
-
-    <!-- Logo centrado -->
-    <div class="logo-centro">
-      <a href="index.html">
-        <img src="./img/logo.png" alt="Logo Brisas Gems">
-      </a>
-    </div>
-
-    <!-- Íconos a la derecha -->
-    <div class="menu-derecha">
-      <a href="#"><img src="./img/gem.svg" alt="Favoritos" class="icono"></a>
-      <a href="#"><img src="./img/bluesky.svg" alt="Carrito" class="icono"></a>
-      <div class="perfil-wrapper">
-        <img src="./img/person.svg" alt="Perfil" class="icono" id="icono-usuario">
-        <div class="menu-usuario" id="menu-usuario">
-          <a href="login.html">Iniciar sesión</a>
-          <a href="registro.html">Registrarse</a>
-          <a href="./usuario/mi-perfil.html">Mi perfil</a>
-          <a href="./usuario/mis-pedidos.html">Mis pedidos</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
 
 <!-- ---- -->
 <!-- MAIN -->
@@ -70,7 +36,6 @@
           Diseña paso a paso la pieza que refleje tu esencia y estilo único. 
           Personaliza, crea y luce algo verdaderamente tuyo.</strong></p>
        </div>
-     </section>
 
 <!-- INFORMACIÓN COMPLEMENTARIA-->
     <article class="info-complement">
@@ -98,56 +63,6 @@
       </div>
     </section>
 
-
-   <!-- ------ -->
-   <!-- FOOTER -->
-   <!-- ------ -->
-
-   <footer class="footer-joyeria text-start">
-    <div class="contenedor-footer">
-      
-      <div class="columna-footer">
-        <h4>Brisas Gems</h4>
-        <p>🟢 Joyería fina y personalizada con los más altos estándares de calidad.</p>
-        <div class="redes-sociales">
-          <a href="#" target="_blank" rel="noopener" aria-label="Facebook Brisas Gems">
-            <img src="./img/icono-whatsApp.png" alt="Facebook Brisas Gems">
-          </a>
-          <a href="#" target="_blank" rel="noopener" aria-label="Instagram Brisas Gems">
-            <img src="./img/icono instagram.png" alt="Instagram Brisas Gems">
-          </a>
-          <a href="#" target="_blank" rel="noopener" aria-label="WhatsApp Brisas Gems">
-            <img src="./img/icono-facebook.png" alt="WhatsApp Brisas Gems">
-          </a>
-        </div>
-      </div>
-  
-      <div class="columna-footer">
-        <h4>Contacto</h4>
-        <p><span class="icono-footer">🟢</span> Av Jiménez #5-43, Emerald Trade Center, Bogotá</p>
-        <p><span class="icono-footer">🟢</span> +57 6017654312</p>
-        <p><span class="icono-footer">🟢</span> info@brisasgem.com</p>
-      </div>
-  
-      <div class="columna-footer">
-        <h4>Enlaces</h4>
-        <nav aria-label="Enlaces rápidos">
-          <ul class="enlaces-footer">
-            <li><a href="./index.html"> Inicio</a></li>
-            <li><a href="./personalizar.html"> Personalización</a></li>
-            <li><a href="./inspiracion.html"> Inspiración</a></li>
-          </ul>
-        </nav>
-      </div>
-  
-    </div>
-  
-    <div class="derechos-footer">
-      <p>© 2025 Brisas Gems - Todos los derechos reservados</p>
-      <p>Desarrollado por SENA CEET - Ficha 2996176 ADSO</p>
-    </div>
-  </footer>
-
    <!-- Script para carrusel simple -->
     <script>
         let slides = document.querySelectorAll(".slide");
@@ -157,9 +72,8 @@
             slides[index].classList.remove("active");
             index = (index + 1) % slides.length;
             slides[index].classList.add("active");
-        }, 3000); // Cambia de imagen cada 3 segundos
+        }, 4000); // Cambia de imagen cada 3 segundos
     </script>
-    
     <!-- Script para el menú de usuario -->
   <script>
   const iconoUsuario = document.getElementById('icono-usuario');
@@ -177,5 +91,7 @@
   });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
- </body>
- </html>
+
+<?php include 'includes/footer.php'; ?>
+</body>
+</html>

@@ -20,17 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // Verifica contraseña cuando este encriptada
-    // if (!password_verify($password, $usuario['usu_password'])) {
-    //   echo "<script>alert('Contraseña incorrecta.'); window.history.back();</script>";
-    //   exit;
-    // }
-
-
-    // Verifica contraseña Temporalmente solo para pruebas
-    if ($password !== $usuario['usu_password']) {
+      if (!password_verify($password, $usuario['usu_password'])) {
       echo "<script>alert('Contraseña incorrecta.'); window.history.back();</script>";
       exit;
     }
+
+
+    // Verifica contraseña Temporalmente solo para pruebas
+    // if ($password !== $usuario['usu_password']) {
+    //  echo "<script>alert('Contraseña incorrecta.'); window.history.back();</script>";
+    //  exit;
+    // }
     // Verifica si la cuenta está activa
     if (!$usuario['usu_activo']) {
       echo "<script>alert('Tu cuenta aún no está activada.'); window.history.back();</script>";
@@ -46,16 +46,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Redireccionar por rol
     switch ($usuario['rol_id']) {
       case 1: // Usuario
-        header("Location: ../usuario/mi-perfil.html");
+        header("Location: ../usuario/mi-perfil.php");
         break;
       case 2: // Administrador
-        header("Location: ../admin/gestion-usuarios-1.html");
+        header("Location: ../admin/gestion-usuarios.php");
         break;
       case 3: // Diseñador
-        header("Location: ../admin/gestion-inspiracion.html");
+        header("Location: ../admin/gestion-inspiracion.php");
         break;
       default:
-        header("Location: ../index.html");
+        header("Location: ../index.php");
     }
     exit;
 
@@ -66,6 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $stmt->close();
   $conn->close();
 } else {
-  header("Location: ../login.html");
+  header("Location: ../login.php");
   exit;
 }

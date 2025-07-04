@@ -22,7 +22,7 @@ if (isset($_GET['token'])) {
 
     // Verificar si ya está activo
     if ($activo) {
-      echo "<script>alert('Tu cuenta ya estaba activada.'); window.location.href='login.html';</script>";
+      echo "<script>alert('Tu cuenta ya estaba activada.'); window.location.href='login.php';</script>";
       exit;
     }
 
@@ -38,17 +38,17 @@ if (isset($_GET['token'])) {
       $stmt_delete->bind_param("s", $token);
       $stmt_delete->execute();
 
-      echo "<script>alert('Cuenta activada con éxito. Ya puedes iniciar sesión.'); window.location.href='login.html';</script>";
+      echo "<script>alert('Cuenta activada con éxito. Ya puedes iniciar sesión.'); window.location.href='login.php';</script>";
     } else {
-      echo "<script>alert('El token ha expirado. Por favor solicita un nuevo registro.'); window.location.href='registro.html';</script>";
+      echo "<script>alert('El token ha expirado. Por favor solicita un nuevo registro.'); window.location.href='registro.php';</script>";
     }
   } else {
-    echo "<script>alert('Token inválido o inexistente.'); window.location.href='registro.html';</script>";
+    echo "<script>alert('Token inválido o inexistente.'); window.location.href='registro.php';</script>";
   }
 
   $stmt->close();
   $conn->close();
 } else {
-  header("Location: index.html");
+  header("Location: index.php");
   exit;
 }

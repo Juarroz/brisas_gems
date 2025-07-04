@@ -11,43 +11,11 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
   <link rel="stylesheet" href="../css/bootstrap.min.css">
   <link rel="stylesheet" href="../css/assets/css-global/main.css">
-  
   <link rel="stylesheet" href="../css/mis-pedidos.css">
   </head>
 <body>
- <!-- ------ -->
-<!-- HEADER -->
-<!-- ------ -->
-<header class="encabezado">
-  <div class="contenedor-header">
 
-    <!-- Logo centrado -->
-    <div class="logo-centro">
-        <img src="../img/logo.png" alt="Logo Brisas Gems">
-      </a>
-    </div>
-
-    <!-- Menú izquierdo -->
-    <nav class="nav-izquierda">
-      <a href="./gestion-usuarios-1.html">GESTIÓN USUARIO</a>
-      <a href="./gestion-inspiracion.html">GESTIÓN INSPIRACIÓN</a>
-      <a href="./gestion-opciones.html">GESTIÓN PERSONALIZACIÓN</a>
-      <a href="./gestion-pedidos.html">GESTIÓN PEDIDOS</a>
-    </nav>
-
-
-    <!-- Íconos a la derecha -->
-    <div class="menu-derecha">
-      <div class="perfil-wrapper">
-        <img src="../img/person.svg" alt="Perfil" class="icono" id="icono-usuario">
-        <div class="menu-usuario" id="menu-usuario">
-          <a href="#">Mi Perfil</a>
-          <a href="../index.html">Cerrar Sesion</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
+<?php include '../includes/header.php'; ?>
 
 <main class="container my-5 Contenido">
 
@@ -77,7 +45,7 @@
         </tr>
       </thead>
       <tbody id="tabla-usuarios">
-        <!-- Aquí se generan dinámicamente los usuarios con PHP -->
+        <?php include '../php/usuarios/listar_usuarios.php'; ?>
       </tbody>
     </table>
   </div>
@@ -87,7 +55,7 @@
 <!-- Modal: Agregar Usuario -->
 <div class="modal fade" id="modalAgregar" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg">
-    <form action="../php/usuarios/agregar_usuario.php" method="POST" class="modal-content">
+    <form action="/brisas_gems/php/usuarios/agregar_usuario.php" method="POST" class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Agregar nuevo usuario</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
@@ -101,7 +69,7 @@
 
         <div class="col-md-6">
           <label class="form-label">Correo electrónico</label>
-          <input type="email" class="form-control" name="usu_email" required>
+          <input type="email" class="form-control" name="usu_correo" required>
         </div>
 
         <div class="col-md-6">
@@ -171,8 +139,8 @@
           <select class="form-select" name="rol_id" required>
             <option value="">Seleccione un rol</option>
             <option value="1">Cliente</option>
-            <option value="2">Diseñador</option>
-            <option value="3">Administrador</option>
+            <option value="2">Administrador</option>
+            <option value="3">Diseñador</option>
           </select>
         </div>
       </div>
@@ -184,49 +152,6 @@
   </div>
 </div>
 
-  <footer class="footer-joyeria">
-    <div class="contenedor-footer">
-      
-      <div class="columna-footer">
-        <h4>Brisas Gems</h4>
-        <p>🟢 Joyería fina y personalizada con los más altos estándares de calidad.</p>
-        <div class="redes-sociales">
-          <a href="#" target="_blank" rel="noopener" aria-label="Facebook Brisas Gems">
-            <img src="../img/icono-whatsApp.png" alt="Facebook Brisas Gems">
-          </a>
-          <a href="#" target="_blank" rel="noopener" aria-label="Instagram Brisas Gems">
-            <img src="../img/icono instagram.png" alt="Instagram Brisas Gems">
-          </a>
-          <a href="#" target="_blank" rel="noopener" aria-label="WhatsApp Brisas Gems">
-            <img src="../img/icono-facebook.png" alt="WhatsApp Brisas Gems">
-          </a>
-        </div>
-      </div>
-  
-      <div class="columna-footer">
-        <h4>Contacto</h4>
-        <p><span class="icono-footer">🟢</span> Av Jiménez #5-43, Emerald Trade Center, Bogotá</p>
-        <p><span class="icono-footer">🟢</span> +57 6017654312</p>
-        <p><span class="icono-footer">🟢</span> info@brisasgem.com</p>
-      </div>
-  
-      <div class="columna-footer">
-        <h4>Enlaces</h4>
-        <nav aria-label="Enlaces rápidos">
-          <ul class="enlaces-footer">
-            <li><a href="./Gestionar-U-R.html">Gestión de Usuarios y Roles</a></li>
-            <li><a href="#"> My Perfil</a></li>
-          </ul>
-        </nav>
-      </div>
-  
-    </div>
-  
-    <div class="derechos-footer">
-      <p>© 2025 Brisas Gems - Todos los derechos reservados</p>
-      <p>Desarrollado por SENA CEET - Ficha 2996176 ADSO</p>
-    </div>
-  </footer>
 
       </script>
     <!-- Script para el menú de usuario -->
@@ -249,28 +174,25 @@
 
 
 <script>
-  // Espera a que cargue todo el DOM
   document.addEventListener('DOMContentLoaded', () => {
-
-    // Buscar todos los botones de editar rol
     const botonesEditarRol = document.querySelectorAll('.btn-editar-rol');
 
     botonesEditarRol.forEach(boton => {
       boton.addEventListener('click', () => {
         const userId = boton.getAttribute('data-user-id');
         const userName = boton.getAttribute('data-user-name');
-        const userRole = boton.getAttribute('data-user-role');
+        const rolId = boton.getAttribute('data-user-role-id');
 
-        // Coloca los datos dentro del modal
         document.getElementById('editar-usu-id').value = userId;
         document.getElementById('nombre-usuario-rol').textContent = userName;
+
+        const selectRol = document.querySelector('#modalEditarRol select[name="rol_id"]');
+        selectRol.value = rolId;
       });
     });
-
   });
 </script>
 
-
-
+<?php include '../includes/footer.php'; ?>
 </body>
 </html>
