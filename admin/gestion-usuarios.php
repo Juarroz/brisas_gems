@@ -14,39 +14,8 @@
   <link rel="stylesheet" href="../css/mis-pedidos.css">
   </head>
 <body>
- <!-- ------ -->
-<!-- HEADER -->
-<!-- ------ -->
-<header class="encabezado">
-  <div class="contenedor-header">
 
-    <!-- Logo centrado -->
-    <div class="logo-centro">
-        <img src="../img/logo.png" alt="Logo Brisas Gems">
-      </a>
-    </div>
-
-    <!-- Menú izquierdo -->
-    <nav class="nav-izquierda">
-      <a href="./gestion-usuarios.php">GESTIÓN USUARIO</a>
-      <a href="./gestion-inspiracion.html">GESTIÓN INSPIRACIÓN</a>
-      <a href="./gestion-opciones.html">GESTIÓN PERSONALIZACIÓN</a>
-      <a href="./gestion-pedidos.html">GESTIÓN PEDIDOS</a>
-    </nav>
-
-
-    <!-- Íconos a la derecha -->
-    <div class="menu-derecha">
-      <div class="perfil-wrapper">
-        <img src="../img/person.svg" alt="Perfil" class="icono" id="icono-usuario">
-        <div class="menu-usuario" id="menu-usuario">
-          <a href="#">Mi Perfil</a>
-          <a href="../index.html">Cerrar Sesion</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</header>
+<?php include '../includes/header.php'; ?>
 
 <main class="container my-5 Contenido">
 
@@ -183,49 +152,6 @@
   </div>
 </div>
 
-  <footer class="footer-joyeria">
-    <div class="contenedor-footer">
-      
-      <div class="columna-footer">
-        <h4>Brisas Gems</h4>
-        <p>🟢 Joyería fina y personalizada con los más altos estándares de calidad.</p>
-        <div class="redes-sociales">
-          <a href="#" target="_blank" rel="noopener" aria-label="Facebook Brisas Gems">
-            <img src="../img/icono-whatsApp.png" alt="Facebook Brisas Gems">
-          </a>
-          <a href="#" target="_blank" rel="noopener" aria-label="Instagram Brisas Gems">
-            <img src="../img/icono instagram.png" alt="Instagram Brisas Gems">
-          </a>
-          <a href="#" target="_blank" rel="noopener" aria-label="WhatsApp Brisas Gems">
-            <img src="../img/icono-facebook.png" alt="WhatsApp Brisas Gems">
-          </a>
-        </div>
-      </div>
-  
-      <div class="columna-footer">
-        <h4>Contacto</h4>
-        <p><span class="icono-footer">🟢</span> Av Jiménez #5-43, Emerald Trade Center, Bogotá</p>
-        <p><span class="icono-footer">🟢</span> +57 6017654312</p>
-        <p><span class="icono-footer">🟢</span> info@brisasgem.com</p>
-      </div>
-  
-      <div class="columna-footer">
-        <h4>Enlaces</h4>
-        <nav aria-label="Enlaces rápidos">
-          <ul class="enlaces-footer">
-            <li><a href="./Gestionar-U-R.html">Gestión de Usuarios y Roles</a></li>
-            <li><a href="#"> My Perfil</a></li>
-          </ul>
-        </nav>
-      </div>
-  
-    </div>
-  
-    <div class="derechos-footer">
-      <p>© 2025 Brisas Gems - Todos los derechos reservados</p>
-      <p>Desarrollado por SENA CEET - Ficha 2996176 ADSO</p>
-    </div>
-  </footer>
 
       </script>
     <!-- Script para el menú de usuario -->
@@ -267,5 +193,6 @@
   });
 </script>
 
+<?php include '../includes/footer.php'; ?>
 </body>
 </html>

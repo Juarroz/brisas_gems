@@ -20,17 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     // Verifica contraseña cuando este encriptada
-    // if (!password_verify($password, $usuario['usu_password'])) {
-    //   echo "<script>alert('Contraseña incorrecta.'); window.history.back();</script>";
-    //   exit;
-    // }
-
-
-    // Verifica contraseña Temporalmente solo para pruebas
-    if ($password !== $usuario['usu_password']) {
+      if (!password_verify($password, $usuario['usu_password'])) {
       echo "<script>alert('Contraseña incorrecta.'); window.history.back();</script>";
       exit;
     }
+
+
+    // Verifica contraseña Temporalmente solo para pruebas
+    // if ($password !== $usuario['usu_password']) {
+    //  echo "<script>alert('Contraseña incorrecta.'); window.history.back();</script>";
+    //  exit;
+    // }
     // Verifica si la cuenta está activa
     if (!$usuario['usu_activo']) {
       echo "<script>alert('Tu cuenta aún no está activada.'); window.history.back();</script>";
