@@ -17,20 +17,69 @@
 <?php include '../includes/header.php'; ?>
 
 
+<?php
+// Cargar datos del usuario autenticado desde sesión (mejor práctica)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (!isset($_SESSION['usu_id'])) {
+    header('Location: ../login.php');
+    exit();
+}
+
+// Conexión a la base de datos
+require_once '../php/conexion.php';
+
+$usu_id = $_SESSION['usu_id'];
+$sql = "SELECT usu_nombre, usu_correo, usu_telefono FROM usuarios WHERE usu_id = ? LIMIT 1";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param('i', $usu_id);
+$stmt->execute();
+$stmt->bind_result($usu_nombre, $usu_correo, $usu_telefono);
+$stmt->fetch();
+$stmt->close();
+$conn->close();
+
+// Objeto para compatibilidad con el frontend
+$usuario = (object) [
+    'usu_id' => $usu_id,
+    'usu_nombre' => $usu_nombre,
+    'usu_correo' => $usu_correo,
+    'usu_telefono' => $usu_telefono
+];
+?>
+
       <main class="container my-5">
         <section id="actualizar-datos-personales" class="mx-auto" style="max-width: 400px;">
           <h2 class="mb-4">Actualizar mis datos personales</h2>
       
           <!-- Mensajes de alerta -->
-          <!--
-            Mostrar dinámicamente con servidor/JS:
-            - .alert-success tras actualización exitosa
-            - .alert-danger si falla la validación o el correo ya existe
-          -->
+          <?php
+          // Mostrar alertas según los parámetros en la URL
+          if (isset($_GET['exito'])) {
+              echo '<div class="alert alert-success" role="alert">¡Datos actualizados correctamente!</div>';
+          } elseif (isset($_GET['error'])) {
+              $msg = '';
+              switch ($_GET['error']) {
+                  case 'correo':
+                      $msg = 'El correo ingresado ya está en uso por otro usuario.';
+                      break;
+                  case 'bd':
+                      $msg = 'Ocurrió un error al actualizar los datos. Intenta nuevamente.';
+                      break;
+                  case 'datos':
+                      $msg = 'Por favor, completa todos los campos obligatorios.';
+                      break;
+                  default:
+                      $msg = 'Ocurrió un error inesperado.';
+              }
+              echo '<div class="alert alert-danger" role="alert">' . $msg . '</div>';
+          }
+          ?>
           <div id="alert-placeholder"></div>
       
           <!-- Formulario: método POST al endpoint encargado -->
-          <form id="form-actualizar-datos" action="/perfil/actualizar" method="POST" novalidate>
+          <form id="form-actualizar-datos" action="../php/usuarios/actualizar_datos_personales.php" method="POST" novalidate autocomplete="off">
             <!-- Campo oculto con el ID del usuario autenticado -->
             <input type="hidden" name="usu_id" value="<?= $usuario->usu_id ?>">
       
@@ -113,3 +162,4 @@
 
 <?php include '../includes/footer.php'; ?>
 </body>
+</html>
