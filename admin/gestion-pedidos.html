@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema interactivo de Brisas Gems para la personalización de joyas en línea">
-    <meta name="author" content="Johan Bocanegra">
-    <link rel="icon" href="../img/icono.png">
-    <title>Gestion De Pedidos</title>
-  <!-- Estilos globales primero -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Gestion Pedidos</title>
+    <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-  <link rel="stylesheet" href="../css/assets/css-global/main.css">
-  <link rel="stylesheet" href="../css/pedidos.css">
-  </head>
-  <body>
-    <!-- ---- -->
+    <link rel="stylesheet" href="../css/assets/css-global/main.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/mis-pedidos.css">
+</head>
+<body>
+
+<!-- ---- -->
 <!--HEADER-->
 <!-- ---- -->
 
@@ -48,200 +47,180 @@
   </div>
 </header>
 
-  <script>
-  const iconoUsuario = document.getElementById('icono-usuario');
-  const menuUsuario = document.getElementById('menu-usuario');
+<!-- admin/gestion-pedido-detalle.html -->
+<!-- Asume que este fragmento se incluye entre header.php y footer.php -->
+<div class="container my-5">
 
-  iconoUsuario.addEventListener('click', () => {
-    menuUsuario.classList.toggle('activo');
-  });
+  <!-- 1. Sección: Subir diseño renderizado (RF 0023) -->
+  <section id="render-upload" class="mb-5">
+    <h2 class="h4 mb-3">1. Subir diseño 3D renderizado</h2>
+    <form id="form-render" action="../php/upload_render.php" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="ped_id" value="<?= $_GET['ped_id'] ?>">
+      <div class="mb-3">
+        <label for="file-render" class="form-label">Archivo 3D (.obj, .stl)</label>
+        <input class="form-control" type="file" id="file-render" name="render_file"
+               accept=".obj,.stl" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Subir render</button>
+      <div id="render-feedback" class="form-text text-danger mt-2"></div>
+    </form>
+    <!-- Preview del modelo 3D -->
+    <div class="mt-4">
+      <model-viewer id="preview-render" 
+                    style="width:100%;height:400px;" 
+                    camera-controls 
+                    ar 
+                    src="">
+      </model-viewer>
+    </div>
+  </section>
 
-  // Cierra el menú al hacer clic fuera
-  document.addEventListener('click', (e) => {
-    if (!iconoUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
-      menuUsuario.classList.remove('activo');
-    }
-  });
-</script>
+  <!-- 2. Sección: Subir imagen del producto terminado (RF 0024) -->
+  <section id="foto-final" class="mb-5">
+    <h2 class="h4 mb-3">2. Subir foto producto terminado</h2>
+    <form id="form-foto" action="../php/upload_final_photo.php" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="ped_id" value="<?= $_GET['ped_id'] ?>">
+      <div class="mb-3">
+        <label for="file-photo" class="form-label">Imagen (JPG, PNG)</label>
+        <input class="form-control" type="file" id="file-photo" name="photo_file"
+               accept=".jpg,.jpeg,.png" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Subir imagen final</button>
+      <div id="photo-feedback" class="form-text text-danger mt-2"></div>
+    </form>
+  </section>
 
-      <!-- CONTENIDO DEL MÓDULO: Gestión de Diseños y Progreso de Pedidos -->
-<main class="container my-5 separador">
-    <!-- 1. Selección de pedido -->
-    <section id="section-seleccionar-pedido" class="mb-5">
-      <h2 class="h4 mb-3">1. Seleccione el pedido</h2>
-      <!-- Selector de pedidos: se debe llenar dinámicamente -->
-      <form id="form-seleccionar-pedido" class="row g-2">
-        <div class="col-md-8">
-          <label for="select-pedido" class="form-label">Pedido</label>
-          <select id="select-pedido" name="ped_id" class="form-select" required>
-            <option value="" selected disabled>-- Seleccione un pedido --</option>
-            <!-- Ejemplo: <option value="1">PED-2025-001 – En diseño</option> -->
+  <!-- 3. Sección: Agregar comentarios al pedido (RF 0025) -->
+  <section id="comentarios" class="mb-5">
+    <h2 class="h4 mb-3">3. Comentarios y notas</h2>
+    <form id="form-comentario" action="../php/update_pedido_comments.php" method="post">
+      <input type="hidden" name="ped_id" value="<?= $_GET['ped_id'] ?>">
+      <div class="mb-3">
+        <label for="input-comentario" class="form-label">Observaciones</label>
+        <textarea class="form-control" id="input-comentario" name="comentario"
+                  rows="3" placeholder="Escribe aquí tus notas..." required><?= $pedido['ped_comentarios'] ?></textarea>
+      </div>
+      <button type="submit" class="btn btn-secondary">Guardar comentario</button>
+    </form>
+  </section>
+
+  <!-- 4. Sección: Historial de pedidos trabajados (RF 0026) -->
+  <section id="historial" class="mb-5">
+    <h2 class="h4 mb-3">4. Historial de pedidos en trabajo</h2>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach($historial as $h): ?>
+        <tr>
+          <td><?= $h['ped_codigo'] ?></td>
+          <td><?= $h['ped_fecha_creacion'] ?></td>
+          <td><?= $h['est_nombre'] ?></td>
+          <td>
+            <a href="gestion-pedido-detalle.html?ped_id=<?= $h['ped_id'] ?>"
+               class="btn btn-sm btn-outline-primary">Ver detalle</a>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 5. Sección: Actualizar barra de progreso (RF 0027) -->
+  <section id="progreso" class="mb-5">
+    <h2 class="h4 mb-3">5. Actualizar estado y progreso</h2>
+    <form id="form-estado" action="../php/update_pedido_status.php" method="post" class="mb-3">
+      <input type="hidden" name="ped_id" value="<?= $_GET['ped_id'] ?>">
+      <div class="row g-3 align-items-center">
+        <div class="col-auto">
+          <label for="select-estado" class="col-form-label">Estado:</label>
+        </div>
+        <div class="col-auto">
+          <select id="select-estado" name="est_id" class="form-select" required>
+            <?php foreach($estados as $e): ?>
+            <option value="<?= $e['est_id'] ?>" <?= $pedido['est_id']==$e['est_id']?'selected':''?>>
+              <?= $e['est_nombre'] ?>
+            </option>
+            <?php endforeach; ?>
           </select>
         </div>
-        <div class="col-md-4 d-flex align-items-end">
-          <button type="submit" class="btn btn-primary w-100">Cargar datos</button>
+        <div class="col-auto">
+          <button type="submit" class="btn btn-success">Actualizar</button>
         </div>
-      </form>
-    </section>
-  
-    <hr>
-  
-    <!-- 2. Subir diseño renderizado -->
-    <section id="section-render-3d" class="mb-5 d-none">
-      <h2 class="h4 mb-3">2. Subir diseño renderizado (3D)</h2>
-      <form id="form-upload-render" action="/render/upload" method="POST" enctype="multipart/form-data" class="row g-3">
-        <!-- ped_id oculto rellenado tras selección -->
-        <input type="hidden" name="ped_id" id="input-render-ped-id">
-        <div class="col-md-8">
-          <label for="input-render-file" class="form-label">Archivo 3D (.OBJ, .STL)</label>
-          <input
-            type="file"
-            id="input-render-file"
-            name="ren_imagen"
-            class="form-control"
-            accept=".obj,.stl"
-            required
-          >
-        </div>
-        <div class="col-md-4 d-flex align-items-end">
-          <button type="submit" class="btn btn-success w-100">Subir render</button>
-        </div>
-        <div class="col-12">
-          <div id="render-preview" class="border rounded p-3" style="min-height: 200px;">
-            <!-- Aquí se cargará el visor o miniatura del render 3D -->
-          </div>
-        </div>
-      </form>
-    </section>
-  
-    <!-- 3. Subir imagen del producto terminado -->
-    <section id="section-foto-final" class="mb-5 d-none">
-      <h2 class="h4 mb-3">3. Subir foto del producto terminado</h2>
-      <form id="form-upload-foto" action="/foto/upload" method="POST" enctype="multipart/form-data" class="row g-3">
-        <input type="hidden" name="ped_id" id="input-foto-ped-id">
-        <div class="col-md-8">
-          <label for="input-foto-file" class="form-label">Imagen JPG/PNG</label>
-          <input
-            type="file"
-            id="input-foto-file"
-            name="fot_imagen_final"
-            class="form-control"
-            accept=".jpg,.jpeg,.png"
-            required
-          >
-        </div>
-        <div class="col-md-4 d-flex align-items-end">
-          <button type="submit" class="btn btn-success w-100">Subir imagen</button>
-        </div>
-        <div class="col-12">
-          <img id="foto-preview" src="#" alt="Vista previa de la foto final" class="img-fluid rounded d-none">
-        </div>
-      </form>
-    </section>
-  
-    <!-- 4. Agregar o editar comentarios -->
-    <section id="section-comentarios" class="mb-5 d-none">
-      <h2 class="h4 mb-3">4. Comentarios del pedido</h2>
-      <form id="form-comentarios" action="/pedido/comentario" method="POST" class="mb-3">
-        <input type="hidden" name="ped_id" id="input-coment-ped-id">
-        <div class="mb-3">
-          <label for="textarea-comentarios" class="form-label">Comentarios</label>
-          <textarea
-            id="textarea-comentarios"
-            name="ped_comentarios"
-            class="form-control"
-            rows="4"
-            placeholder="Agregue observaciones..."
-            required
-          ></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Guardar comentario</button>
-      </form>
-    </section>
-  
-    <!-- 5. Historial de pedidos y barra de progreso -->
-    <section id="section-historial" class="mb-5">
-      <h2 class="h4 mb-3">5. Historial de pedidos</h2>
-      <div id="historial-list" class="row gy-4">
-        <!-- Cada tarjeta representa un pedido -->
-  
-        <div class="col-md-6">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">PED-2025-001</h5>
-              <p class="card-text">Cliente: Juan Pérez • Fecha: 2025-06-29</p>
-              <div class="mb-3">
-                <label class="form-label">Progreso:</label>
-                <div class="progress">
-                  <div class="progress-bar" role="progressbar"
-                       style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-                    En producción (50%)
-                  </div>
-                </div>
-              </div>
-              <!-- (Solo para administradores) Actualizar estado  -->
-              <form action="/pedido/progreso" method="POST" class="d-flex align-items-center">
-                <input type="hidden" name="ped_id" value="1">
-                <select name="est_id" class="form-select me-2" required>
-                  <option value="1">En diseño</option>
-                  <option value="2">En producción</option>
-                  <option value="3">Finalizado</option>
-                </select>
-                <button type="submit" class="btn btn-outline-secondary">Actualizar</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      
       </div>
-    </section>
-  </main>
+    </form>
+    <!-- Barra de progreso Bootstrap 
+    <div class="progress" style="height: 1.5rem;">
+      <div id="barra-progreso" class="progress-bar" role="progressbar"
+           style="width: <?= $pedido['est_id']*25 ?>%;" aria-valuenow="<?= $pedido['est_id']*25 ?>"  -->
+           aria-valuemin="0" aria-valuemax="100">
+        <?= $pedido['est_id']*25 ?>%
+      </div>
+    </div>
+  </section>
+
+</div>
+
+
+
+    <!-- Footer existente -->
+       <!-- ------ -->
+  <!-- FOOTER -->
+  <!-- ------ -->
+
+  <footer class="footer-joyeria text-start">
+    <div class="contenedor-footer">
+      
+      <div class="columna-footer">
+        <h4>Brisas Gems</h4>
+        <p>🟢 Joyería fina y personalizada con los más altos estándares de calidad.</p>
+        <div class="redes-sociales">
+          <a href="#" target="_blank" rel="noopener" aria-label="Facebook Brisas Gems">
+            <img src="../img/icono-whatsApp.png" alt="Facebook Brisas Gems">
+          </a>
+          <a href="#" target="_blank" rel="noopener" aria-label="Instagram Brisas Gems">
+            <img src="../img/icono instagram.png" alt="Instagram Brisas Gems">
+          </a>
+          <a href="#" target="_blank" rel="noopener" aria-label="WhatsApp Brisas Gems">
+            <img src="../img/icono-facebook.png" alt="WhatsApp Brisas Gems">
+          </a>
+        </div>
+      </div>
   
-
-      <!-- coontenido-->
-
-
-      <footer class="footer-joyeria">
-        <div class="contenedor-footer">
-          
-          <div class="columna-footer">
-            <h4>Brisas Gems</h4>
-            <p>🟢 Joyería fina y personalizada con los más altos estándares de calidad.</p>
-            <div class="redes-sociales">
-              <a href="#" target="_blank" rel="noopener" aria-label="Facebook Brisas Gems">
-                <img src="../img/icono-whatsApp.png" alt="Facebook Brisas Gems">
-              </a>
-              <a href="#" target="_blank" rel="noopener" aria-label="Instagram Brisas Gems">
-                <img src="../img/icono instagram.png" alt="Instagram Brisas Gems">
-              </a>
-              <a href="#" target="_blank" rel="noopener" aria-label="WhatsApp Brisas Gems">
-                <img src="../img/icono-facebook.png" alt="WhatsApp Brisas Gems">
-              </a>
-            </div>
-          </div>
-      
-          <div class="columna-footer">
-            <h4>Contacto</h4>
-            <p><span class="icono-footer">🟢</span> Av Jiménez #5-43, Emerald Trade Center, Bogotá</p>
-            <p><span class="icono-footer">🟢</span> +57 6017654312</p>
-            <p><span class="icono-footer">🟢</span> info@brisasgem.com</p>
-          </div>
-      
-          <div class="columna-footer">
-            <h4>Enlaces</h4>
-            <nav aria-label="Enlaces rápidos">
-              <ul class="enlaces-footer">
-                <li><a href="./Gestionar-U-R.html">Gestión de Usuarios y Roles</a></li>
-                <li><a href="#"> My Perfil</a></li>
-              </ul>
-            </nav>
-          </div>
-      
-        </div>
-      
-        <div class="derechos-footer">
-          <p>© 2025 Brisas Gems - Todos los derechos reservados</p>
-          <p>Desarrollado por SENA CEET - Ficha 2996176 ADSO</p>
-        </div>
-      </footer>
-  </body>
+      <div class="columna-footer">
+        <h4>Contacto</h4>
+        <p><span class="icono-footer">🟢</span> Av Jiménez #5-43, Emerald Trade Center, Bogotá</p>
+        <p><span class="icono-footer">🟢</span> +57 6017654312</p>
+        <p><span class="icono-footer">🟢</span> info@brisasgem.com</p>
+      </div>
+  
+      <div class="columna-footer">
+        <h4>Enlaces</h4>
+        <nav aria-label="Enlaces rápidos">
+          <ul class="enlaces-footer">
+            <li><a href="./index.html"> Inicio</a></li>
+            <li><a href="./personalizar.html"> Personalización</a></li>
+            <li><a href="./inspiracion.html"> Inspiración</a></li>
+          </ul>
+        </nav>
+      </div>
+  
+    </div>
+  
+    <div class="derechos-footer">
+      <p>© 2025 Brisas Gems - Todos los derechos reservados</p>
+      <p>Desarrollado por SENA CEET - Ficha 2996176 ADSO</p>
+    </div>
+  </footer>
+  <!-- Model Viewer script necesario para previsualizar .obj/.stl -->
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+<script src="../js/gestion-pedidos.js"></script>
+</body>
+</html>

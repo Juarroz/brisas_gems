@@ -1,17 +1,17 @@
 <!DOCTYPE html>
- <html lang="es">
- <head>
-  <title>Brisas Gems</title>
+<html lang="es">
+<head>
+  <title>Gestion Opciones</title>
   <link rel="icon" href="../img/icono.png"> 
-  <link rel="stylesheet" href="../css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
   <link rel="stylesheet" href="../css/assets/css-global/main.css">
-  <link rel="stylesheet" href="../css/gestion-inspiracion.css">
+  <link rel="stylesheet" href="../css/gestion-in">
   <meta charset="UTF-8">
   <meta name="author" content="Natalia Cueca">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <meta name="description" content="Brisas Gems permite personalizar joyas en línea con visualización en tiempo real, catálogo inteligente, seguimiento de pedidos y contacto directo con el equipo de diseño.">
- </head>
- <body>
+</head>
+<body>
 
 <!-- ---- -->
 <!--HEADER-->
@@ -47,4 +47,277 @@
     </div>
   </div>
 </header>
+    <!-- Incluir header existente -->
+    <?php include '../php/header.php'; ?>
+
+    <main class="container my-5">
+        <h1 class="mb-4">Gestión de Catálogo de Personalización</h1>
+
+        <!-- Sección: Opciones de personalización -->
+        <section class="mb-5">
+            <h2>Opciones</h2>
+            <!-- Formulario: Crear nueva opción -->
+            <form id="form-nueva-opcion" action="../php/admin/gestionar_catalogo.php" method="post" class="row g-3 align-items-end">
+                <!-- Hidden para indicar acción -->
+                <input type="hidden" name="accion" value="crear_opcion">
+                <div class="col-md-8">
+                    <label for="opc_nombre" class="form-label">Nombre de la opción</label>
+                    <input type="text" class="form-control" id="opc_nombre" name="opc_nombre" required>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary">Agregar Opción</button>
+                </div>
+            </form>
+
+            <!-- Tabla: Listado de opciones -->
+            <div class="table-responsive mt-4">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Opción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Aquí se iteran las opciones desde backend -->
+                        <?php foreach ($opciones as $opc): ?>
+                        <tr>
+                            <td><?= $opc['opc_id'] ?></td>
+                            <td><?= htmlspecialchars($opc['opc_nombre']) ?></td>
+                            <td>
+                                <!-- Editar y eliminar -->
+                                <button class="btn btn-sm btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#modal-editar-opcion" data-opc_id="<?= $opc['opc_id'] ?>" data-opc_nombre="<?= htmlspecialchars($opc['opc_nombre']) ?>">Editar</button>
+                                <form action="../php/admin/gestionar_catalogo.php" method="post" class="d-inline">
+                                    <input type="hidden" name="accion" value="eliminar_opcion">
+                                    <input type="hidden" name="opc_id" value="<?= $opc['opc_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar esta opción?');">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Sección: Valores de personalización (g ods, materias, etc.) -->
+        <section>
+            <h2>Valores</h2>
+            <!-- Formulario: Crear nuevo valor -->
+            <form id="form-nuevo-valor" action="../php/admin/gestionar_catalogo.php" method="post" enctype="multipart/form-data" class="row g-3 align-items-end">
+                <input type="hidden" name="accion" value="crear_valor">
+                <div class="col-md-4">
+                    <label for="opc_id" class="form-label">Opción asociada</label>
+                    <select class="form-select" id="opc_id" name="opc_id" required>
+                        <option value="" selected disabled>Seleccione...</option>
+                        <?php foreach ($opciones as $opc): ?>
+                        <option value="<?= $opc['opc_id'] ?>"><?= htmlspecialchars($opc['opc_nombre']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="val_nombre" class="form-label">Nombre del valor</label>
+                    <input type="text" class="form-control" id="val_nombre" name="val_nombre" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="val_imagen" class="form-label">Imagen (PNG, JPG)</label>
+                    <input type="file" class="form-control" id="val_imagen" name="val_imagen" accept=".png,.jpg,.jpeg" required>
+                    <div class="invalid-feedback">Formato no compatible. Use PNG o JPG.</div>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary">Agregar Valor</button>
+                </div>
+            </form>
+
+            <!-- Tabla: Listado de valores -->
+            <div class="table-responsive mt-4">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Opción</th>
+                            <th>Valor</th>
+                            <th>Imagen</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Iterar valores desde backend -->
+                        <?php foreach ($valores as $val): ?>
+                        <tr>
+                            <td><?= $val['val_id'] ?></td>
+                            <td><?= htmlspecialchars($val['opc_nombre']) ?></td>
+                            <td><?= htmlspecialchars($val['val_nombre']) ?></td>
+                            <td><img src="../img/personalizacion/<?= htmlspecialchars($val['val_imagen']) ?>" alt="" class="img-thumbnail" style="max-width: 80px;"></td>
+                            <td>
+                                <button class="btn btn-sm btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#modal-editar-valor"
+                                    data-val_id="<?= $val['val_id'] ?>"
+                                    data-opc_id="<?= $val['opc_id'] ?>"
+                                    data-val_nombre="<?= htmlspecialchars($val['val_nombre']) ?>"
+                                >Editar</button>
+                                <form action="../php/admin/gestionar_catalogo.php" method="post" class="d-inline">
+                                    <input type="hidden" name="accion" value="eliminar_valor">
+                                    <input type="hidden" name="val_id" value="<?= $val['val_id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este valor?');">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modales para edición (opción y valor) -->
+    <!-- Modal Editar Opción -->
+    <div class="modal fade" id="modal-editar-opcion" tabindex="-1">
+        <div class="modal-dialog">
+            <form action="../php/admin/gestionar_catalogo.php" method="post" class="modal-content">
+                <input type="hidden" name="accion" value="editar_opcion">
+                <input type="hidden" id="edit_opc_id" name="opc_id">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Opción</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_opc_nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="edit_opc_nombre" name="opc_nombre" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Editar Valor -->
+    <div class="modal fade" id="modal-editar-valor" tabindex="-1">
+        <div class="modal-dialog">
+            <form action="../php/admin/gestionar_catalogo.php" method="post" enctype="multipart/form-data" class="modal-content">
+                <input type="hidden" name="accion" value="editar_valor">
+                <input type="hidden" id="edit_val_id" name="val_id">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Valor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_opc_select" class="form-label">Opción</label>
+                        <select class="form-select" id="edit_opc_select" name="opc_id" required>
+                            <?php foreach ($opciones as $opc): ?>
+                            <option value="<?= $opc['opc_id'] ?>"><?= htmlspecialchars($opc['opc_nombre']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_val_nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="edit_val_nombre" name="val_nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_val_imagen" class="form-label">Imagen (PNG, JPG)</label>
+                        <input type="file" class="form-control" id="edit_val_imagen" name="val_imagen" accept=".png,.jpg,.jpeg">
+                        <div class="form-text">Dejar en blanco para mantener la imagen actual.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Incluir footer existente -->
+    <?php include '../php/footer.php'; ?>
+
+    <!-- Scripts Bootstrap y validación -->
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Validación básica de tipos de archivo
+    document.querySelectorAll('input[type=file]').forEach(input => {
+        input.addEventListener('change', () => {
+            const file = input.files[0];
+            if (file) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!['png','jpg','jpeg'].includes(ext)) {
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            }
+        });
+    });
+
+    // Pasar datos al modal de editar
+    var editarOpcionModal = document.getElementById('modal-editar-opcion');
+    editarOpcionModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        document.getElementById('edit_opc_id').value = button.getAttribute('data-opc_id');
+        document.getElementById('edit_opc_nombre').value = button.getAttribute('data-opc_nombre');
+    });
+
+    var editarValorModal = document.getElementById('modal-editar-valor');
+    editarValorModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        document.getElementById('edit_val_id').value = button.getAttribute('data-val_id');
+        document.getElementById('edit_opc_select').value = button.getAttribute('data-opc_id');
+        document.getElementById('edit_val_nombre').value = button.getAttribute('data-val_nombre');
+    });
+    </script>
+
+  <!-- ------ -->
+  <!-- FOOTER -->
+  <!-- ------ -->
+
+  <footer class="footer-joyeria text-start">
+    <div class="contenedor-footer">
+      
+      <div class="columna-footer">
+        <h4>Brisas Gems</h4>
+        <p>🟢 Joyería fina y personalizada con los más altos estándares de calidad.</p>
+        <div class="redes-sociales">
+          <a href="#" target="_blank" rel="noopener" aria-label="Facebook Brisas Gems">
+            <img src="../img/icono-whatsApp.png" alt="Facebook Brisas Gems">
+          </a>
+          <a href="#" target="_blank" rel="noopener" aria-label="Instagram Brisas Gems">
+            <img src="../img/icono instagram.png" alt="Instagram Brisas Gems">
+          </a>
+          <a href="#" target="_blank" rel="noopener" aria-label="WhatsApp Brisas Gems">
+            <img src="../img/icono-facebook.png" alt="WhatsApp Brisas Gems">
+          </a>
+        </div>
+      </div>
+  
+      <div class="columna-footer">
+        <h4>Contacto</h4>
+        <p><span class="icono-footer">🟢</span> Av Jiménez #5-43, Emerald Trade Center, Bogotá</p>
+        <p><span class="icono-footer">🟢</span> +57 6017654312</p>
+        <p><span class="icono-footer">🟢</span> info@brisasgem.com</p>
+      </div>
+  
+      <div class="columna-footer">
+        <h4>Enlaces</h4>
+        <nav aria-label="Enlaces rápidos">
+          <ul class="enlaces-footer">
+            <li><a href="./index.html"> Inicio</a></li>
+            <li><a href="./personalizar.html"> Personalización</a></li>
+            <li><a href="./inspiracion.html"> Inspiración</a></li>
+          </ul>
+        </nav>
+      </div>
+  
+    </div>
+  
+    <div class="derechos-footer">
+      <p>© 2025 Brisas Gems - Todos los derechos reservados</p>
+      <p>Desarrollado por SENA CEET - Ficha 2996176 ADSO</p>
+    </div>
+  </footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+</body>
 
