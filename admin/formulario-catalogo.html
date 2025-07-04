@@ -48,21 +48,6 @@
   </div>
 </header>
 
-  <script>
-  const iconoUsuario = document.getElementById('icono-usuario');
-  const menuUsuario = document.getElementById('menu-usuario');
-
-  iconoUsuario.addEventListener('click', () => {
-    menuUsuario.classList.toggle('activo');
-  });
-
-  // Cierra el menú al hacer clic fuera
-  document.addEventListener('click', (e) => {
-    if (!iconoUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
-      menuUsuario.classList.remove('activo');
-    }
-  });
-</script>
 
 <!--CONTENIDO-->
 <div class="container py-5">
@@ -122,4 +107,22 @@
     </div>
   </form>
 </div>
+
+<script>
+  const iconoUsuario = document.getElementById('icono-usuario');
+  const menuUsuario = document.getElementById('menu-usuario');
+
+  iconoUsuario.addEventListener('click', () => {
+    menuUsuario.classList.toggle('activo');
+  });
+
+  // Cierra el menú al hacer clic fuera
+  document.addEventListener('click', (e) => {
+    if (!iconoUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
+      menuUsuario.classList.remove('activo');
+    }
+  });
+</script>
 <script src="../js/bootstrap.bundle.min.js"></script>
+ </body>
+ </html>
