@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-// Eliminar todas las variables de sesión
+// --- Seguridad: Eliminar todas las variables de sesión ---
 $_SESSION = array();
 
-// Destruir la cookie de sesión si existe
+// --- Destruir la cookie de sesión si existe ---
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
     setcookie(
@@ -18,9 +18,9 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
-// Finalmente destruir la sesión
+// --- Finalmente destruir la sesión ---
 session_destroy();
 
-// Redirigir al inicio
+// --- Redirigir al inicio de forma segura ---
 header("Location: ../index.php");
 exit;
