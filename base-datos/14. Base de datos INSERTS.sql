@@ -20,25 +20,25 @@ values
 insert into usuarios (usu_nombre, usu_correo, usu_telefono, usu_password, rol_id, tipdoc_id) 
 values
 	-- administradores
-	('ana administrador',     'ana@gmail.com',            '3001000001', 'hash-ana001',     2, 1),
-	('catalina lópez',        'catalina.admin@gmail.com', '3001000002', 'hash-catalina002', 2, 1),
-	('jorge herrera',         'jorgeherrera@gmail.com',   '3001000003', 'hash-jorge003',    2, 2),
+	('ana administrador',     'ana@gmail.com',            '3001000001', 'clave123',     2, 1),
+	('catalina lópez',        'catalina.admin@gmail.com', '3001000002', 'clave123', 2, 1),
+	('jorge herrera',         'jorgeherrera@gmail.com',   '3001000003', 'clave123',    2, 2),
 
 	-- diseñadores
-	('soledad martínez',      'soledad@gmail.com',        '3001000004', 'hash-soledad004',  3, 1),
-	('tomás agudelo',         'tomas@gmail.com',          '3001000005', 'hash-tomas005',    3, 2),
-	('paula cárdenas',        'paula@gmail.com',          '3001000006', 'hash-paula006',    3, 1),
+	('soledad martínez',      'soledad@gmail.com',        '3001000004', 'clave123',  3, 1),
+	('tomás agudelo',         'tomas@gmail.com',          '3001000005', 'clave123',    3, 2),
+	('paula cárdenas',        'paula@gmail.com',          '3001000006', 'clave123',    3, 1),
 
 	-- clientes
-	('valentina castro',      'valentinacastro@gmail.com','3001000007','hash-valentina007',1, 2),
-	('santiago morales',      'santiagomorales@gmail.com','3001000008','hash-santiago008',1, 1),
-	('laura sánchez',         'laurasanchez@gmail.com',   '3001000009','hash-laura009',    1, 2),
-	('marcela fernández',     'marcelaf@gmail.com',       '3001000010','hash-marcela010',  1, 1),
-	('felipe castro',         'felipecastro@gmail.com',   '3001000011','hash-felipe011',   1, 2),
-	('daniela mendoza',       'danielamendoza@gmail.com', '3001000012','hash-daniela012',  1, 1),
-	('alejandro rojas',       'alejandrorojas@gmail.com', '3001000013','hash-alejandro013',1, 2),
-	('juliana álvarez',       'julianaalvarez@gmail.com', '3001000014','hash-juliana014',  1, 1),
-	('sebastián díaz',        'sebastiandiaz@gmail.com',  '3001000015','hash-sebastian015',1, 2);
+	('valentina castro',      'valentinacastro@gmail.com','3001000007','clave123',1, 2),
+	('santiago morales',      'santiagomorales@gmail.com','3001000008','sclave123',1, 1),
+	('laura sánchez',         'laurasanchez@gmail.com',   '3001000009','clave123',    1, 2),
+	('marcela fernández',     'marcelaf@gmail.com',       '3001000010','clave123',  1, 1),
+	('felipe castro',         'felipecastro@gmail.com',   '3001000011','clave123',   1, 2),
+	('daniela mendoza',       'danielamendoza@gmail.com', '3001000012','clave123',  1, 1),
+	('alejandro rojas',       'alejandrorojas@gmail.com', '3001000013','clave123',1, 2),
+	('juliana álvarez',       'julianaalvarez@gmail.com', '3001000014','clave123',  1, 1),
+	('sebastián díaz',        'sebastiandiaz@gmail.com',  '3001000015','clave123',1, 2);
     
     select * from usuarios;
 
