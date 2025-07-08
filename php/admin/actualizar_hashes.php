@@ -1,11 +1,19 @@
 <?php
 // Archivo: actualizar_hashes.php
 
-require_once '../conexion.php';
+require_once '../conexion.php'; // Asegúrate que esta ruta sea válida
+echo "🧪 Script iniciado<br>";
 
 // Paso 1: obtener todos los usuarios y sus contraseñas actuales
 $sql = "SELECT usu_id, usu_password FROM usuarios";
 $result = $conn->query($sql);
+
+// Verificar si la consulta fue exitosa
+if (!$result) {
+    die("❌ Error en la consulta: " . $conn->error);
+}
+
+echo "🔎 Usuarios encontrados: " . $result->num_rows . "<br>";
 
 if ($result->num_rows > 0) {
     $actualizados = 0;
@@ -14,26 +22,36 @@ if ($result->num_rows > 0) {
         $id = $row['usu_id'];
         $contrasenaPlano = $row['usu_password'];
 
-        // Evita volver a hashear si ya está hasheado
-        if (password_get_info($contrasenaPlano)['algo'] !== 0) {
-            continue; // ya está hasheada, saltar
+        echo "🧪 Usuario ID $id → contraseña actual: $contrasenaPlano<br>";
+
+        // ⚠️ Forzar rehash de todas las contraseñas (dato de prueba controlado)
+        $hashSeguro = password_hash($contrasenaPlano, PASSWORD_DEFAULT);
+        if (!$hashSeguro) {
+            echo "❌ Error al hashear contraseña para usuario ID $id<br>";
+            continue;
         }
 
-        // Aplicar password_hash
-        $hashSeguro = password_hash($contrasenaPlano, PASSWORD_DEFAULT);
-
-        // Actualizar en la base de datos
+        // Preparar y ejecutar la actualización
         $stmt = $conn->prepare("UPDATE usuarios SET usu_password = ? WHERE usu_id = ?");
-        $stmt->bind_param("si", $hashSeguro, $id);
-        $stmt->execute();
-        $stmt->close();
+        if (!$stmt) {
+            echo "❌ Error al preparar la consulta para usuario ID $id: " . $conn->error . "<br>";
+            continue;
+        }
 
-        $actualizados++;
+        $stmt->bind_param("si", $hashSeguro, $id);
+        if ($stmt->execute()) {
+            echo "✅ Contraseña actualizada para usuario ID $id<br>";
+            $actualizados++;
+        } else {
+            echo "❌ Error al ejecutar UPDATE para usuario ID $id: " . $stmt->error . "<br>";
+        }
+
+        $stmt->close();
     }
 
-    echo "✅ Se actualizaron correctamente $actualizados contraseñas.";
+    echo "<br>🔒 Total de contraseñas actualizadas: $actualizados<br>";
 } else {
-    echo "⚠️ No se encontraron usuarios.";
+    echo "⚠️ No se encontraron usuarios.<br>";
 }
 
 $conn->close();
