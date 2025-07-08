@@ -31,7 +31,7 @@ values
 
 	-- clientes
 	('valentina castro',      'valentinacastro@gmail.com','3001000007','clave123',1, 2),
-	('santiago morales',      'santiagomorales@gmail.com','3001000008','sclave123',1, 1),
+	('santiago morales',      'santiagomorales@gmail.com','3001000008','clave123',1, 1),
 	('laura sánchez',         'laurasanchez@gmail.com',   '3001000009','clave123',    1, 2),
 	('marcela fernández',     'marcelaf@gmail.com',       '3001000010','clave123',  1, 1),
 	('felipe castro',         'felipecastro@gmail.com',   '3001000011','clave123',   1, 2),
