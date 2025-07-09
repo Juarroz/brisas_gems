@@ -131,46 +131,47 @@ fetch('../php/usuario/listar_pedidos.php')
     }
     tbody.innerHTML = '';
     pedidos.forEach((p, i) => {
-      // Progreso según estado
+      // Calcular progreso según est_id
       let progreso = 0;
-      let estado = p.est_nombre.toLowerCase();
-      if (estado.includes('confirm')) progreso = 10;
-      if (estado.includes('diseño') || estado.includes('render')) progreso = 30;
-      if (estado.includes('producción') || estado.includes('ensamblaje')) progreso = 60;
-      if (estado.includes('finaliz')) progreso = 100;
-      // Botones activos solo si hay render/imagen
+      switch (parseInt(p.est_id)) {
+        case 1: progreso = 30; break; // Diseño
+        case 2: progreso = 60; break; // Producción
+        case 3: progreso = 60; break; // Ensamblaje
+        case 4: progreso = 80; break; // Envío
+        case 5: progreso = 100; break; // Finalizado
+        default: progreso = 10; // Confirmado u otro
+      }
+      let barra = `<div class='progress' style='height:20px;'>
+        <div class='progress-bar' role='progressbar' style='width:${progreso}%;' aria-valuenow='${progreso}' aria-valuemin='0' aria-valuemax='100'>${progreso}%</div>
+      </div>`;
+      // Notificaciones "¡Nuevo!" solo si el usuario no ha visto el render/final
+      let vistoRender = localStorage.getItem('visto_render_' + p.ped_id);
+      let vistoFinal = localStorage.getItem('visto_final_' + p.ped_id);
+      let badgeRender = (!vistoRender && p.render_3d) ? "<span class='badge bg-success ms-1'>¡Nuevo!</span>" : '';
+      let badgeFinal = (!vistoFinal && p.imagen_final) ? "<span class='badge bg-success ms-1'>¡Nuevo!</span>" : '';
       let btn3d = p.render_3d ?
-        `<button type='button' class='btn btn-outline-info btn-lg d-flex flex-column align-items-center justify-content-center px-2 py-1' data-bs-toggle='modal' data-bs-target='#render3DModal' data-render='${p.render_3d}' title='Ver diseño 3D' aria-label='Ver diseño 3D' data-bs-toggle='tooltip' data-bs-placement='top'><i class='bi bi-cube' style='font-size:1.5rem;'></i><span class='small'>3D</span></button>`
+        `<button type='button' class='btn btn-outline-info btn-lg d-flex flex-column align-items-center justify-content-center px-2 py-1 fw-bold' data-bs-toggle='modal' data-bs-target='#render3DModal' data-render='${p.render_3d}' data-pedid='${p.ped_id}' title='Ver diseño 3D'><i class='bi bi-cube' style='font-size:1.5rem;'></i><span class='small'>3D</span>${badgeRender}</button>`
         : `<button type='button' class='btn btn-outline-info btn-lg d-flex flex-column align-items-center justify-content-center px-2 py-1' disabled title='No disponible'><i class='bi bi-cube' style='font-size:1.5rem;'></i><span class='small'>3D</span></button>`;
       let btnFinal = p.imagen_final ?
-        `<button type='button' class='btn btn-outline-success btn-lg d-flex flex-column align-items-center justify-content-center px-2 py-1' data-bs-toggle='modal' data-bs-target='#imagenFinalModal' data-img='${p.imagen_final}' title='Ver imagen final' aria-label='Ver imagen final' data-bs-toggle='tooltip' data-bs-placement='top'><i class='bi bi-camera' style='font-size:1.5rem;'></i><span class='small'>Final</span></button>`
+        `<button type='button' class='btn btn-outline-success btn-lg d-flex flex-column align-items-center justify-content-center px-2 py-1 fw-bold' data-bs-toggle='modal' data-bs-target='#imagenFinalModal' data-img='${p.imagen_final}' data-pedid='${p.ped_id}' title='Ver imagen final'><i class='bi bi-camera' style='font-size:1.5rem;'></i><span class='small'>Final</span>${badgeFinal}</button>`
         : `<button type='button' class='btn btn-outline-success btn-lg d-flex flex-column align-items-center justify-content-center px-2 py-1' disabled title='No disponible'><i class='bi bi-camera' style='font-size:1.5rem;'></i><span class='small'>Final</span></button>`;
       tbody.innerHTML += `
         <tr>
           <td>${p.ped_codigo}</td>
           <td>${p.ped_fecha_creacion}</td>
           <td>${p.est_nombre}</td>
+          <td>${barra}</td>
           <td>
-            <div class='progress' style='height: 1rem;'>
-              <div class='progress-bar' role='progressbar' style='width: ${progreso}%;' aria-valuenow='${progreso}' aria-valuemin='0' aria-valuemax='100'>${progreso}%</div>
-            </div>
-          </td>
-          <td>
-            <div class='btn-group acciones-pedido' role='group' aria-label='Acciones del pedido'>
-              <button type='button' class='btn btn-outline-primary btn-lg d-flex flex-column align-items-center justify-content-center px-2 py-1' data-bs-toggle='modal' data-bs-target='#detallesPedidoModal' data-index='${i}' title='Ver detalles' aria-label='Ver detalles' data-bs-toggle='tooltip' data-bs-placement='top'>
-                <i class='bi bi-list' style='font-size:1.5rem;'></i>
-                <span class='small'>Detalle</span>
-              </button>
-              ${btn3d}
-              ${btnFinal}
-            </div>
+            <button type='button' class='btn btn-primary' data-bs-toggle='modal' data-bs-target='#detallesPedidoModal' data-index='${i}'>Detalles</button>
+            ${btn3d}
+            ${btnFinal}
           </td>
         </tr>
       `;
     });
-    // Guardar pedidos en window para los modales
     window._pedidos = pedidos;
   });
+
 // Modales dinámicos
 const detallesModal = document.getElementById('detallesPedidoModal');
 detallesModal.addEventListener('show.bs.modal', function (event) {
@@ -185,6 +186,7 @@ detallesModal.addEventListener('show.bs.modal', function (event) {
   });
   html += '</ul>';
   html += `<div class='mt-3'><h6>Comentarios:</h6><p>${pedido.ped_comentarios || 'Sin comentarios.'}</p></div>`;
+  html += `<div class='mt-3'><h6>Estado actual:</h6><p>${pedido.est_nombre}</p></div>`;
   detallesModal.querySelector('.modal-body').innerHTML = html;
 });
 const render3DModal = document.getElementById('render3DModal');
@@ -192,16 +194,24 @@ render3DModal.addEventListener('show.bs.modal', function (event) {
   const btn = event.relatedTarget;
   if (!btn) return;
   const src = btn.getAttribute('data-render');
-  render3DModal.querySelector('model-viewer').setAttribute('src', src ? '../' + src : '');
+  const pedid = btn.getAttribute('data-pedid');
+  const viewer = render3DModal.querySelector('model-viewer');
+  viewer.setAttribute('src', src ? '../' + src : '');
   render3DModal.querySelector('.no-render').style.display = src ? 'none' : 'block';
+  // Marcar como visto el render
+  if (src && pedid) localStorage.setItem('visto_render_' + pedid, '1');
 });
 const imagenFinalModal = document.getElementById('imagenFinalModal');
 imagenFinalModal.addEventListener('show.bs.modal', function (event) {
   const btn = event.relatedTarget;
   if (!btn) return;
   const src = btn.getAttribute('data-img');
-  imagenFinalModal.querySelector('img').setAttribute('src', src ? '../' + src : '');
+  const pedid = btn.getAttribute('data-pedid');
+  const img = imagenFinalModal.querySelector('img');
+  img.setAttribute('src', src ? '../' + src : '');
   imagenFinalModal.querySelector('.no-img').style.display = src ? 'none' : 'block';
+  // Marcar como vista la imagen final
+  if (src && pedid) localStorage.setItem('visto_final_' + pedid, '1');
 });
   </script>
 
