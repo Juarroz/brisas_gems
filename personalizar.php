@@ -20,143 +20,229 @@
   <!-- ---- -->
   <!-- MAIN -->
   <!-- ---- -->
-   
-  <main class="container my-5">
-  <div class="row">
-    <!-- Columna izquierda: Vista previa del anillo -->
-    <div class="col-md-6 mb-4 mb-md-0">
-      <section>
-        <h2 class="h5 text-center">Vista previa del anillo</h2>
-        <img id="vista-principal" src="./img/personalizacion/vista-previa/vista-superior.jpg" alt="Vista previa del anillo" class="img-fluid mb-3 d-block mx-auto" style="max-height: 300px;">
-        <div class="d-flex justify-content-center gap-3">
-          <img src="./img/personalizacion/vista-previa/vista-superior.jpg" alt="Vista Superior" class="img-thumbnail miniatura" width="70" onclick="cambiarVista(this)">
-          <img src="./img/personalizacion/vista-previa/vista-frontal.jpg" alt="Vista Frontal" class="img-thumbnail miniatura" width="70" onclick="cambiarVista(this)">
-          <img src="./img/personalizacion/vista-previa/vista-perfil.jpg" alt="Vista Perfil" class="img-thumbnail miniatura" width="70" onclick="cambiarVista(this)">
-        </div>
-      </section>
-    </div>
+   <main class="container my-5">
+    <div class="row">
+      <!-- Columna izquierda: Vista previa del anillo -->
+      <div class="col-md-6 mb-4 mb-md-0">
+        <section>
+          <h2 class="h5 text-center" >Vista previa del anillo</h2>
+          <img id="vista-principal" src="./img/personalizacion/vistas-anillos/esmeralda/redonda/oro-blanco/superior.jpg" alt="Vista previa del anillo" class="img-fluid mb-3 d-block mx-auto"  style="max-height: 300px;">
 
-    <!-- Columna derecha: Opciones -->
-    <div class="col-md-6 container-opciones">
-      <form id="form-personalizacion">
-        <div id="opciones-personalizacion"></div>
+          <!-- Miniaturas para cambiar vista -->
+          <div class="d-flex justify-content-center gap-3">
+            <img id="vista-superior" src="./img/personalizacion/vistas-anillos/esmeralda/redonda/oro-blanco/superior.jpg" alt="Vista Superior" class="miniatura" width="70" onclick="cambiarVista(this)">
+            <img id="vista-frontal" src="./img/personalizacion/vistas-anillos/esmeralda/redonda/oro-blanco/frontal.jpg" alt="Vista Frontal" class="miniatura" width="70" onclick="cambiarVista(this)">
+            <img id="vista-perfil" src="./img/personalizacion/vistas-anillos/esmeralda/redonda/oro-blanco/perfil.jpg" alt="Vista Perfil" class="miniatura" width="70" onclick="cambiarVista(this)">
+          </div>
+        </section>
+      </div>
+
+
+
+      <!-- Columna derecha: Opciones de personalización -->
+      <div class="col-md-6 container-opciones">
+        <section class="mb-4">
+          <h3 class="h5">Piedra central</h3>
+          <div class="d-flex flex-wrap gap-3">
+            <button class="btn btn-opcion btn-gema" data-gema="diamante">
+              <img src="./img/personalizacion/opciones/gemas/diamante.png" alt="Diamante" width="40"><br>Diamante
+            </button>
+            <button class="btn btn-opcion btn-gema active" data-gema="esmeralda">
+              <img src="./img/personalizacion/opciones/gemas/esmeralda.png" alt="Esmeralda" width="40"><br>Esmeralda
+            </button>
+            <button class="btn btn-opcion btn-gema" data-gema="zafiro">
+              <img src="./img/personalizacion/opciones/gemas/zafiro.png" alt="Zafiro" width="40"><br>Zafiro
+            </button>
+            <button class="btn btn-opcion btn-gema" data-gema="rubi">
+              <img src="./img/personalizacion/opciones/gemas/ruby.png" alt="Rubí" width="40"><br>Rubí
+            </button>
+          </div>
+        </section>
+
+        <section class="mb-4">
+          <h3 class="h5">Forma de la piedra</h3>
+          <div class="d-flex flex-wrap gap-3">
+            <button class="btn btn-opcion btn-forma active" data-forma="redonda">
+              <img src="./img/personalizacion/opciones/forma/redonda.png" alt="Redonda" width="40"><br>Redonda
+            </button>
+            <button class="btn btn-opcion btn-forma" data-forma="ovalada">
+              <img src="./img/personalizacion/opciones/forma/ovalada.png" alt="Ovalada" width="40"><br>Ovalada
+            </button>
+            <button class="btn btn-opcion btn-forma solo-esmeralda" data-forma="corazon">
+              <img src="./img/personalizacion/opciones/forma/corazon.png" alt="Corazón" width="40"><br>Corazón
+            </button>
+          </div>
+        </section>
+
+        <section class="mb-4">
+          <h3 class="h5">Tamaño de la piedra</h3>
+          <div class="d-flex flex-wrap gap-3">
+            <button class="btn btn-opcion active"><img src="./img/personalizacion/opciones/tama-piedra-central/6mm.png" alt="6mm" width="40"><br>6 mm</button>
+            <button class="btn btn-opcion"><img src="./img/personalizacion//opciones/tama-piedra-central/7mm.png" alt="7mm" width="40"><br>7 mm</button>
+          </div>
+        </section>
+
+        <section class="mb-4">
+          <h3 class="h5">Material del anillo</h3>
+          <div class="d-flex flex-wrap gap-3">
+            <button class="btn btn-opcion btn-material" data-material="oro-amarillo">
+              <img src="./img/personalizacion/opciones/material/oro-amarillo.png" alt="Oro Amarillo" width="40"><br>Oro Amarillo
+            </button>
+            <button class="btn btn-opcion btn-material active" data-material="oro-blanco">
+              <img src="./img/personalizacion/opciones/material/oro-blanco.png" alt="Oro Blanco" width="40"><br>Oro Blanco
+            </button>
+            <button class="btn btn-opcion btn-material" data-material="oro-rosa">
+              <img src="./img/personalizacion/opciones/material/oro-rosa.png" alt="Oro Rosa" width="40"><br>Oro Rosa
+            </button>
+          </div>
+        </section>
+
         <section class="mb-4">
           <h3 class="h5">Talla del anillo</h3>
           <div class="form-group">
-            <select class="form-select" name="talla" id="talla" required>
+            <select class="form-select" id="input-talla">
               <option disabled selected>Elige tu talla</option>
-              <option value="5">Talla 5</option>
-              <option value="6">Talla 6</option>
-              <option value="7">Talla 7</option>
-              <option value="8">Talla 8</option>
-              <option value="9">Talla 9</option>
+              <option value="4">Talla 4.0</option>
+              <option value="4.5">Talla 4.5</option>
+              <option value="5">Talla 5.0</option>
+              <option value="5.5">Talla 5.5</option>
+              <option value="6">Talla 6.0</option>
+              <option value="6.5">Talla 6.5</option>
+              <option value="7">Talla 7.0</option>
+              <option value="7.5">Talla 7.5</option>
+              <option value="8">Talla 8.0</option>
+              <option value="8.5">Talla 8.5</option>
+              <option value="9">Talla 9.0</option>
             </select>
-            <small class="form-text text-muted">¿No sabes tu talla? <a href="#" data-bs-toggle="modal" data-bs-target="#modalTallas">Aprende cómo medirla</a></small>
+            <small class="form-text text-muted">¿No sabes tu talla? <a href="#">Aprende cómo medirla</a></small>
           </div>
         </section>
-        <div class="text-center contenedor-boton">
-          <button type="submit" class="btn btn-primary">Adquiere tu anillo</button>
+
+        <div class="text-center contenedor-boton ">
+          <a href="contacto.php" class="btn btn-primary">Empieza tu solicitud</a>
         </div>
-      </form>
-      <div id="alerta-personalizacion" class="mt-3"></div>
-    </div>
-  </div>
-</main>
-<!-- Modal guía de tallas -->
-<div class="modal fade" id="modalTallas" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title">Guía de Tallas</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-      <div class="modal-body">
-        <img src="./img/tallas-anillo.png" alt="Guía de tallas" class="img-fluid">
-        <p class="mt-2">Sigue las instrucciones de la imagen para conocer tu talla.</p>
       </div>
     </div>
-  </div>
-</div>
-<script src="./js/bootstrap.bundle.min.js"></script>
+  </main>
+
+<!-- seleccion dinamica -->
 <script>
-// Menú usuario desplegable (igual que en otros módulos)
-document.addEventListener('DOMContentLoaded', function() {
-  const iconoUsuario = document.getElementById('icono-usuario');
-  const menuUsuario = document.getElementById('menu-usuario');
-  if (iconoUsuario && menuUsuario) {
-    iconoUsuario.addEventListener('click', function(e) {
-      e.stopPropagation();
-      menuUsuario.classList.toggle('activo');
-    });
-    document.addEventListener('click', function(e) {
-      if (!menuUsuario.contains(e.target) && e.target !== iconoUsuario) {
-        menuUsuario.classList.remove('activo');
+  let gemaSeleccionada = localStorage.getItem('gema') || 'esmeralda';
+  let formaSeleccionada = localStorage.getItem('forma') || 'redonda';
+  let materialSeleccionado = localStorage.getItem('material') || 'oro-blanco';
+  let tamanoSeleccionado = localStorage.getItem('tamano') || '7';
+  let tallaSeleccionada = localStorage.getItem('talla') || '5.5';
+
+  function actualizarVistas() {
+    const vistas = ['superior', 'frontal', 'perfil'];
+
+    vistas.forEach(vista => {
+      const ruta = `./img/personalizacion/vistas-anillos/${gemaSeleccionada}/${formaSeleccionada}/${materialSeleccionado}/${vista}.jpg`;
+      const img = document.getElementById(`vista-${vista}`);
+      if (img) {
+        img.src = ruta;
+        img.alt = `Vista ${vista}`;
       }
     });
+
+    const vistaPrincipal = document.getElementById('vista-principal');
+    if (vistaPrincipal) {
+      vistaPrincipal.src = `./img/personalizacion/vistas-anillos/${gemaSeleccionada}/${formaSeleccionada}/${materialSeleccionado}/superior.jpg`;
+      vistaPrincipal.alt = 'Vista previa del anillo';
+    }
+
+    // Guardar en localStorage para el resumen
+    localStorage.setItem('gema', gemaSeleccionada);
+    localStorage.setItem('forma', formaSeleccionada);
+    localStorage.setItem('material', materialSeleccionado);
+    localStorage.setItem('tamano', tamanoSeleccionado);
+    localStorage.setItem('talla', tallaSeleccionada);
   }
-});
-// Cargar opciones de personalización dinámicamente
-fetch('php/personalizacion/listar_opciones.php')
-  .then(r => r.json())
-  .then(opciones => {
-    const cont = document.getElementById('opciones-personalizacion');
-    cont.innerHTML = '';
-    opciones.forEach(opcion => {
-      let html = `<section class='mb-4'>`;
-      html += `<h3 class='h5 mb-1 d-flex align-items-center gap-2'>`;
-      if(opcion.opc_imagen) html += `<img src='${opcion.opc_imagen}' alt='${opcion.opc_nombre}' style='width:40px;height:40px;object-fit:contain;'>`;
-      html += `${opcion.opc_nombre}</h3>`;
-      if(opcion.opc_descripcion) html += `<div class='text-muted mb-2' style='font-size:0.95em;'>${opcion.opc_descripcion}</div>`;
-      html += `<div class='d-flex flex-wrap gap-3'>`;
-      opcion.valores.forEach(val => {
-        html += `<button type='button' class='btn-opcion' data-name='${opcion.opc_nombre}' data-value='${val.id}'>`;
-        if (val.imagen) html += `<img src='${val.imagen}' alt='${val.nombre}'><br>`;
-        html += `${val.nombre}</button>`;
+
+  function manejarBotones(selector) {
+    document.querySelectorAll(selector).forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (selector === '.btn-gema') {
+          gemaSeleccionada = btn.dataset.gema;
+
+          const corazonBtn = document.querySelector('.btn-forma[data-forma="corazon"]');
+          if (gemaSeleccionada === 'esmeralda') {
+            corazonBtn.style.display = 'inline-block';
+          } else {
+            if (corazonBtn.classList.contains('active')) {
+              document.querySelectorAll('.btn-forma').forEach(b => b.classList.remove('active'));
+              document.querySelector('.btn-forma[data-forma="redonda"]').classList.add('active');
+              formaSeleccionada = 'redonda';
+            }
+            corazonBtn.style.display = 'none';
+          }
+        }
+
+        if (selector === '.btn-forma') formaSeleccionada = btn.dataset.forma;
+        if (selector === '.btn-material') materialSeleccionado = btn.dataset.material;
+
+        const grupo = btn.parentElement.querySelectorAll(selector);
+        grupo.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        actualizarVistas();
       });
-      html += '</div></section>';
-      cont.innerHTML += html;
     });
-    // Reasignar eventos
-    asignarEventosOpciones();
+  }
+
+  manejarBotones('.btn-gema');
+  manejarBotones('.btn-forma');
+  manejarBotones('.btn-material');
+
+  function cambiarVista(imagen) {
+    const vistaPrincipal = document.getElementById('vista-principal');
+    if (vistaPrincipal) {
+      vistaPrincipal.src = imagen.src;
+      vistaPrincipal.alt = imagen.alt;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputTamano = document.getElementById('input-tamano');
+    const inputTalla = document.getElementById('input-talla');
+
+    if (inputTamano) {
+      inputTamano.value = tamanoSeleccionado;
+      inputTamano.addEventListener('input', (e) => {
+        tamanoSeleccionado = e.target.value;
+        localStorage.setItem('tamano', tamanoSeleccionado);
+      });
+    }
+
+    if (inputTalla) {
+      inputTalla.value = tallaSeleccionada;
+      inputTalla.addEventListener('input', (e) => {
+        tallaSeleccionada = e.target.value;
+        localStorage.setItem('talla', tallaSeleccionada);
+      });
+    }
+
+    actualizarVistas(); // Carga inicial con valores actuales
   });
-function asignarEventosOpciones() {
-  const botones = document.querySelectorAll('#opciones-personalizacion button[data-name]');
-  const seleccion = {};
-  botones.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const nombre = btn.getAttribute('data-name');
-      const valor = btn.getAttribute('data-value');
-      seleccion[nombre] = valor;
-      // Desactivar botones del mismo grupo
-      botones.forEach(b => {
-        if (b.getAttribute('data-name') === nombre) {
-          b.classList.remove('active');
+</script>
+
+<script>
+  // Script para menú usuario (evita conflicto si se incluye varias veces)
+  document.addEventListener('DOMContentLoaded', function() {
+    const iconoUsuario = document.getElementById('icono-usuario');
+    const menuUsuario = document.getElementById('menu-usuario');
+    if (iconoUsuario && menuUsuario) {
+      iconoUsuario.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menuUsuario.classList.toggle('activo');
+      });
+      document.addEventListener('click', (e) => {
+        if (!iconoUsuario.contains(e.target) && !menuUsuario.contains(e.target)) {
+          menuUsuario.classList.remove('activo');
         }
       });
-      btn.classList.add('active');
-      // Vista previa (simulada)
-      document.getElementById('vista-principal').src = './img/personalizacion/vista-previa/vista-superior.jpg';
-    });
+    }
   });
-  // Guardar personalización
-  document.getElementById('form-personalizacion').onsubmit = function(e) {
-    e.preventDefault();
-    const selecciones = Object.values(seleccion);
-    const talla = document.getElementById('talla').value;
-    fetch('php/personalizacion/guardar_personalizacion.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ selecciones, talla })
-    })
-    .then(r => r.json())
-    .then(res => {
-      const alerta = document.getElementById('alerta-personalizacion');
-      if (res.success) {
-        alerta.innerHTML = `<div class='alert alert-success'>¡Personalización guardada! Código de pedido: ${res.codigo}</div>`;
-        setTimeout(() => { window.location.href = 'usuario/mis-pedidos.php'; }, 1500);
-      } else {
-        alerta.innerHTML = `<div class='alert alert-danger'>${res.error || 'Error al guardar.'}</div>`;
-      }
-    });
-  }
-}
 </script>
 
 <?php include 'includes/footer.php'; ?>

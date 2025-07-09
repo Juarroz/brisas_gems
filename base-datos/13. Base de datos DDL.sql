@@ -30,6 +30,7 @@ create table usuarios (
 	usu_telefono 	varchar(20),
 	usu_password 	varchar(255) not null,
     usu_docnum		varchar(20),
+    usu_origen 		enum('registro', 'formulario', 'admin') not null default 'formulario', -- NUEVO
 	rol_id 			int,
 	tipdoc_id 		int,
     usu_activo      boolean not null default 0,
@@ -71,7 +72,7 @@ create table valor_personalizacion (
 create table personalizacion (
 	per_id 			int primary key auto_increment,
     per_fecha 		date not null,
-    usu_id_cliente 	int,
+    usu_id_cliente 	int null ,
     foreign key (usu_id_cliente) references usuarios (usu_id)
 );
 

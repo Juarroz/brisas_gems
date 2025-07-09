@@ -44,4 +44,15 @@
   margin: 0 auto;
 }
 
-  
+.miniatura {
+  border: 1px solid #4C6A57;
+  border-radius: 0.5rem;
+  padding: 4px;
+  background-color: #fff;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.miniatura:hover {
+  transform: scale(1.05);
+}

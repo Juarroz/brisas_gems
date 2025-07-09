@@ -75,6 +75,7 @@ values
 	('redonda',      2),
 	('cuadrada',     2),
 	('ovalada',      2),
+	('corazon',      2),
 
 	-- opciones para “seleccionar material del anillo” (opc_id = 3)
 	('oro amarillo', 3),
@@ -88,10 +89,17 @@ values
 	('9 mm',         4),
 
 	-- opciones para “seleccionar talla del anillo” (opc_id = 5)
-	('talla 6',      5),
-	('talla 7',      5),
-	('talla 8',      5),
+	('talla 4',		 5),
+	('talla 4.5',	 5),
+	('talla 5', 	 5),
+	('talla 5.5',	 5),
+	('talla 6',		 5),
+	('talla 6.5',	 5),
+	('talla 7.5',	 5),
+	('talla 7', 	 5),
+	('talla 8.5',	 5),
 	('talla 9',      5);
+
 
 
 -- tabla personalizacion (sin per_id, autoincremental)
@@ -227,13 +235,14 @@ values
 -- =============================
 
 -- tabla estado_pedido
-insert into estado_pedido (est_id, est_nombre)
+insert into estado_pedido (est_nombre)
 values
-	(1, 'diseño'),
-	(2, 'tallado'),
-	(3, 'engaste'),
-	(4, 'pulido'),
-	(5, 'finalizado');
+	('pendiente por validacion'),
+	('diseño'),
+	('tallado'),
+	('engaste'),
+	('pulido'),
+	('finalizado');
 
 -- tabla pedido 
 insert into pedido (ped_id, ped_codigo, ped_fecha_creacion, ped_comentarios, est_id, per_id, usu_id) 
