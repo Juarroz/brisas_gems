@@ -114,8 +114,9 @@
               <option value="8.5">Talla 8.5</option>
               <option value="9">Talla 9.0</option>
             </select>
-            <small class="form-text text-muted">¿No sabes tu talla? <a href="#">Aprende cómo medirla</a></small>
-          </div>
+            <small class="form-text text-muted"> ¿No sabes tu talla? 
+            <a href="#" data-bs-toggle="modal" data-bs-target="#guiaTallasModal">Aprende cómo medirla</a>
+            </small>
         </section>
 
         <div class="text-center contenedor-boton ">
@@ -124,6 +125,31 @@
       </div>
     </div>
   </main>
+
+<!-- Modal: Guía de tallas -->
+<div class="modal fade" id="guiaTallasModal" tabindex="-1" aria-labelledby="guiaTallasLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-4 shadow-lg">
+      <div class="modal-header">
+        <h5 class="modal-title" id="guiaTallasLabel">Guía para medir tu talla de anillo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <img src="./img/personalizacion/guia-tallas.png" alt="Guía de tallas" class="img-fluid mb-3 rounde">
+        <p class="text">
+      <strong>Enrolla un pedazo de papel o hilo alrededor de tu dedo, como si fuera un anillo, 
+      este debe quedar ajustado, que no quede flojo ni apretado.</strong></p>
+        <p> *Marca con una pluma o lapicero el punto exacto donde se junta la tira de papel.</p>
+        <p> *Después con una regla mides el papel, enfócate en los milímetros, justo como aparece en la foto.</p>
+        <p> *Por último, te fijas en la tabla de tallas de anillos.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!-- seleccion dinamica -->
 <script>
@@ -245,6 +271,7 @@
   });
 </script>
 
+<script src="./js/bootstrap.bundle.min.js"></script>
 <?php include 'includes/footer.php'; ?>
 </body>
 </html>
