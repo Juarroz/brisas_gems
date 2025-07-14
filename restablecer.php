@@ -1,3 +1,5 @@
+<?php require_once './php/verificaciones/verificar_publico.php'; ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
