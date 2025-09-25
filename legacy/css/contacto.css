@@ -1,0 +1,151 @@
+:root {
+  --color-primario: #0a8048;
+  --color-secundario: #d3fbe2;
+  --color-texto: #333;
+  --color-borde: #ddd;
+  --border-radius: 8px;
+}
+
+/* Contenedor principal */
+.contenedor-soporte {
+  max-width: 960px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* Secciones */
+.seccion-formulario,
+.seccion-whatsapp {
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  padding: 30px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 40px;
+}
+
+.icono-seccion {
+  color: var(--color-primario);
+  margin-right: 10px;
+}
+
+/* Formulario */
+.formulario-contacto .form-label {
+  font-weight: 500;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.formulario-contacto .form-control,
+.formulario-contacto .form-select,
+.formulario-contacto textarea {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--border-radius);
+}
+
+.formulario-contacto textarea {
+  resize: vertical;
+}
+
+/* Checkbox términos */
+.terminos-contacto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+}
+
+.terminos-contacto a {
+  color: var(--color-primario);
+  text-decoration: none;
+}
+
+.terminos-contacto a:hover {
+  text-decoration: underline;
+}
+
+/* Botón Enviar */
+.boton-enviar {
+  background-color: var(--color-primario);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.boton-enviar:hover {
+  background-color: #087a40;
+  box-shadow: 0 4px 12px rgba(10, 128, 72, 0.2);
+}
+
+/* Botón WhatsApp */
+.boton-whatsapp {
+  background-color: #25D366;
+  color: white;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+}
+
+.boton-whatsapp:hover {
+  background-color: #128C7E;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+}
+
+.boton-whatsapp[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Modal términos */
+.modal-terminos {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1050;
+  justify-content: center;
+  align-items: center;
+}
+
+.contenido-modal {
+  background: white;
+  padding: 25px;
+  border-radius: var(--border-radius);
+  max-width: 700px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.cerrar-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #888;
+}
+
+.boton-aceptar-terminos {
+  background-color: var(--color-primario);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  margin-top: 20px;
+}
