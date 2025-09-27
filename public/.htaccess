@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Si usas subcarpeta, NO pongas RewriteBase hasta que sea necesario.
+# RewriteBase /public/
+
+# Ignorar archivos/carpetas reales
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirigir todo a index.php
+RewriteRule ^ index.php [QSA,L]

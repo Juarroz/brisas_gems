@@ -6,9 +6,9 @@ drop database if exists brisas_gems;
 create database brisas_gems;
 use brisas_gems;
 
--- =============================
+-- =====================
 -- 1. SISTEMA Y USUARIOS
--- =============================
+-- =====================
 
 -- Tipos de documento
 create table tipo_de_documento(
@@ -19,7 +19,7 @@ create table tipo_de_documento(
 -- Roles de usuario
 create table rol(
 	rol_id 		int primary key auto_increment,
-	rol_nombre 	varchar(50) not null
+	rol_nombre 	varchar(50) not null unique
 );
 
 -- Usuarios 
@@ -30,21 +30,21 @@ create table usuarios (
 	usu_telefono 	varchar(20),
 	usu_password 	varchar(255) not null,
     usu_docnum		varchar(20),
-    usu_origen 		enum('registro', 'formulario', 'admin') not null default 'formulario', -- NUEVO
-	rol_id 			int,
-	tipdoc_id 		int,
+    usu_origen 		enum('registro', 'formulario', 'admin') not null default 'formulario',
     usu_activo      boolean not null default 0,
+    tipdoc_id 		int,
+	rol_id 			int,
 	foreign key (tipdoc_id) references tipo_de_documento (tipdoc_id),
 	foreign key (rol_id) references rol (rol_id)
 );
 
 --  Token de activacion y recuperacion 
 create table tokens (
-    tok_id             int primary key auto_increment,
-    token              varchar(255) not null,
-    tipo               enum('activacion', 'recuperacion') not null default 'recuperacion', -- NUEVO
-    fecha_expiracion   datetime not null,
-    usu_id             int,
+    tok_id             		int primary key auto_increment,
+    tok_codigo              varchar(255) not null,
+    tok_tipo               	enum('activacion', 'recuperacion') not null default 'recuperacion', -- NUEVO
+    tok_fecha_expiracion 	datetime not null,
+    usu_id             		int,
     foreign key (usu_id) references usuarios (usu_id)
 );
 
@@ -56,7 +56,7 @@ create table tokens (
 -- Opciones de personalización (ej. Gema, Forma, Metal, Tamaño de piedra, Talla del anillo)
 create table opcion_personalizacion (
 	opc_id 		int primary key auto_increment,
-	opc_nombre 	varchar(100) not null
+	opc_nombre 	varchar(100) not null unique
 );
 
 -- Valores posibles para cada opción (ej. Rubí, Esmeralda, Redonda, Ovalada, Oro, Plata, etc.)
@@ -72,8 +72,8 @@ create table valor_personalizacion (
 create table personalizacion (
 	per_id 			int primary key auto_increment,
     per_fecha 		date not null,
-    usu_id_cliente 	int null ,
-    foreign key (usu_id_cliente) references usuarios (usu_id)
+    usu_id 	int null ,
+    foreign key (usu_id) references usuarios (usu_id)
 );
 
 -- Detalles de personalización seleccionados por el cliente
@@ -135,15 +135,19 @@ create table render_3d (
 -- Contacto por formulario o WhatsApp
 create table contacto_formulario (
     con_id          int primary key auto_increment,
-    usu_id          int null,
     con_nombre      varchar(150) not null,
-    con_email       varchar(100),
+    con_correo      varchar(100),
     con_telefono    varchar(30),
     con_mensaje     text not null,
     con_fecha_envio datetime not null default current_timestamp,
     con_via         enum('formulario', 'whatsapp') default 'formulario',
     con_terminos    boolean not null,
-    foreign key (usu_id) references usuarios(usu_id) on delete set null
+    con_estado      enum('pendiente','atendido','archivado') not null default 'pendiente',
+    con_notas       varchar(500),
+    usu_id          int null,
+    usu_id_admin    int null,
+    foreign key (usu_id) references usuarios(usu_id) on delete set null,
+    foreign key (usu_id_admin) references usuarios(usu_id) on delete set null
 );
 
 create table portafolio_inspiracion (

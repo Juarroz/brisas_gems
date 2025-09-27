@@ -2,6 +2,7 @@
 -- INSERCIONES
 -- ===========
 
+
 -- tabla tipo_de_documento
 insert into tipo_de_documento (tipdoc_nombre)
 values
@@ -42,12 +43,12 @@ values
     
     select * from usuarios;
 
--- tabla tokens (versión sin tok_id manual)
-insert into tokens (token, tipo, fecha_expiracion, usu_id) values
-	('token-activo-ana',     'activacion',   '2025-07-01 23:59:59', 1),
-	('token-recu-luis',      'recuperacion', '2025-06-30 23:59:59', 2),
-	('token-recu-carla',     'recuperacion', '2025-06-30 23:59:59', 3),
-	('token-activo-diego',   'activacion',   '2025-07-01 23:59:59', 4);
+insert into tokens (tok_codigo, tok_tipo, tok_fecha_expiracion, usu_id) 
+values
+    ('token-activo-ana',     'activacion',   '2025-07-01 23:59:59', 1),
+    ('token-recu-luis',      'recuperacion', '2025-06-30 23:59:59', 2),
+    ('token-recu-carla',     'recuperacion', '2025-06-30 23:59:59', 3),
+    ('token-activo-diego',   'activacion',   '2025-07-01 23:59:59', 4);
 
 
 -- ===============================
@@ -103,7 +104,7 @@ values
 
 
 -- tabla personalizacion (sin per_id, autoincremental)
-insert into personalizacion (per_fecha, usu_id_cliente) 
+insert into personalizacion (per_fecha, usu_id) 
 values
 	('2025-06-01', 1),
 	('2025-06-02', 2),
@@ -303,7 +304,7 @@ values
 -- =============================
 
 -- tabla contacto Contactos con y sin usuarios asociados
-insert into contacto_formulario (con_id, usu_id, con_nombre, con_email, con_telefono, con_mensaje, con_via, con_terminos)
+insert into contacto_formulario (con_id, usu_id, con_nombre, con_correo, con_telefono, con_mensaje, con_via, con_terminos)
 values
 (1, 2, 'Luis Pérez', 'luisperez@gmail.com', '3001000002', 'Estoy interesado en un diseño nuevo.', 'formulario', true),
 (2, null, 'Carolina López', 'carolina@gmail.com', '3001234567', '¿Puedo personalizar una joya con una piedra propia?', 'whatsapp', true),
