@@ -1,15 +1,29 @@
 <?php
 // Definir las rutas: método + path => Controller@acción
 return [
-    // Autenticación
-    'GET /'         => 'AuthController@showLogin',
-    'POST /login'   => 'AuthController@login',
-    'POST /registro'=> 'AuthController@register',
 
-    // Usuarios
-    'GET /usuarios' => 'UsuarioController@index',
+    // ======================
+    // Autenticación (ejemplo)
+    // ======================
+    'GET /'           => 'sistemausuarios/AuthController@showLogin',   // raíz = login
+    'POST /login'     => 'sistemausuarios/AuthController@login',
+    'POST /registro'  => 'sistemausuarios/AuthController@register',
 
-    // Contacto
-    'GET /contacto' => 'ContactoController@index',
-    'POST /contacto'=> 'ContactoController@crear'
+    // ======================
+    // Sistema y Usuarios
+    // ======================
+    'GET /usuarios'   => 'sistemausuarios/UsuarioController@index',
+    'GET /gestion-usuarios' => 'sistemausuarios/GestionUsuariosController@index',
+
+    // ======================
+    // Experiencia de Usuario
+    // ======================
+    'GET /contacto'   => 'experienciausuarios/ContactoController@manejarpeticion',
+    'POST /contacto'  => 'experienciausuarios/ContactoController@crear',
+
+    // ======================
+    // Gestión de Pedidos
+    // ======================
+    'GET /pedido'     => 'gestionpedidos/PedidoController@index',
+    'POST /pedido'    => 'gestionpedidos/PedidoController@crear',
 ];
