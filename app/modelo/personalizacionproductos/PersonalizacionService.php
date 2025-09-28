@@ -1,15 +1,12 @@
 <?php
-// app/modelo/personalizacionproducto/PersonalizacionService.php
+// app/modelo/personalizacionproductos/PersonalizacionService.php
 
 class PersonalizacionService {
     private string $apiUrl;
-    private string $apiDetalleUrl;
 
     public function __construct() {
-        $base = rtrim(BASE_URL_API, '/');
-        $this->apiUrl       = $base . '/personalizacion';
-        $this->apiDetalleUrl= $base . '/personalizacion/detalle';
         if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->apiUrl = rtrim(BASE_URL_API, '/') . '/personalizaciones';
     }
 
     private function authHeaders(): array {
@@ -19,79 +16,85 @@ class PersonalizacionService {
         return $headers;
     }
 
-    // POST /personalizacion
-    // { usu_id?, notas? } → { per_id, ... }
-    public function crear(?int $usuarioId = null, ?string $notas = null): array {
+    // POST /api/personalizaciones
+    // body: { "usuId": 123|null, "notas": "..." }
+    // resp: { "perId": N, ... }
+    public function crear(?int $usuId = null, ?string $notas = null): array {
         $payload = [];
-        if ($usuarioId !== null) $payload['usu_id'] = $usuarioId;
-        if ($notas !== null)     $payload['notas']  = $notas;
+        if ($usuId !== null) $payload['usuId'] = $usuId;
+        if ($notas !== null) $payload['notas'] = $notas;
 
-        $data_json = json_encode($payload, JSON_UNESCAPED_UNICODE);
+        $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $ch = curl_init($this->apiUrl);
         curl_setopt_array($ch, [
             CURLOPT_CUSTOMREQUEST  => 'POST',
-            CURLOPT_POSTFIELDS     => $data_json,
+            CURLOPT_POSTFIELDS     => $json,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($data_json)]),
+            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($json)]),
         ]);
         $resp = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (curl_errno($ch)) { $err = curl_error($ch); curl_close($ch); return ['success'=>false,'error'=>$err]; }
+        $err  = curl_error($ch);
         curl_close($ch);
 
+        if ($err) return ['success'=>false, 'error'=>$err];
         return ($code >= 200 && $code < 300)
             ? ['success'=>true, 'data'=>json_decode($resp, true)]
             : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp];
     }
 
-    // POST /personalizacion/detalle
-    // { per_id, val_ids: [val_gema, val_forma, val_material, val_tamano, val_talla] }
+    // POST /api/personalizaciones/{perId}/detalles
+    // body: { "valIds": [idGema, idForma, idMaterial, idTamano, idTalla] }
     public function guardarDetalle(int $perId, array $valIds): array {
-        $payload = ['per_id' => $perId, 'val_ids' => array_values($valIds)];
+        $payload = ['valIds' => array_values($valIds)];
+        $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
 
-        $data_json = json_encode($payload, JSON_UNESCAPED_UNICODE);
-        $ch = curl_init($this->apiDetalleUrl);
+        $url = $this->apiUrl . '/' . urlencode($perId) . '/detalles';
+        $ch = curl_init($url);
         curl_setopt_array($ch, [
             CURLOPT_CUSTOMREQUEST  => 'POST',
-            CURLOPT_POSTFIELDS     => $data_json,
+            CURLOPT_POSTFIELDS     => $json,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($data_json)]),
+            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($json)]),
         ]);
         $resp = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (curl_errno($ch)) { $err = curl_error($ch); curl_close($ch); return ['success'=>false,'error'=>$err]; }
+        $err  = curl_error($ch);
         curl_close($ch);
 
+        if ($err) return ['success'=>false, 'error'=>$err];
         return ($code >= 200 && $code < 300)
             ? ['success'=>true, 'data'=>json_decode($resp, true)]
             : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp];
     }
 
-    // GET /personalizacion?usu_id=
-    public function listarPorUsuario(int $usuarioId): array|false {
-        $url = $this->apiUrl . '?' . http_build_query(['usu_id' => $usuarioId]);
-        $context = stream_context_create([
+    // (Opcional) GET /api/personalizaciones?usuId=...
+    public function listarPorUsuario(int $usuId): array|false {
+        $url = $this->apiUrl . '?' . http_build_query(['usuId' => $usuId]);
+        $ctx = stream_context_create([
             'http' => [
                 'method' => 'GET',
-                'header' => implode("\r\n", $this->authHeaders())
+                'header' => implode("\r\n", $this->authHeaders()),
+                'ignore_errors' => true,
             ]
         ]);
-        $respuesta = @file_get_contents($url, false, $context);
-        if ($respuesta === false) return false;
-        return json_decode($respuesta, true);
+        $resp = @file_get_contents($url, false, $ctx);
+        if ($resp === false) return false;
+        return json_decode($resp, true);
     }
 
-    // (Opcional) GET /personalizacion/{per_id}
+    // (Opcional) GET /api/personalizaciones/{perId}
     public function obtener(int $perId): array|false {
         $url = $this->apiUrl . '/' . urlencode($perId);
-        $context = stream_context_create([
+        $ctx = stream_context_create([
             'http' => [
                 'method' => 'GET',
-                'header' => implode("\r\n", $this->authHeaders())
+                'header' => implode("\r\n", $this->authHeaders()),
+                'ignore_errors' => true,
             ]
         ]);
-        $respuesta = @file_get_contents($url, false, $context);
-        if ($respuesta === false) return false;
-        return json_decode($respuesta, true);
+        $resp = @file_get_contents($url, false, $ctx);
+        if ($resp === false) return false;
+        return json_decode($resp, true);
     }
 }

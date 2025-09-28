@@ -1,18 +1,17 @@
 <?php
-// app/modelo/personalizacionproducto/OpcionPersonalizacionService.php
+// app/modelo/personalizacionproductos/OpcionPersonalizacionService.php
 
 class OpcionPersonalizacionService {
     private string $apiUrl;
 
     public function __construct() {
-        $base = rtrim(BASE_URL_API, '/');
-        $this->apiUrl = $base . '/personalizacion/opciones';
         if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->apiUrl = rtrim(BASE_URL_API, '/') . '/opciones';
     }
 
-    // --------------------
-    // Helpers
-    // --------------------
+    // ================
+    // Helpers internos
+    // ================
     private function authHeaders(): array {
         $jwt = $_SESSION['jwt'] ?? $_SESSION['access_token'] ?? null;
         $headers = ['Content-Type: application/json'];
@@ -25,85 +24,102 @@ class OpcionPersonalizacionService {
         return $this->apiUrl . '?' . http_build_query($query);
     }
 
-    // --------------------
-    // Métodos públicos
-    // --------------------
+    // ======
+    // GET(s)
+    // ======
+    // GET /api/opciones[?search=...]
+    public function listar(?string $search = null): array|false {
+        $q = [];
+        if ($search !== null && $search !== '') $q['search'] = $search;
+        $url = $this->buildUrl($q);
 
-    // GET /personalizacion/opciones
-    public function listar(): array|false {
-        $url = $this->buildUrl();
-        $context = stream_context_create([
+        $ctx = stream_context_create([
             'http' => [
                 'method' => 'GET',
-                'header' => implode("\r\n", $this->authHeaders())
+                'header' => implode("\r\n", $this->authHeaders()),
+                'ignore_errors' => true,
             ]
         ]);
-        $respuesta = @file_get_contents($url, false, $context);
-        if ($respuesta === false) return false;
-        return json_decode($respuesta, true);
+        $resp = @file_get_contents($url, false, $ctx);
+        if ($resp === false) return false;
+        return json_decode($resp, true);
     }
 
-    // GET /personalizacion/opciones/{id}
+    // GET /api/opciones/{id}
     public function obtener(int $id): array|false {
         $url = $this->apiUrl . '/' . urlencode($id);
-        $context = stream_context_create([
+        $ctx = stream_context_create([
             'http' => [
                 'method' => 'GET',
-                'header' => implode("\r\n", $this->authHeaders())
+                'header' => implode("\r\n", $this->authHeaders()),
+                'ignore_errors' => true,
             ]
         ]);
-        $respuesta = @file_get_contents($url, false, $context);
-        if ($respuesta === false) return false;
-        return json_decode($respuesta, true);
+        $resp = @file_get_contents($url, false, $ctx);
+        if ($resp === false) return false;
+        return json_decode($resp, true);
     }
 
-    // POST /personalizacion/opciones
-    public function crear(string $nombre, ?string $slug = null): array {
-        $payload = ['opc_nombre' => $nombre];
+    // ======
+    // POST
+    // ======
+    // POST /api/opciones
+    // body esperado: { "opcNombre": "...", "slug": "..." }
+    public function crear(string $opcNombre, ?string $slug = null): array {
+        $payload = ['opcNombre' => $opcNombre];
         if ($slug !== null) $payload['slug'] = $slug;
 
-        $data_json = json_encode($payload, JSON_UNESCAPED_UNICODE);
+        $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $ch = curl_init($this->apiUrl);
         curl_setopt_array($ch, [
             CURLOPT_CUSTOMREQUEST  => 'POST',
-            CURLOPT_POSTFIELDS     => $data_json,
+            CURLOPT_POSTFIELDS     => $json,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($data_json)]),
+            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($json)]),
         ]);
         $resp = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (curl_errno($ch)) { $err = curl_error($ch); curl_close($ch); return ['success'=>false,'error'=>$err]; }
+        $err  = curl_error($ch);
         curl_close($ch);
 
+        if ($err) return ['success'=>false, 'error'=>$err];
         return ($code >= 200 && $code < 300)
             ? ['success'=>true, 'data'=>json_decode($resp, true)]
             : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp];
     }
 
-    // PUT /personalizacion/opciones/{id}
-    public function actualizar(int $id, string $nombre, ?string $slug = null): array {
-        $payload = ['opc_nombre' => $nombre];
+    // =====
+    // PUT
+    // =====
+    // PUT /api/opciones/{id}
+    // body esperado: { "opcNombre": "...", "slug": "..." }
+    public function actualizar(int $id, string $opcNombre, ?string $slug = null): array {
+        $payload = ['opcNombre' => $opcNombre];
         if ($slug !== null) $payload['slug'] = $slug;
 
-        $data_json = json_encode($payload, JSON_UNESCAPED_UNICODE);
+        $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $ch = curl_init($this->apiUrl . '/' . urlencode($id));
         curl_setopt_array($ch, [
             CURLOPT_CUSTOMREQUEST  => 'PUT',
-            CURLOPT_POSTFIELDS     => $data_json,
+            CURLOPT_POSTFIELDS     => $json,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($data_json)]),
+            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($json)]),
         ]);
         $resp = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (curl_errno($ch)) { $err = curl_error($ch); curl_close($ch); return ['success'=>false,'error'=>$err]; }
+        $err  = curl_error($ch);
         curl_close($ch);
 
+        if ($err) return ['success'=>false, 'error'=>$err];
         return ($code >= 200 && $code < 300)
             ? ['success'=>true, 'data'=>json_decode($resp, true)]
             : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp];
     }
 
-    // DELETE /personalizacion/opciones/{id}
+    // ========
+    // DELETE
+    // ========
+    // DELETE /api/opciones/{id}
     public function eliminar(int $id): array {
         $ch = curl_init($this->apiUrl . '/' . urlencode($id));
         curl_setopt_array($ch, [
@@ -113,11 +129,12 @@ class OpcionPersonalizacionService {
         ]);
         $resp = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (curl_errno($ch)) { $err = curl_error($ch); curl_close($ch); return ['success'=>false,'error'=>$err]; }
+        $err  = curl_error($ch);
         curl_close($ch);
 
+        if ($err) return ['success'=>false, 'error'=>$err];
         return ($code >= 200 && $code < 300)
             ? ['success'=>true]
-            : ['success'=>false,'error'=>"HTTP $code",'data'=>$resp];
+            : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp];
     }
 }

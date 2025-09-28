@@ -20,7 +20,7 @@ class PersonalizacionController {
 
     // GET /personalizar
     public function mostrar() {
-    require __DIR__ . '/../../vista/personalizacionproducto/personalizar.php';
+    require __DIR__ . '/../../vista/personalizacionproductos/personalizar.php';
     }
 
     // POST /personalizar/guardar
@@ -76,7 +76,13 @@ class PersonalizacionController {
             exit;
         }
         $perId = $creado['data']['per_id'] ?? null;
-        if (!$perId) {
+        $perId = $creado['data']['perId']
+             ?? $creado['data']['per_id']
+             ?? $creado['perId']        // por si el API no envuelve en "data"
+             ?? $creado['per_id']
+              ?? null;
+
+        if (!$perId) {  
             header('Location: ' . BASE_URL . '/personalizar?msg=error_perid');
             exit;
         }

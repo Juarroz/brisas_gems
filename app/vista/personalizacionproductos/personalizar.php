@@ -1,15 +1,27 @@
 <?php
-// app/vista/personalizacionproducto/personalizar.php
-if (!function_exists('e')) {
-  function e($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
-}
-$msg     = $_GET['msg']     ?? null;
-$perId   = $_GET['per_id']  ?? null;
+if (!function_exists('e')) { function e($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); } }
+$msg   = $_GET['msg']    ?? null;
+$perId = $_GET['per_id'] ?? null;
 
-// Ajusta a tu número de asesor (código país sin +, ej. 57 para Colombia):
-$WHATS_NUMBER = '57XXXXXXXXXX'; // <-- cámbialo
+// (cámbialo por el real)
+$WHATS_NUMBER = '57XXXXXXXXXX';
 ?>
-<?php include __DIR__ . '/../includes/header.php'; ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Personalización de Anillo · Brisas Gems</title>
+  <link rel="icon" href="<?= BASE_URL ?>/assets/icons/icono.png" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/header.css" />
+  <!-- hoja específica de esta vista (si la tienes) -->
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/personalizar.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Personaliza tu anillo con visualización en tiempo real." />
+</head>
+<body>
+<?php include BASE_PATH . '/public/includes/header.php'; ?>
 
 <main class="container my-5">
   <div class="row">
@@ -37,19 +49,19 @@ $WHATS_NUMBER = '57XXXXXXXXXX'; // <-- cámbialo
       <section>
         <h2 class="h5 text-center">Vista previa del anillo</h2>
         <img id="vista-principal"
-             src="<?= BASE_URL ?>/assets/img/personalizacion/vistas-anillos/esmeralda/redonda/oro-blanco/superior.jpg"
+             src="<?= BASE_URL ?>/assets/img/personalizacionproductos/vistas-anillos/esmeralda/redonda/oro-blanco/superior.jpg"
              alt="Vista previa del anillo"
              class="img-fluid mb-3 d-block mx-auto" style="max-height:300px">
 
         <div class="d-flex justify-content-center gap-3">
           <img id="vista-superior" class="miniatura" width="70"
-               src="<?= BASE_URL ?>/assets/img/personalizacion/vistas-anillos/esmeralda/redonda/oro-blanco/superior.jpg"
+               src="<?= BASE_URL ?>/assets/img/personalizacionproductos/vistas-anillos/esmeralda/redonda/oro-blanco/superior.jpg"
                alt="Vista Superior" onclick="cambiarVista(this)">
           <img id="vista-frontal" class="miniatura" width="70"
-               src="<?= BASE_URL ?>/assets/img/personalizacion/vistas-anillos/esmeralda/redonda/oro-blanco/frontal.jpg"
+               src="<?= BASE_URL ?>/assets/img/personalizacionproductos/vistas-anillos/esmeralda/redonda/oro-blanco/frontal.jpg"
                alt="Vista Frontal" onclick="cambiarVista(this)">
           <img id="vista-perfil" class="miniatura" width="70"
-               src="<?= BASE_URL ?>/assets/img/personalizacion/vistas-anillos/esmeralda/redonda/oro-blanco/perfil.jpg"
+               src="<?= BASE_URL ?>/assets/img/personalizacionproductos/vistas-anillos/esmeralda/redonda/oro-blanco/perfil.jpg"
                alt="Vista Perfil" onclick="cambiarVista(this)">
         </div>
       </section>
@@ -63,16 +75,16 @@ $WHATS_NUMBER = '57XXXXXXXXXX'; // <-- cámbialo
           <h3 class="h5">Piedra central</h3>
           <div class="d-flex flex-wrap gap-3" id="grupo-gema">
             <button type="button" class="btn btn-opcion btn-gema" data-gema="diamante">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/gemas/diamante.png" alt="Diamante" width="40"><br>Diamante
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/gemas/diamante.png" alt="Diamante" width="40"><br>Diamante
             </button>
             <button type="button" class="btn btn-opcion btn-gema active" data-gema="esmeralda">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/gemas/esmeralda.png" alt="Esmeralda" width="40"><br>Esmeralda
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/gemas/esmeralda.png" alt="Esmeralda" width="40"><br>Esmeralda
             </button>
             <button type="button" class="btn btn-opcion btn-gema" data-gema="zafiro">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/gemas/zafiro.png" alt="Zafiro" width="40"><br>Zafiro
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/gemas/zafiro.png" alt="Zafiro" width="40"><br>Zafiro
             </button>
             <button type="button" class="btn btn-opcion btn-gema" data-gema="rubi">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/gemas/ruby.png" alt="Rubí" width="40"><br>Rubí
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/gemas/ruby.png" alt="Rubí" width="40"><br>Rubí
             </button>
           </div>
         </section>
@@ -82,13 +94,13 @@ $WHATS_NUMBER = '57XXXXXXXXXX'; // <-- cámbialo
           <h3 class="h5">Forma de la piedra</h3>
           <div class="d-flex flex-wrap gap-3" id="grupo-forma">
             <button type="button" class="btn btn-opcion btn-forma active" data-forma="redonda">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/forma/redonda.png" alt="Redonda" width="40"><br>Redonda
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/forma/redonda.png" alt="Redonda" width="40"><br>Redonda
             </button>
             <button type="button" class="btn btn-opcion btn-forma" data-forma="ovalada">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/forma/ovalada.png" alt="Ovalada" width="40"><br>Ovalada
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/forma/ovalada.png" alt="Ovalada" width="40"><br>Ovalada
             </button>
             <button type="button" class="btn btn-opcion btn-forma solo-esmeralda" data-forma="corazon">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/forma/corazon.png" alt="Corazón" width="40"><br>Corazón
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/forma/corazon.png" alt="Corazón" width="40"><br>Corazón
             </button>
           </div>
         </section>
@@ -98,10 +110,10 @@ $WHATS_NUMBER = '57XXXXXXXXXX'; // <-- cámbialo
           <h3 class="h5">Tamaño de la piedra</h3>
           <div class="d-flex flex-wrap gap-3" id="grupo-tamano">
             <button type="button" class="btn btn-opcion btn-tamano" data-tamano="6">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/tama-piedra-central/6mm.png" alt="6mm" width="40"><br>6 mm
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/tama-piedra-central/6mm.png" alt="6mm" width="40"><br>6 mm
             </button>
             <button type="button" class="btn btn-opcion btn-tamano" data-tamano="7">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/tama-piedra-central/7mm.png" alt="7mm" width="40"><br>7 mm
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/tama-piedra-central/7mm.png" alt="7mm" width="40"><br>7 mm
             </button>
           </div>
         </section>
@@ -111,13 +123,13 @@ $WHATS_NUMBER = '57XXXXXXXXXX'; // <-- cámbialo
           <h3 class="h5">Material del anillo</h3>
           <div class="d-flex flex-wrap gap-3" id="grupo-material">
             <button type="button" class="btn btn-opcion btn-material" data-material="oro-amarillo">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/material/oro-amarillo.png" alt="Oro Amarillo" width="40"><br>Oro Amarillo
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/material/oro-amarillo.png" alt="Oro Amarillo" width="40"><br>Oro Amarillo
             </button>
             <button type="button" class="btn btn-opcion btn-material active" data-material="oro-blanco">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/material/oro-blanco.png" alt="Oro Blanco" width="40"><br>Oro Blanco
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/material/oro-blanco.png" alt="Oro Blanco" width="40"><br>Oro Blanco
             </button>
             <button type="button" class="btn btn-opcion btn-material" data-material="oro-rosa">
-              <img src="<?= BASE_URL ?>/assets/img/personalizacion/opciones/material/oro-rosa.png" alt="Oro Rosa" width="40"><br>Oro Rosa
+              <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/material/oro-rosa.png" alt="Oro Rosa" width="40"><br>Oro Rosa
             </button>
           </div>
         </section>
@@ -171,7 +183,7 @@ $WHATS_NUMBER = '57XXXXXXXXXX'; // <-- cámbialo
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
-        <img src="<?= BASE_URL ?>/assets/img/personalizacion/guia-tallas.png" alt="Guía de tallas" class="img-fluid mb-3 rounded">
+        <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/guia-tallas.png" alt="Guía de tallas" class="img-fluid mb-3 rounded">
         <p><strong>Enrolla un pedazo de papel o hilo alrededor de tu dedo...</strong></p>
         <p>* Marca el punto donde se junta la tira.</p>
         <p>* Mide en milímetros.</p>
@@ -185,7 +197,7 @@ $WHATS_NUMBER = '57XXXXXXXXXX'; // <-- cámbialo
 </div>
 
 <script>
-  const BASE_IMG = "<?= BASE_URL ?>/assets/img/personalizacion";
+  const BASE_IMG = "<?= BASE_URL ?>/assets/img/personalizacionproductos";
 
   let gemaSeleccionada     = localStorage.getItem('gema')     || 'esmeralda';
   let formaSeleccionada    = localStorage.getItem('forma')    || 'redonda';
@@ -297,4 +309,7 @@ $WHATS_NUMBER = '57XXXXXXXXXX'; // <-- cámbialo
   window.cambiarVista = cambiarVista;
 </script>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include BASE_PATH . '/public/includes/footer.php'; ?>
+<script src="<?= BASE_URL ?>/assets/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

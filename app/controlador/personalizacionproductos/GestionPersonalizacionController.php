@@ -44,7 +44,7 @@ class GestionPersonalizacionController {
 }
 
     public function listarValores() {
-    $opcId    = isset($_GET['opc_id']) ? (int)$_GET['opc_id'] : null;
+    $opcId    = isset($_GET['opcId']) ? (int)$_GET['opcId'] : null;
     $valores  = $this->valService->listar($opcId);
     if ($valores === false) $valores = [];
 

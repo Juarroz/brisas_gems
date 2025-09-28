@@ -1,13 +1,12 @@
 <?php
-// app/modelo/personalizacionproducto/ValorPersonalizacionService.php
+// app/modelo/personalizacionproductos/ValorPersonalizacionService.php
 
 class ValorPersonalizacionService {
     private string $apiUrl;
 
     public function __construct() {
-        $base = rtrim(BASE_URL_API, '/');
-        $this->apiUrl = $base . '/personalizacion/valores';
         if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->apiUrl = rtrim(BASE_URL_API, '/') . '/valores';
     }
 
     private function authHeaders(): array {
@@ -22,83 +21,88 @@ class ValorPersonalizacionService {
         return $this->apiUrl . '?' . http_build_query($query);
     }
 
-    // GET /personalizacion/valores[?opc_id=]
+    // GET /api/valores[?opcId=]
     public function listar(?int $opcId = null): array|false {
         $q = [];
-        if ($opcId !== null) $q['opc_id'] = $opcId;
-
+        if ($opcId !== null) $q['opcId'] = $opcId; // camelCase según tu API
         $url = $this->buildUrl($q);
-        $context = stream_context_create([
+
+        $ctx = stream_context_create([
             'http' => [
                 'method' => 'GET',
-                'header' => implode("\r\n", $this->authHeaders())
+                'header' => implode("\r\n", $this->authHeaders()),
+                'ignore_errors' => true,
             ]
         ]);
-        $respuesta = @file_get_contents($url, false, $context);
-        if ($respuesta === false) return false;
-        return json_decode($respuesta, true);
+        $resp = @file_get_contents($url, false, $ctx);
+        if ($resp === false) return false;
+        return json_decode($resp, true);
     }
 
-    // GET /personalizacion/valores/{id}
+    // GET /api/valores/{id}
     public function obtener(int $id): array|false {
         $url = $this->apiUrl . '/' . urlencode($id);
-        $context = stream_context_create([
+        $ctx = stream_context_create([
             'http' => [
                 'method' => 'GET',
-                'header' => implode("\r\n", $this->authHeaders())
+                'header' => implode("\r\n", $this->authHeaders()),
+                'ignore_errors' => true,
             ]
         ]);
-        $respuesta = @file_get_contents($url, false, $context);
-        if ($respuesta === false) return false;
-        return json_decode($respuesta, true);
+        $resp = @file_get_contents($url, false, $ctx);
+        if ($resp === false) return false;
+        return json_decode($resp, true);
     }
 
-    // POST /personalizacion/valores
-    public function crear(int $opcId, string $nombre, ?string $imagenUrl = null, ?string $slug = null): array {
-        $payload = ['opc_id' => $opcId, 'val_nombre' => $nombre];
-        if ($imagenUrl !== null) $payload['val_imagen'] = $imagenUrl;
-        if ($slug !== null)      $payload['slug'] = $slug;
+    // POST /api/valores
+    // body: { "opcId": 3, "valNombre":"...", "valImagen": "...", "slug": "..." }
+    public function crear(int $opcId, string $valNombre, ?string $valImagen = null, ?string $slug = null): array {
+        $payload = ['opcId' => $opcId, 'valNombre' => $valNombre];
+        if ($valImagen !== null) $payload['valImagen'] = $valImagen;
+        if ($slug !== null)      $payload['slug']      = $slug;
 
-        $data_json = json_encode($payload, JSON_UNESCAPED_UNICODE);
+        $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $ch = curl_init($this->apiUrl);
         curl_setopt_array($ch, [
             CURLOPT_CUSTOMREQUEST  => 'POST',
-            CURLOPT_POSTFIELDS     => $data_json,
+            CURLOPT_POSTFIELDS     => $json,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($data_json)]),
+            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($json)]),
         ]);
         $resp = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (curl_errno($ch)) { $err = curl_error($ch); curl_close($ch); return ['success'=>false,'error'=>$err]; }
+        $err  = curl_error($ch);
         curl_close($ch);
 
+        if ($err) return ['success'=>false, 'error'=>$err];
         return ($code >= 200 && $code < 300)
             ? ['success'=>true, 'data'=>json_decode($resp, true)]
             : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp];
     }
 
-    // PUT /personalizacion/valores/{id}
+    // PUT /api/valores/{id}
+    // body admite: valNombre, valImagen, slug, opcId
     public function actualizar(int $id, array $datos): array {
-        // $datos puede incluir: val_nombre, val_imagen, slug, opc_id (si permites mover de opción)
-        $data_json = json_encode($datos, JSON_UNESCAPED_UNICODE);
+        $json = json_encode($datos, JSON_UNESCAPED_UNICODE);
         $ch = curl_init($this->apiUrl . '/' . urlencode($id));
         curl_setopt_array($ch, [
             CURLOPT_CUSTOMREQUEST  => 'PUT',
-            CURLOPT_POSTFIELDS     => $data_json,
+            CURLOPT_POSTFIELDS     => $json,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($data_json)]),
+            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($json)]),
         ]);
         $resp = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (curl_errno($ch)) { $err = curl_error($ch); curl_close($ch); return ['success'=>false,'error'=>$err]; }
+        $err  = curl_error($ch);
         curl_close($ch);
 
+        if ($err) return ['success'=>false, 'error'=>$err];
         return ($code >= 200 && $code < 300)
             ? ['success'=>true, 'data'=>json_decode($resp, true)]
             : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp];
     }
 
-    // DELETE /personalizacion/valores/{id}
+    // DELETE /api/valores/{id}
     public function eliminar(int $id): array {
         $ch = curl_init($this->apiUrl . '/' . urlencode($id));
         curl_setopt_array($ch, [
@@ -108,11 +112,13 @@ class ValorPersonalizacionService {
         ]);
         $resp = curl_exec($ch);
         $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (curl_errno($ch)) { $err = curl_error($ch); curl_close($ch); return ['success'=>false,'error'=>$err]; }
+        $err  = curl_error($ch);
         curl_close($ch);
 
+        if ($err) return ['success'=>false, 'error'=>$err];
         return ($code >= 200 && $code < 300)
             ? ['success'=>true]
-            : ['success'=>false,'error'=>"HTTP $code",'data'=>$resp];
+            : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp];
     }
 }
+
