@@ -2,10 +2,15 @@
 // Definir las rutas: método + path => Controller@acción
 return [
 
+    
+    // Landige page
+    'GET /' => 'HomeController@index',
+
+     
     // ======================
     // Autenticación (ejemplo)
     // ======================
-    'GET /'           => 'sistemausuarios/AuthController@showLogin',   // raíz = login
+    
     'POST /login'     => 'sistemausuarios/AuthController@login',
     'POST /registro'  => 'sistemausuarios/AuthController@register',
 
