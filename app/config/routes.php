@@ -42,9 +42,9 @@ return [
     // ======================
     // Personalización de Joyas
     // ======================
-    'GET /personalizar'          => 'personalizacionproducto/PersonalizacionController@mostrar',
+    'GET /personalizar'          => 'personalizacionproductos/PersonalizacionController@mostrar',
     'POST /personalizar/guardar' => 'personalizacionproducto/PersonalizacionController@guardar',
 
-    'GET /admin/opciones'        => 'personalizacionproducto/GestionPersonalizacionController@listarOpciones',
-    'GET /admin/valores'         => 'personalizacionproducto/GestionPersonalizacionController@listarValores',
+    'GET /admin/opciones'        => 'personalizacionproductos/GestionPersonalizacionController@listarOpciones',
+    'GET /admin/valores'         => 'personalizacionproductos/GestionPersonalizacionController@listarValores',
 ];
