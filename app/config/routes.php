@@ -18,8 +18,14 @@ return [
     // ======================
     // Experiencia de Usuario
     // ======================
-    'GET /contacto'   => 'experienciausuarios/ContactoController@manejarpeticion',
-    'POST /contacto'  => 'experienciausuarios/ContactoController@crear',
+    "GET /contacto"           => "experienciausuarios/ContactoController@listar",
+    "POST /contacto/crear"    => "experienciausuarios/ContactoController@crear",
+    "POST /contacto/update"   => "experienciausuarios/ContactoController@actualizar",
+    "POST /contacto/delete"   => "experienciausuarios/ContactoController@eliminar",
+
+    
+    'GET /contacto-usuario'  => 'experienciausuarios/ContactoUsuarioController@manejarPeticion',
+    'POST /contacto-usuario' => 'experienciausuarios/ContactoUsuarioController@manejarPeticion',
 
     // ======================
     // Gestión de Pedidos
