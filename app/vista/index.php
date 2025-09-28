@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/index.css" />
+  <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/header.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Brisas Gems: personalización de joyas, inspiración y seguimiento de pedidos." />
 </head>

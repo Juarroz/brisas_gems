@@ -34,26 +34,33 @@ $usu_nombre = $_SESSION['usu_nombre'] ?? null;
     <div class="menu-derecha">
       <a href="#"><img src="<?= BASE_URL ?>/assets/img/icons/gem.svg" alt="Favoritos" class="icono"></a>
       <a href="#"><img src="<?= BASE_URL ?>/assets/img/icons/bluesky.svg" alt="Carrito" class="icono"></a>
+
       <div class="perfil-wrapper">
-        <img src="<?= BASE_URL ?>/assets/img/icons/person.svg" alt="Perfil" class="icono" id="icono-usuario">
+        <?php if ($usu_nombre): ?>
+          <div class="avatar" id="icono-usuario">
+            <?= strtoupper(substr($usu_nombre, 0, 1)) ?>
+          </div>
+        <?php else: ?>
+          <a href="<?= BASE_URL ?>/login.php" class="btn-login">Iniciar sesión</a>
+        <?php endif; ?>
+
+        <?php if ($rol_id): ?>
         <div class="menu-usuario" id="menu-usuario">
+          <p class="px-3 fw-bold"><?= htmlspecialchars($usu_nombre) ?></p>
+
           <?php if ($rol_id === 1): ?>
-            <p class="px-3 fw-bold"><?= htmlspecialchars($usu_nombre) ?></p>
             <a href="<?= BASE_URL ?>/usuario/mi-perfil.php">Mi perfil</a>
             <a href="<?= BASE_URL ?>/usuario/mis-pedidos.php">Mis pedidos</a>
-            <a href="<?= BASE_URL ?>/php/logout.php">Cerrar sesión</a>
           <?php elseif ($rol_id === 2): ?>
-            <p class="px-3 fw-bold"><?= htmlspecialchars($usu_nombre) ?></p>
             <a href="<?= BASE_URL ?>/admin/gestion-usuarios.php">Gestión usuarios</a>
             <a href="<?= BASE_URL ?>/admin/gestion-inspiracion.php">Gestión inspiración</a>
             <a href="<?= BASE_URL ?>/admin/gestion-opciones.php">Gestión personalización</a>
             <a href="<?= BASE_URL ?>/admin/gestion-pedidos.php">Gestión pedidos</a>
-            <a href="<?= BASE_URL ?>/php/logout.php">Cerrar sesión</a>
-          <?php else: ?>
-            <a href="<?= BASE_URL ?>/login.php">Iniciar sesión</a>
-            <a href="<?= BASE_URL ?>/registro.php">Registrarse</a>
           <?php endif; ?>
+
+          <a href="<?= BASE_URL ?>/php/logout.php">Cerrar sesión</a>
         </div>
+        <?php endif; ?>
       </div>
     </div>
   </div>

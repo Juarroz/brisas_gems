@@ -1,4 +1,6 @@
 <?php
+
+// app/config/routes.php
 // Definir las rutas: método + path => Controller@acción
 return [
 
@@ -28,7 +30,6 @@ return [
     "POST /contacto/update"   => "experienciausuarios/ContactoController@actualizar",
     "POST /contacto/delete"   => "experienciausuarios/ContactoController@eliminar",
 
-    
     'GET /contacto-usuario'  => 'experienciausuarios/ContactoUsuarioController@manejarPeticion',
     'POST /contacto-usuario' => 'experienciausuarios/ContactoUsuarioController@manejarPeticion',
 
@@ -37,4 +38,13 @@ return [
     // ======================
     'GET /pedido'     => 'gestionpedidos/PedidoController@index',
     'POST /pedido'    => 'gestionpedidos/PedidoController@crear',
+
+    // ======================
+    // Personalización de Joyas
+    // ======================
+    'GET /personalizar'          => 'personalizacionproducto/PersonalizacionController@mostrar',
+    'POST /personalizar/guardar' => 'personalizacionproducto/PersonalizacionController@guardar',
+
+    'GET /admin/opciones'        => 'personalizacionproducto/GestionPersonalizacionController@listarOpciones',
+    'GET /admin/valores'         => 'personalizacionproducto/GestionPersonalizacionController@listarValores',
 ];
