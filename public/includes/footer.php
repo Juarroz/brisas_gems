@@ -5,14 +5,14 @@
       <h4>Brisas Gems</h4>
       <p>🟢 Joyería fina y personalizada con los más altos estándares de calidad.</p>
       <div class="redes-sociales">
-        <a href="#" target="_blank" rel="noopener" aria-label="Facebook Brisas Gems">
-          <img src="/brisas_gems/img/icono-whatsApp.png" alt="Facebook Brisas Gems">
+        <a href="#" target="_blank" rel="noopener" aria-label="WhatsApp Brisas Gems">
+          <img src="<?= BASE_URL ?>/assets/img/icons/icono-whatsApp.png" alt="WhatsApp Brisas Gems">
         </a>
         <a href="#" target="_blank" rel="noopener" aria-label="Instagram Brisas Gems">
-          <img src="/brisas_gems/img/icono instagram.png" alt="Instagram Brisas Gems">
+          <img src="<?= BASE_URL ?>/assets/img/icons/icono instagram.png" alt="Instagram Brisas Gems">
         </a>
-        <a href="#" target="_blank" rel="noopener" aria-label="WhatsApp Brisas Gems">
-          <img src="/brisas_gems/img/icono-facebook.png" alt="WhatsApp Brisas Gems">
+        <a href="#" target="_blank" rel="noopener" aria-label="Facebook Brisas Gems">
+          <img src="<?= BASE_URL ?>/assets/img/icons/icono-facebook.png" alt="Facebook Brisas Gems">
         </a>
       </div>
     </div>
@@ -28,9 +28,9 @@
       <h4>Enlaces</h4>
       <nav aria-label="Enlaces rápidos">
         <ul class="enlaces-footer">
-          <li><a href="/brisas_gems/index.php"> Inicio</a></li>
-          <li><a href="/brisas_gems/personalizar.php"> Personalización</a></li>
-          <li><a href="/brisas_gems/inspiracion.php"> Inspiración</a></li>
+          <li><a href="<?= BASE_URL ?>/"> Inicio</a></li>
+          <li><a href="<?= BASE_URL ?>/personalizar.php"> Personalización</a></li>
+          <li><a href="<?= BASE_URL ?>/inspiracion.php"> Inspiración</a></li>
         </ul>
       </nav>
     </div>
