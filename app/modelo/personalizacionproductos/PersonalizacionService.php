@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../core/ApiClient.php';
+
 $usu_id = readline("Ingrese el ID del usuario: ");
 $deseaPersonalizacion = readline("¿Desea personalización? (1 = Sí, 0 = No): ");
 

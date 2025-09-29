@@ -1,61 +1,80 @@
 <?php
 class Router {
-    private $routes;
+    protected $routes = [];
 
-    public function __construct() {
-        $this->routes = require __DIR__ . '/../config/routes.php';
+    public function __construct($routes) {
+        $this->routes = $routes;
     }
 
-    public function dispatch($uri, $method) {
+    public function handleRequest() {
+        $method = $_SERVER['REQUEST_METHOD'];
+        $uri = $_SERVER['REQUEST_URI'];
         $path = parse_url($uri, PHP_URL_PATH);
 
-        // Quitar prefijo del proyecto (/brisas_gems/public)
-        $baseDir = '/brisas_gems/public';
-        if (strpos($path, $baseDir) === 0) {
-            $path = substr($path, strlen($baseDir));
+        // --- LÓGICA MEJORADA PARA CALCULAR LA RUTA BASE DINÁMICAMENTE ---
+        $scriptName = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME']));
+        // Si el script está en la carpeta public, la quitamos para obtener la base del proyecto
+        if (basename($scriptName) === 'public') {
+            $basePath = dirname($scriptName);
+        } else {
+            $basePath = $scriptName;
         }
+        // Normalizamos para evitar barras duplicadas
+        $basePath = rtrim($basePath, '/');
 
-        // Normalizar path
-        $path = rtrim($path, '/');
-        if ($path === '') {
+        if (strpos($path, $basePath) === 0) {
+            $path = substr($path, strlen($basePath));
+        }
+        
+        // Si el path está vacío después de quitar la base, es la raíz '/'
+        if (empty($path)) {
             $path = '/';
         }
+        // --- FIN DE LA LÓGICA MEJORADA ---
 
-        // Clave de búsqueda en routes.php
-        $key = strtoupper($method) . ' ' . $path;
+        foreach ($this->routes as $route => $handler) {
+            list($routeMethod, $routePath) = explode(' ', $route, 2);
 
-        if (isset($this->routes[$key])) {
-            list($controller, $action) = explode('@', $this->routes[$key]);
+            // Convertir ruta con placeholders (ej: /usuarios/{id}) a una expresión regular
+            $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[a-zA-Z0-9_]+)', $routePath);
+            $pattern = '#^' . $pattern . '$#';
 
-            // Controlador con subcarpeta
-            $controllerFile = __DIR__ . '/../controlador/' . $controller . '.php';
-
-            if (file_exists($controllerFile)) {
-                require_once $controllerFile;
-
-                // Nombre de clase = archivo sin extensión
-                $className = basename($controller); // ej: "ContactoController"
-
-                if (class_exists($className)) {
-                    $instance = new $className();
-
-                    if (method_exists($instance, $action)) {
-                        return $instance->$action();
-                    } else {
-                        http_response_code(500);
-                        echo "Método <b>$action</b> no existe en $className.";
-                    }
-                } else {
-                    http_response_code(500);
-                    echo "Clase <b>$className</b> no encontrada en $controllerFile.";
-                }
-            } else {
-                http_response_code(404);
-                echo "Controlador no encontrado: $controllerFile";
+            if ($method === $routeMethod && preg_match($pattern, $path, $matches)) {
+                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+                list($controllerName, $action) = explode('@', $handler);
+                $this->callAction($controllerName, $action, $params);
+                return;
             }
-        } else {
-            http_response_code(404);
-            echo "Ruta no encontrada: $key";
         }
+
+        http_response_code(404);
+        echo "Error 404: Ruta no encontrada para la petición '{$method} {$path}'.";
+    }
+
+    protected function callAction($controllerName, $action, $params = []) {
+        $pathParts = explode('/', $controllerName);
+        $className = array_pop($pathParts);
+        $subFolder = implode('/', $pathParts);
+
+        $controllerFile = __DIR__ . '/../controlador/' . $subFolder . '/' . $className . '.php';
+
+        if (!file_exists($controllerFile)) {
+            die("Error: Controlador no encontrado: {$controllerFile}");
+        }
+
+        require_once $controllerFile;
+        
+        if (!class_exists($className)) {
+            die("Error: Clase no encontrada: {$className}");
+        }
+
+        $controller = new $className();
+
+        if (!method_exists($controller, $action)) {
+            die("Error: Método no encontrado: {$action} en la clase {$className}");
+        }
+
+        // Llamar al método del controlador, pasando los parámetros de la URL
+        call_user_func_array([$controller, $action], $params);
     }
 }

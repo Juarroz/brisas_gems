@@ -1,5 +1,6 @@
 <?php
-require_once 'config/url.php';
+
+require_once __DIR__ . '/../../core/ApiClient.php';
 
 $url = $URL_OPCIONES_PERSONALIZACION;
 

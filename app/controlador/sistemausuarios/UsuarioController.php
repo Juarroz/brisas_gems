@@ -1,74 +1,59 @@
 <?php
-// Inicia o reanuda la sesión de PHP para manejar el token
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
+// Rutas actualizadas para la nueva estructura
 require_once __DIR__ . '/../../modelo/sistemausuarios/UsuarioService.php';
+require_once __DIR__ . '/../../modelo/sistemausuarios/RolService.php';
+require_once __DIR__ . '/../../core/AuthGuard.php';
 
 class UsuarioController {
     private $usuarioService;
+    private $rolService;
 
     public function __construct() {
         $this->usuarioService = new UsuarioService();
+        $this->rolService = new RolService();
     }
 
-    public function manejarPeticion() {
-        // Variables que usará la vista
-        $mensajeLogin    = '';
-        $mensajeRegistro = '';
-        $usuarios        = [];
+    // --- MÉTODOS PARA EL REGISTRO ---
 
-        // ---------- LOGOUT ----------
-        if (isset($_GET['accion']) && $_GET['accion'] === 'logout') {
-            session_destroy();
-            header("Location: index.php?page=usuarios");
-            exit();
-        }
+    public function showRegistrationForm() {
+        // Apunta a la nueva ubicación de la vista de registro
+        require_once __DIR__ . '/../../vista/sistemausuarios/registro.php';
+    }
 
-        // ---------- POST: login / registrar ----------
+    public function handleRegistration() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $accion = $_POST['accion'] ?? '';
+            $userData = [
+                'nombre'   => $_POST['nombre'] ?? '',
+                'correo'   => $_POST['correo'] ?? '',
+                'password' => $_POST['password'] ?? '',
+                'telefono' => $_POST['telefono'] ?? null,
+                'rolId'    => 1, // Por defecto, el rol de 'usuario' es 1
+                'origen'   => 'registro',
+                'activo'   => true
+            ];
 
-            // Login
-            if ($accion === 'login') {
-                $resultado = $this->usuarioService->login($_POST['email'] ?? '', $_POST['password'] ?? '');
-                if ($resultado['success']) {
-                    $_SESSION['jwt_token'] = $resultado['token'];
-                } else {
-                    $mensajeLogin = "<p style='color:red;'>" . htmlspecialchars($resultado['error']) . "</p>";
-                }
-            }
-            // Registro
-            elseif ($accion === 'registrar') {
-                $userData = [
-                    "nombre"   => $_POST['nombre'] ?? '',
-                    "correo"   => $_POST['correo'] ?? '',
-                    "password" => $_POST['password'] ?? '',
-                    "rolId"    => 2,   // Rol por defecto
-                    "activo"   => true
-                ];
-                $resultado = $this->usuarioService->registrarUsuario($userData);
-                if ($resultado['success']) {
-                    $mensajeRegistro = "<p style='color:green;'>Usuario registrado correctamente.</p>";
-                } else {
-                    $mensajeRegistro = "<p style='color:red;'>" . htmlspecialchars($resultado['error']) . "</p>";
-                }
-            }
-        }
+            // La creación de usuario es pública, no necesita token
+            $response = $this->usuarioService->crearUsuario($userData);
 
-        // ---------- LISTAR USUARIOS (si hay sesión activa) ----------
-        if (isset($_SESSION['jwt_token'])) {
-            $listaUsuarios = $this->usuarioService->obtenerUsuarios($_SESSION['jwt_token']);
-            if ($listaUsuarios !== false) {
-                $usuarios = $listaUsuarios;
+            if ($response['code'] === 201) {
+                // Si el registro es exitoso, redirigimos al login con un mensaje de éxito
+                if (session_status() == PHP_SESSION_NONE) { session_start(); }
+                $_SESSION['flash_message'] = ['type' => 'success', 'text' => '¡Registro exitoso! Ya puedes iniciar sesión.'];
+                header('Location: /login');
+                exit();
             } else {
-                unset($_SESSION['jwt_token']);
-                $mensajeLogin = "<p style='color:red;'>Tu sesión ha expirado. Inicia sesión de nuevo.</p>";
+                // Si falla, volvemos a mostrar el formulario con un error
+                $errorMessage = "Error al registrar el usuario.";
+                if (isset($response['body']['message'])) {
+                    $errorMessage .= " Detalle: " . $response['body']['message'];
+                }
+                $error_message = $errorMessage;
+                require_once __DIR__ . '/../../vista/sistemausuarios/registro.php';
             }
+        } else {
+            $this->showRegistrationForm();
         }
-
-        // ---------- Cargar vista ----------
-        require __DIR__ . '/../../vista/sistemausuarios/usuario_index.php';
     }
+    
+    // --- (Aquí irían los otros métodos que migraremos después: listUsers, showEditForm, etc.) ---
 }
