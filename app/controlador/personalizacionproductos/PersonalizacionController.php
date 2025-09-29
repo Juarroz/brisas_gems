@@ -102,7 +102,7 @@ class PersonalizacionController {
         }
 
         // 6) OK → redirigir con per_id
-        header('Location: ' . BASE_URL . '/contacto-usuario?per_id=' . urlencode($perId));
+        header('Location: ' . BASE_URL . '/contacto?per_id=' . urlencode($perId));
         exit;
 
     }

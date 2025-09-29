@@ -25,8 +25,8 @@ $usu_nombre = $_SESSION['usu_nombre'] ?? null;
         <a href="<?= BASE_URL ?>/admin/gestion-opciones.php" class="<?= $pagina === 'gestion-opciones.php' ? 'activo' : '' ?>">GESTIÓN PERSONALIZACIÓN</a>
         <a href="<?= BASE_URL ?>/admin/gestion-pedidos.php" class="<?= $pagina === 'gestion-pedidos.php' ? 'activo' : '' ?>">GESTIÓN PEDIDOS</a>
       <?php else: ?>
-        <a href="<?= BASE_URL ?>/personalizar.php" class="<?= $pagina === 'personalizar.php' ? 'activo' : '' ?>">PERSONALIZACIÓN</a>
-        <a href="<?= BASE_URL ?>/inspiracion.php" class="<?= $pagina === 'inspiracion.php' ? 'activo' : '' ?>">INSPIRACIÓN</a>
+        <a href="<?= BASE_URL ?>/personalizar" class="<?= strpos($_SERVER['REQUEST_URI'], '/personalizar') !== false ? 'activo' : '' ?>">PERSONALIZACIÓN</a>
+        <a href="<?= BASE_URL ?>/inspiracion" class="<?= strpos($_SERVER['REQUEST_URI'], '/inspiracion') !== false ? 'activo' : '' ?>">INSPIRACIÓN</a>
       <?php endif; ?>
     </nav>
 
