@@ -16,13 +16,22 @@ class PersonalizacionService {
         return $headers;
     }
 
-    // POST /api/personalizaciones
-    // body: { "usuId": 123|null, "notas": "..." }
-    // resp: { "perId": N, ... }
-    public function crear(?int $usuId = null, ?string $notas = null): array {
-        $payload = [];
-        if ($usuId !== null) $payload['usuId'] = $usuId;
-        if ($notas !== null) $payload['notas'] = $notas;
+    /**
+     * POST /api/personalizaciones
+     * Body:
+     * {
+     *   "fecha": "YYYY-MM-DD",
+     *   "usuarioClienteId": 123,
+     *   "valoresSeleccionados": [idGema, idForma, idMaterial, idTamano, idTalla]
+     * }
+     * Respuesta: { "id": N, ... }
+     */
+    public function crear(string $fecha, int $usuarioClienteId, array $valoresSeleccionados): array {
+        $payload = [
+            'fecha'                => $fecha,
+            'usuarioClienteId'     => $usuarioClienteId,
+            'valoresSeleccionados' => array_values($valoresSeleccionados),
+        ];
 
         $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
         $ch = curl_init($this->apiUrl);
@@ -37,40 +46,19 @@ class PersonalizacionService {
         $err  = curl_error($ch);
         curl_close($ch);
 
-        if ($err) return ['success'=>false, 'error'=>$err];
+        if ($err) return ['success'=>false, 'error'=>$err, 'http_code'=>$code];
         return ($code >= 200 && $code < 300)
-            ? ['success'=>true, 'data'=>json_decode($resp, true)]
-            : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp];
+            ? ['success'=>true, 'data'=>json_decode($resp, true), 'http_code'=>$code]
+            : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp, 'http_code'=>$code];
     }
 
-    // POST /api/personalizaciones/{perId}/detalles
-    // body: { "valIds": [idGema, idForma, idMaterial, idTamano, idTalla] }
-    public function guardarDetalle(int $perId, array $valIds): array {
-        $payload = ['valIds' => array_values($valIds)];
-        $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
+    // (Opcional) GET /api/personalizaciones?clienteId=...
+    public function listarPorCliente(int $clienteId, ?string $fechaDesde=null, ?string $fechaHasta=null): array|false {
+        $q = ['clienteId' => $clienteId];
+        if ($fechaDesde) $q['fechaDesde'] = $fechaDesde;
+        if ($fechaHasta) $q['fechaHasta'] = $fechaHasta;
 
-        $url = $this->apiUrl . '/' . urlencode($perId) . '/detalles';
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_CUSTOMREQUEST  => 'POST',
-            CURLOPT_POSTFIELDS     => $json,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($json)]),
-        ]);
-        $resp = curl_exec($ch);
-        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $err  = curl_error($ch);
-        curl_close($ch);
-
-        if ($err) return ['success'=>false, 'error'=>$err];
-        return ($code >= 200 && $code < 300)
-            ? ['success'=>true, 'data'=>json_decode($resp, true)]
-            : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp];
-    }
-
-    // (Opcional) GET /api/personalizaciones?usuId=...
-    public function listarPorUsuario(int $usuId): array|false {
-        $url = $this->apiUrl . '?' . http_build_query(['usuId' => $usuId]);
+        $url = $this->apiUrl . '?' . http_build_query($q);
         $ctx = stream_context_create([
             'http' => [
                 'method' => 'GET',
@@ -83,9 +71,9 @@ class PersonalizacionService {
         return json_decode($resp, true);
     }
 
-    // (Opcional) GET /api/personalizaciones/{perId}
-    public function obtener(int $perId): array|false {
-        $url = $this->apiUrl . '/' . urlencode($perId);
+    // (Opcional) GET /api/personalizaciones/{id}
+    public function obtener(int $id): array|false {
+        $url = $this->apiUrl . '/' . urlencode($id);
         $ctx = stream_context_create([
             'http' => [
                 'method' => 'GET',

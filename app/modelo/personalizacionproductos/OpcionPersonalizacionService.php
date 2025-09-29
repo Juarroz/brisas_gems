@@ -29,20 +29,26 @@ class OpcionPersonalizacionService {
     // ======
     // GET /api/opciones[?search=...]
     public function listar(?string $search = null): array|false {
-        $q = [];
-        if ($search !== null && $search !== '') $q['search'] = $search;
-        $url = $this->buildUrl($q);
+    $q = [];
+    if ($search !== null && $search !== '') $q['search'] = $search;
+    $url = $this->buildUrl($q);
 
-        $ctx = stream_context_create([
-            'http' => [
-                'method' => 'GET',
-                'header' => implode("\r\n", $this->authHeaders()),
-                'ignore_errors' => true,
-            ]
-        ]);
-        $resp = @file_get_contents($url, false, $ctx);
-        if ($resp === false) return false;
-        return json_decode($resp, true);
+    $ctx = stream_context_create([
+        'http' => [
+            'method' => 'GET',
+            'header' => implode("\r\n", $this->authHeaders()),
+            'ignore_errors' => true,
+        ]
+    ]);
+    $resp = @file_get_contents($url, false, $ctx);
+    if ($resp === false) return false;
+
+    $decoded = json_decode($resp, true);
+    if ($decoded === null) {
+        // API respondió algo que no es JSON válido
+        return false;
+    }
+    return $decoded;
     }
 
     // GET /api/opciones/{id}

@@ -78,7 +78,8 @@
                     </header>
                     <div class="card-body p-4">
                         <?= !empty($mensaje) ? $mensaje : '' ?>
-                        <form method="POST">
+                        <form method="POST" >
+                            <input type="hidden" name="per_id" value="<?= htmlspecialchars($_GET['per_id'] ?? '') ?>">
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label for="nombre" class="form-label">Nombre *</label>

@@ -26,4 +26,7 @@ if (!defined('BASE_PATH')) {
     define('BASE_PATH', dirname(__DIR__, 2));
 }
 
+if (!defined('DEFAULT_CLIENTE_ID')) {
+    define('DEFAULT_CLIENTE_ID', 1); // el ID real del Guest en tu BD
+}
 

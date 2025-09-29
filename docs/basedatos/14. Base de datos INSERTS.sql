@@ -40,6 +40,29 @@ values
 	('alejandro rojas',       'alejandrorojas@gmail.com', '3001000013','clave123',1, 2),
 	('juliana álvarez',       'julianaalvarez@gmail.com', '3001000014','clave123',  1, 1),
 	('sebastián díaz',        'sebastiandiaz@gmail.com',  '3001000015','clave123',1, 2);
+
+-- Usuario "Guest" para personalizaciones sin registro
+INSERT INTO usuarios (
+    usu_nombre,
+    usu_correo,
+    usu_telefono,
+    usu_password,
+    usu_docnum,
+    usu_origen,
+    usu_activo,
+    tipdoc_id,
+    rol_id
+) VALUES (
+    'Usuario Invitado',
+    'guest@brisasgems.com',
+    '0000000000',
+    'nopassword',        -- puede ser un hash o un dummy
+    'GUEST-9999',
+    'admin',             -- origen: creado por sistema/admin
+    true,                -- activo = 1
+    1,                   -- tipdoc_id válido (ejemplo: Cédula)
+    1                    -- rol_id = cliente (ajusta al id correcto de "cliente")
+);
     
     select * from usuarios;
 

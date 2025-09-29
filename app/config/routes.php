@@ -8,30 +8,30 @@ return [
     // Landige page
     'GET /' => 'HomeController@index',
 
-     
     // ======================
-    // Autenticación (ejemplo)
+    // Sistema y Usuarios
     // ======================
+    
     
     'POST /login'     => 'sistemausuarios/AuthController@login',
     'POST /registro'  => 'sistemausuarios/AuthController@register',
 
-    // ======================
-    // Sistema y Usuarios
-    // ======================
     'GET /usuarios'   => 'sistemausuarios/UsuarioController@index',
     'GET /gestion-usuarios' => 'sistemausuarios/GestionUsuariosController@index',
 
     // ======================
     // Experiencia de Usuario
     // ======================
-    "GET /contacto"           => "experienciausuarios/ContactoController@listar",
-    "POST /contacto/crear"    => "experienciausuarios/ContactoController@crear",
-    "POST /contacto/update"   => "experienciausuarios/ContactoController@actualizar",
-    "POST /contacto/delete"   => "experienciausuarios/ContactoController@eliminar",
 
-    'GET /contacto-usuario'  => 'experienciausuarios/ContactoUsuarioController@manejarPeticion',
-    'POST /contacto-usuario' => 'experienciausuarios/ContactoUsuarioController@manejarPeticion',
+    // Cliente (formulario de contacto)
+    "GET /contacto"        => "experienciausuarios/ContactoController@mostrar", // muestra el form
+    "POST /contacto"       => "experienciausuarios/ContactoController@crear",   // envía datos del form
+
+    // Admin (gestión de contactos)
+    "GET /admin/contactos"        => "experienciausuarios/GestionContactosController@listar",
+    "POST /admin/contactos/update" => "experienciausuarios/GestionContactosController@actualizar",
+    "POST /admin/contactos/delete" => "experienciausuarios/GestionContactosController@eliminar",
+
 
     // ======================
     // Gestión de Pedidos
@@ -43,7 +43,7 @@ return [
     // Personalización de Joyas
     // ======================
     'GET /personalizar'          => 'personalizacionproductos/PersonalizacionController@mostrar',
-    'POST /personalizar/guardar' => 'personalizacionproducto/PersonalizacionController@guardar',
+    'POST /personalizar/guardar' => 'personalizacionproductos/PersonalizacionController@guardar',
 
     'GET /admin/opciones'        => 'personalizacionproductos/GestionPersonalizacionController@listarOpciones',
     'GET /admin/valores'         => 'personalizacionproductos/GestionPersonalizacionController@listarValores',

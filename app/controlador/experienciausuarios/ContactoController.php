@@ -2,118 +2,66 @@
 require_once __DIR__ . '/../../modelo/experienciausuarios/ContactoService.php';
 
 class ContactoController {
-    private $service;
+    private ContactoService $service;
 
     public function __construct() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         $this->service = new ContactoService();
     }
 
     // =========================
-    // LISTAR (GET /contacto)
+    // GET /contacto → mostrar formulario
     // =========================
-    public function listar() {
-        $filtros = [
-            "via"    => $_GET["via"]    ?? null,
-            "estado" => $_GET["estado"] ?? null
-        ];
-        $filtros = array_filter($filtros, fn($v) => $v !== null && $v !== "");
-
-        $contactos = $this->service->listarContactos($filtros);
-
-        // mensaje de feedback (si viene de redirección)
+    public function mostrar() {
+        // mensajes de feedback por query string
         $mensaje = null;
         if (isset($_GET["msg"])) {
             switch ($_GET["msg"]) {
-                case "creado":     $mensaje = "<div class='alert alert-success'>Contacto creado correctamente.</div>"; break;
-                case "actualizado":$mensaje = "<div class='alert alert-success'>Contacto actualizado.</div>"; break;
-                case "eliminado":  $mensaje = "<div class='alert alert-success'>Contacto eliminado.</div>"; break;
-                case "error":      $mensaje = "<div class='alert alert-danger'>Ocurrió un error en la operación.</div>"; break;
+                case "creado": $mensaje = "<div class='alert alert-success'>Tu mensaje fue enviado correctamente.</div>"; break;
+                case "error":  $mensaje = "<div class='alert alert-danger'>Ocurrió un error. Verifica los datos.</div>"; break;
             }
         }
 
-        require __DIR__ . '/../../vista/experienciausuarios/contacto_index.php';
+        require __DIR__ . '/../../vista/experienciausuarios/contacto.php';
     }
 
     // =========================
-    // CREAR (POST /contacto/crear)
+    // POST /contacto → enviar formulario
     // =========================
     public function crear() {
-        $nombre   = trim($_POST["nombre"] ?? "");
-        $correo   = trim($_POST["correo"] ?? "");
+        $nombre   = trim($_POST["nombre"]   ?? "");
+        $correo   = trim($_POST["correo"]   ?? "");
         $telefono = trim($_POST["telefono"] ?? "");
-        $mensajeC = trim($_POST["mensaje"] ?? "");
-        $via      = $_POST["via"] ?? null;
+        $mensajeC = trim($_POST["mensaje"]  ?? "");
+        $via      = $_POST["via"] ?? "formulario"; // siempre formulario por defecto
         $terminos = isset($_POST["terminos"]) && $_POST["terminos"] ? true : false;
+        $perId    = $_POST["per_id"] ?? null; // 👈 vínculo con personalización (opcional)
 
         // Validaciones básicas
-        if ($nombre === "" || $mensajeC === "" || (!$terminos) || ($correo && !filter_var($correo, FILTER_VALIDATE_EMAIL))) {
-            header("Location: /brisas_gems/public/contacto?msg=error");
+        if ($nombre === "" || $mensajeC === "" || !$terminos || ($correo && !filter_var($correo, FILTER_VALIDATE_EMAIL))) {
+            header("Location: " . BASE_URL . "/contacto?msg=error");
             exit;
         }
 
+        // Payload para API
         $payload = [
             "nombre"   => $nombre,
             "correo"   => $correo,
             "telefono" => $telefono,
             "mensaje"  => $mensajeC,
-            "via"      => $via ?: null,
-            "terminos" => $terminos
+            "via"      => $via,
+            "terminos" => $terminos,
+            "perId"    => $perId ? (int)$perId : null
         ];
 
         $res = $this->service->crearContacto($payload);
 
         if ($res["success"]) {
-            header("Location: /brisas_gems/public/contacto?msg=creado");
+            header("Location: " . BASE_URL . "/contacto?msg=creado");
         } else {
-            header("Location: /brisas_gems/public/contacto?msg=error");
-        }
-        exit;
-    }
-
-    // =========================
-    // ACTUALIZAR (POST /contacto/update)
-    // =========================
-    public function actualizar() {
-        $id     = $_POST["id"] ?? null;
-        $estado = $_POST["estado"] ?? null;
-        $notas  = $_POST["notas"] ?? null;
-
-        if (!$id) {
-            header("Location: /brisas_gems/public/contacto?msg=error");
-            exit;
-        }
-
-        $payload = [
-            "estado" => $estado,
-            "notas"  => $notas
-        ];
-
-        $res = $this->service->actualizarContacto($id, $payload);
-
-        if ($res["success"]) {
-            header("Location: /brisas_gems/public/contacto?msg=actualizado");
-        } else {
-            header("Location: /brisas_gems/public/contacto?msg=error");
-        }
-        exit;
-    }
-
-    // =========================
-    // ELIMINAR (POST /contacto/delete)
-    // =========================
-    public function eliminar() {
-        $id = $_POST["id"] ?? null;
-        if (!$id) {
-            header("Location: /brisas_gems/public/contacto?msg=error");
-            exit;
-        }
-
-        $res = $this->service->eliminarContacto($id);
-
-        if ($res["success"]) {
-            header("Location: /brisas_gems/public/contacto?msg=eliminado");
-        } else {
-            header("Location: /brisas_gems/public/contacto?msg=error");
+            header("Location: " . BASE_URL . "/contacto?msg=error");
         }
         exit;
     }

@@ -23,21 +23,35 @@ class ValorPersonalizacionService {
 
     // GET /api/valores[?opcId=]
     public function listar(?int $opcId = null): array|false {
-        $q = [];
-        if ($opcId !== null) $q['opcId'] = $opcId; // camelCase según tu API
-        $url = $this->buildUrl($q);
+    $q = [];
+    if ($opcId !== null) $q['opcId'] = $opcId; // camelCase según tu API
+    $url = $this->buildUrl($q);
 
-        $ctx = stream_context_create([
-            'http' => [
-                'method' => 'GET',
-                'header' => implode("\r\n", $this->authHeaders()),
-                'ignore_errors' => true,
-            ]
-        ]);
-        $resp = @file_get_contents($url, false, $ctx);
-        if ($resp === false) return false;
-        return json_decode($resp, true);
+    $ctx = stream_context_create([
+        'http' => [
+            'method' => 'GET',
+            'header' => implode("\r\n", $this->authHeaders()),
+            'ignore_errors' => true,
+        ]
+    ]);
+    $resp = @file_get_contents($url, false, $ctx);
+    if ($resp === false) return false;
+
+    $decoded = json_decode($resp, true);
+    if ($decoded === null) {
+        // API devolvió algo que no es JSON válido
+        if (defined('DEBUG_MODE') && DEBUG_MODE) {
+            echo "<pre>Respuesta inválida de la API en /valores:\n";
+            echo htmlspecialchars($resp);
+            echo "</pre>";
+            exit;
+        }
+        return false;
     }
+
+    return $decoded;
+    }
+
 
     // GET /api/valores/{id}
     public function obtener(int $id): array|false {

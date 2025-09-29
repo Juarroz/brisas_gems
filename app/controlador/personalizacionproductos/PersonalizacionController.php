@@ -20,12 +20,12 @@ class PersonalizacionController {
 
     // GET /personalizar
     public function mostrar() {
-    require __DIR__ . '/../../vista/personalizacionproductos/personalizar.php';
+        require __DIR__ . '/../../vista/personalizacionproductos/personalizar.php';
     }
 
     // POST /personalizar/guardar
     public function guardar() {
-        // 1) Entradas del form (desde tu vista)
+        // 1) Entradas del form
         $gema     = trim($_POST['gema']     ?? '');
         $forma    = trim($_POST['forma']    ?? '');
         $material = trim($_POST['material'] ?? '');
@@ -43,9 +43,6 @@ class PersonalizacionController {
         }
 
         // 2) Normaliza textos del UI a cómo están guardados en BD
-        //    - material: "oro-blanco" -> "oro blanco"
-        //    - tamaño: "6" -> "6 mm"
-        //    - talla: "5.5" -> "talla 5.5"
         $seleccionNormalizada = [
             'gema'     => $this->norm($gema),
             'forma'    => $this->norm($forma),
@@ -54,7 +51,7 @@ class PersonalizacionController {
             'talla'    => str_starts_with($talla, 'talla') ? $this->norm($talla) : 'talla ' . $this->norm($talla),
         ];
 
-        // 3) Mapa opc_id (gema, forma, material, tamano, talla)
+        // 3) Mapa opc_id
         $opcIds = $this->resolverOpcionesIds();
         if (!$opcIds) {
             header('Location: ' . BASE_URL . '/personalizar?msg=error_opciones');
@@ -68,34 +65,46 @@ class PersonalizacionController {
             exit;
         }
 
-        // 5) Crear personalización + guardar detalle
-        $usuId = $_SESSION['usu_id'] ?? null; // null si invitado
-        $creado = $this->perService->crear($usuId, 'Selección desde configurador');
+        // 5) Crear personalización (un solo POST según tu API)
+        $fecha = date('Y-m-d');
+        // tu DTO exige int; si el usuario no está logueado, decide:
+        // a) exigir login y redirigir, o b) usar 0 como invitado.
+        $usuarioClienteId = isset($_SESSION['usu_id'])
+            ? (int)$_SESSION['usu_id']
+            : (int)DEFAULT_CLIENTE_ID;
+
+        $creado = $this->perService->crear($fecha, $usuarioClienteId, $valIds);
+
+        // Debug temporal si falla
         if (!($creado['success'] ?? false)) {
+            if (defined('DEBUG_MODE') && DEBUG_MODE) {
+                echo "<pre style='white-space:pre-wrap'>";
+                echo "Fallo al crear personalización (POST /api/personalizaciones)\n\n";
+                echo htmlspecialchars(print_r($creado, true));
+                echo "\n\nPayload enviado:\n" . htmlspecialchars(print_r([
+                    'fecha'                => $fecha,
+                    'usuarioClienteId'     => $usuarioClienteId,
+                    'valoresSeleccionados' => $valIds,
+                ], true));
+                echo "\n\nURL: " . htmlspecialchars(rtrim(BASE_URL_API, '/') . '/personalizaciones');
+                echo "</pre>";
+                exit;
+            }
             header('Location: ' . BASE_URL . '/personalizar?msg=error_crear');
             exit;
         }
-        $perId = $creado['data']['per_id'] ?? null;
-        $perId = $creado['data']['perId']
-             ?? $creado['data']['per_id']
-             ?? $creado['perId']        // por si el API no envuelve en "data"
-             ?? $creado['per_id']
-              ?? null;
 
-        if (!$perId) {  
+        // La API responde con {"id": N, ...}
+        $perId = $creado['data']['id'] ?? $creado['id'] ?? null;
+        if (!$perId) {
             header('Location: ' . BASE_URL . '/personalizar?msg=error_perid');
             exit;
         }
 
-        $detalle = $this->perService->guardarDetalle($perId, $valIds);
-        if (!($detalle['success'] ?? false)) {
-            header('Location: ' . BASE_URL . '/personalizar?msg=error_detalle');
-            exit;
-        }
-
-        // 6) OK → redirigir con per_id (luego mostramos link de WhatsApp en la vista)
-        header('Location: ' . BASE_URL . '/personalizar?msg=creado&per_id=' . urlencode($perId));
+        // 6) OK → redirigir con per_id
+        header('Location: ' . BASE_URL . '/contacto-usuario?per_id=' . urlencode($perId));
         exit;
+
     }
 
     // -------------------------
@@ -108,10 +117,6 @@ class PersonalizacionController {
         return $s;
     }
 
-    /**
-     * Trae opciones y devuelve slug lógico => opc_id
-     * DDL/INSERT definen 5 opciones: gema, forma, material, tamaño, talla (nombres “humanos”) :contentReference[oaicite:0]{index=0} :contentReference[oaicite:1]{index=1}
-     */
     private function resolverOpcionesIds(): ?array {
         $opciones = $this->opcService->listar();
         if ($opciones === false || !is_array($opciones)) return null;
@@ -120,8 +125,13 @@ class PersonalizacionController {
         $map = [];
 
         foreach ($opciones as $opc) {
-            $id   = $opc['opc_id']     ?? $opc['id'] ?? null;
-            $name = strtolower((string)($opc['opc_nombre'] ?? $opc['nombre'] ?? ''));
+            $id   = $opc['opc_id'] ?? $opc['id'] ?? null;
+            $name = strtolower((string)(
+                $opc['opc_nombre']   // snake
+                ?? $opc['opcNombre'] // camel
+                ?? $opc['nombre']
+                ?? ''
+            ));
             $slug = strtolower((string)($opc['slug'] ?? ''));
 
             if (!$id) continue;
@@ -131,7 +141,6 @@ class PersonalizacionController {
                 continue;
             }
 
-            // fallback por nombre en español de tus inserts
             if (str_contains($name, 'gema'))     $map['gema']     = (int)$id;
             if (str_contains($name, 'forma'))    $map['forma']    = (int)$id;
             if (str_contains($name, 'material')) $map['material'] = (int)$id;
@@ -143,11 +152,6 @@ class PersonalizacionController {
         return $map;
     }
 
-    /**
-     * Para cada opción (opc_id), busca el valor cuyo val_nombre coincida con la selección normalizada.
-     * En BD tienes ejemplos: materiales "oro blanco / oro amarillo / plata / platino" y tamaños "6 mm / 7 mm" etc. :contentReference[oaicite:2]{index=2}
-     * Devuelve [val_gema, val_forma, val_material, val_tamano, val_talla]
-     */
     private function resolverValoresIds(array $opcIds, array $seleccion): ?array {
         $orden = ['gema','forma','material','tamano','talla'];
         $result = [];
@@ -155,7 +159,6 @@ class PersonalizacionController {
         foreach ($orden as $slug) {
             $opcId = $opcIds[$slug] ?? null;
             $buscado = $this->norm((string)$seleccion[$slug]);
-
             if (!$opcId) return null;
 
             $valores = $this->valService->listar((int)$opcId);
@@ -163,8 +166,12 @@ class PersonalizacionController {
 
             $valId = null;
             foreach ($valores as $v) {
-                $nombre = $this->norm((string)($v['val_nombre'] ?? $v['nombre'] ?? ''));
-                // igual exacto o “sin espacios/guiones”
+                $nombre = $this->norm((string)(
+                    $v['val_nombre']   // snake
+                    ?? $v['valNombre'] // camel
+                    ?? $v['nombre']
+                    ?? ''
+                ));
                 if ($nombre === $buscado ||
                     str_replace(['-',' '], '', $nombre) === str_replace(['-',' '], '', $buscado)) {
                     $valId = (int)($v['val_id'] ?? $v['id']);

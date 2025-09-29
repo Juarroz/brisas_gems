@@ -100,6 +100,7 @@ create table estado_pedido(
 create table pedido (
 	ped_id 				int primary key auto_increment,
     ped_codigo 			varchar(100) not null,
+    
     ped_fecha_creacion 	date not null,
     ped_comentarios 	varchar(250),
     est_id 				int,
