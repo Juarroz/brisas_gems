@@ -85,4 +85,46 @@ class PersonalizacionService {
         if ($resp === false) return false;
         return json_decode($resp, true);
     }
+
+    // GET /api/personalizaciones/{id}
+public function obtenerDetalle(int $perId): array|false {
+    $url = rtrim(BASE_URL_API, '/') . '/personalizaciones/' . urlencode($perId);
+
+    $ctx = stream_context_create([
+        'http' => [
+            'method' => 'GET',
+            'header' => "Content-Type: application/json\r\n",
+            'ignore_errors' => true,
+        ]
+    ]);
+
+    $resp = @file_get_contents($url, false, $ctx);
+    if ($resp === false) return false;
+
+    $data = json_decode($resp, true);
+    if (!is_array($data)) return false;
+
+    // Adaptar el detalle a un formato sencillo para la vista
+    $resumen = [
+        'gema'     => null,
+        'forma'    => null,
+        'material' => null,
+        'tamano'   => null,
+        'talla'    => null,
+    ];
+
+    if (!empty($data['detalles']) && is_array($data['detalles'])) {
+        foreach ($data['detalles'] as $det) {
+            $nombre = strtolower($det['valNombre'] ?? $det['val_nombre'] ?? '');
+            if (str_contains($nombre, 'gema'))     $resumen['gema']     = $nombre;
+            elseif (str_contains($nombre, 'forma'))    $resumen['forma']    = $nombre;
+            elseif (str_contains($nombre, 'oro') || str_contains($nombre, 'plata')) $resumen['material'] = $nombre;
+            elseif (str_contains($nombre, 'mm'))       $resumen['tamano']   = $nombre;
+            elseif (str_contains($nombre, 'talla'))    $resumen['talla']    = $nombre;
+        }
+    }
+
+    return $resumen;
+}
+
 }

@@ -1,5 +1,8 @@
 <?php
 require_once __DIR__ . '/../../modelo/experienciausuarios/ContactoService.php';
+require_once __DIR__ . '/../../modelo/personalizacionproductos/PersonalizacionService.php';
+
+
 
 class ContactoController {
     private ContactoService $service;
@@ -15,17 +18,18 @@ class ContactoController {
     // GET /contacto → mostrar formulario
     // =========================
     public function mostrar() {
-        // mensajes de feedback por query string
-        $mensaje = null;
-        if (isset($_GET["msg"])) {
-            switch ($_GET["msg"]) {
-                case "creado": $mensaje = "<div class='alert alert-success'>Tu mensaje fue enviado correctamente.</div>"; break;
-                case "error":  $mensaje = "<div class='alert alert-danger'>Ocurrió un error. Verifica los datos.</div>"; break;
-            }
-        }
+    $resumenPersonalizacion = null;
 
-        require __DIR__ . '/../../vista/experienciausuarios/contacto.php';
+    // Si viene ?per_id en la URL, traer detalle
+    if (!empty($_GET['per_id'])) {
+        $perId = (int) $_GET['per_id'];
+        $perService = new PersonalizacionService();
+        $resumenPersonalizacion = $perService->obtenerDetalle($perId);
     }
+
+    require __DIR__ . '/../../vista/experienciausuarios/contacto.php';
+    }
+
 
     // =========================
     // POST /contacto → enviar formulario
