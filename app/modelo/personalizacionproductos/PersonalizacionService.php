@@ -1,45 +1,130 @@
 <?php
+// app/modelo/personalizacionproductos/PersonalizacionService.php
 
-$usu_id = readline("Ingrese el ID del usuario: ");
-$deseaPersonalizacion = readline("¿Desea personalización? (1 = Sí, 0 = No): ");
+class PersonalizacionService {
+    private string $apiUrl;
 
-// --- Consumir API Usuario ---
-$urlUsuario = "http://localhost:8080/usuarios/" . $usu_id;
-$usuarioJson = @file_get_contents($urlUsuario);
-
-if ($usuarioJson === FALSE) {
-    die("Error al consumir el servicio de usuarios.\n");
-}
-
-$usuario = json_decode($usuarioJson, true);
-
-// Validar si usuario existe
-if (!$usuario) {
-    die("Usuario no encontrado.\n");
-}
-
-// Verificar si está activo
-if (!$usuario['usuActivo']) {
-    die("El usuario {$usuario['usuNombre']} no puede realizar pedidos porque está inactivo.\n");
-}
-
-// --- Si desea personalización, consultar API ---
-if ($deseaPersonalizacion == 1) {
-    $urlPers = "http://localhost:8080/personalizacion?usu_id=" . $usu_id;
-    $personalizacionesJson = @file_get_contents($urlPers);
-
-    if ($personalizacionesJson === FALSE) {
-        die("Error al consumir el servicio de personalizaciones.\n");
+    public function __construct() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $this->apiUrl = rtrim(BASE_URL_API, '/') . '/personalizaciones';
     }
 
-    $personalizaciones = json_decode($personalizacionesJson, true);
-
-    if (empty($personalizaciones)) {
-        echo "Debe configurar una personalización antes de continuar.\n";
-    } else {
-        echo "Pedido con personalización válido para el usuario {$usuario['usuNombre']}.\n";
+    private function authHeaders(): array {
+        $jwt = $_SESSION['jwt'] ?? $_SESSION['access_token'] ?? null;
+        $headers = ['Content-Type: application/json'];
+        if ($jwt) $headers[] = 'Authorization: Bearer ' . $jwt;
+        return $headers;
     }
-} else {
-    echo "Pedido estándar válido para el usuario {$usuario['usuNombre']}.\n";
+
+    /**
+     * POST /api/personalizaciones
+     * Body:
+     * {
+     *   "fecha": "YYYY-MM-DD",
+     *   "usuarioClienteId": 123,
+     *   "valoresSeleccionados": [idGema, idForma, idMaterial, idTamano, idTalla]
+     * }
+     * Respuesta: { "id": N, ... }
+     */
+    public function crear(string $fecha, int $usuarioClienteId, array $valoresSeleccionados): array {
+        $payload = [
+            'fecha'                => $fecha,
+            'usuarioClienteId'     => $usuarioClienteId,
+            'valoresSeleccionados' => array_values($valoresSeleccionados),
+        ];
+
+        $json = json_encode($payload, JSON_UNESCAPED_UNICODE);
+        $ch = curl_init($this->apiUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_CUSTOMREQUEST  => 'POST',
+            CURLOPT_POSTFIELDS     => $json,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER     => array_merge($this->authHeaders(), ['Content-Length: ' . strlen($json)]),
+        ]);
+        $resp = curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $err  = curl_error($ch);
+        curl_close($ch);
+
+        if ($err) return ['success'=>false, 'error'=>$err, 'http_code'=>$code];
+        return ($code >= 200 && $code < 300)
+            ? ['success'=>true, 'data'=>json_decode($resp, true), 'http_code'=>$code]
+            : ['success'=>false, 'error'=>"HTTP $code", 'data'=>$resp, 'http_code'=>$code];
+    }
+
+    // (Opcional) GET /api/personalizaciones?clienteId=...
+    public function listarPorCliente(int $clienteId, ?string $fechaDesde=null, ?string $fechaHasta=null): array|false {
+        $q = ['clienteId' => $clienteId];
+        if ($fechaDesde) $q['fechaDesde'] = $fechaDesde;
+        if ($fechaHasta) $q['fechaHasta'] = $fechaHasta;
+
+        $url = $this->apiUrl . '?' . http_build_query($q);
+        $ctx = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => implode("\r\n", $this->authHeaders()),
+                'ignore_errors' => true,
+            ]
+        ]);
+        $resp = @file_get_contents($url, false, $ctx);
+        if ($resp === false) return false;
+        return json_decode($resp, true);
+    }
+
+    // (Opcional) GET /api/personalizaciones/{id}
+    public function obtener(int $id): array|false {
+        $url = $this->apiUrl . '/' . urlencode($id);
+        $ctx = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'header' => implode("\r\n", $this->authHeaders()),
+                'ignore_errors' => true,
+            ]
+        ]);
+        $resp = @file_get_contents($url, false, $ctx);
+        if ($resp === false) return false;
+        return json_decode($resp, true);
+    }
+
+    // GET /api/personalizaciones/{id}
+public function obtenerDetalle(int $perId): array|false {
+    $url = rtrim(BASE_URL_API, '/') . '/personalizaciones/' . urlencode($perId);
+
+    $ctx = stream_context_create([
+        'http' => [
+            'method' => 'GET',
+            'header' => "Content-Type: application/json\r\n",
+            'ignore_errors' => true,
+        ]
+    ]);
+
+    $resp = @file_get_contents($url, false, $ctx);
+    if ($resp === false) return false;
+
+    $data = json_decode($resp, true);
+    if (!is_array($data)) return false;
+
+    // Adaptar el detalle a un formato sencillo para la vista
+    $resumen = [
+        'gema'     => null,
+        'forma'    => null,
+        'material' => null,
+        'tamano'   => null,
+        'talla'    => null,
+    ];
+
+    if (!empty($data['detalles']) && is_array($data['detalles'])) {
+        foreach ($data['detalles'] as $det) {
+            $nombre = strtolower($det['valNombre'] ?? $det['val_nombre'] ?? '');
+            if (str_contains($nombre, 'gema'))     $resumen['gema']     = $nombre;
+            elseif (str_contains($nombre, 'forma'))    $resumen['forma']    = $nombre;
+            elseif (str_contains($nombre, 'oro') || str_contains($nombre, 'plata')) $resumen['material'] = $nombre;
+            elseif (str_contains($nombre, 'mm'))       $resumen['tamano']   = $nombre;
+            elseif (str_contains($nombre, 'talla'))    $resumen['talla']    = $nombre;
+        }
+    }
+
+    return $resumen;
 }
-?>
+
+}
