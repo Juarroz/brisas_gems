@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
-    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/icons/icono.png" />
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css" />
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/header.css" />
     <style>
         :root { --bs-primary: #009688; }
         body { background-color: #f0f2f5; }
@@ -41,7 +44,7 @@
 
                         <form action="/login" method="POST">
                             <div class="mb-3">
-                                <label for="email" class="form-label">Correo Electrónico</label>
+                                <label for="email" class="form-label">Correo electrónico</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="mb-3">

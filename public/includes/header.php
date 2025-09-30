@@ -41,7 +41,7 @@ $usu_nombre = $_SESSION['usu_nombre'] ?? null;
             <?= strtoupper(substr($usu_nombre, 0, 1)) ?>
           </div>
         <?php else: ?>
-          <a href="<?= BASE_URL ?>/login.php" class="btn-login">Iniciar sesión</a>
+          <a href="<?= BASE_URL ?>/login" class="btn-login">Iniciar sesión</a>
         <?php endif; ?>
 
         <?php if ($rol_id): ?>
