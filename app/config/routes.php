@@ -3,26 +3,32 @@
 // app/config/routes.php
 // Definir las rutas: método + path => Controller@acción
 return [
-    // Landige page
+
+    // ======================
+    // LANDING PAGE
+    // ======================
     'GET /' => 'HomeController@index',
 
-    // === RUTAS EXISTENTES DE TU EQUIPO ===
-    'POST /registro'  => 'sistemausuarios/AuthController@register',
-    'GET /gestion-usuarios' => 'sistemausuarios/GestionUsuariosController@index',
-    "POST /contacto/crear"    => "experienciausuarios/ContactoController@crear",
-    
-    // === NUESTRAS RUTAS DEL PANEL DE ADMINISTRACIÓN ===
+    // ======================
+    // AUTENTICACIÓN
+    // ======================
 
-    // --- Autenticación ---
+    'POST /registro'  => 'sistemausuarios/AuthController@register',
     'GET /login'    => 'seguridad/AuthController@showLogin',
     'POST /login'   => 'seguridad/AuthController@handleLogin',
     'GET /logout'   => 'seguridad/AuthController@handleLogout',
 
-    // --- Dashboard ---
+    // ======================
+    // DASHBOARD
+    // ======================
+
     'GET /dashboard' => 'dashboard/DashboardController@showDashboard',
 
-    // --- Usuarios ---
-    // --- LÍNEA AÑADIDA ---
+    // ======================
+    // SISTEMA Y USUARIOS
+    // ======================
+
+    'GET /gestion-usuarios'         => 'sistemausuarios/GestionUsuariosController@index',
     'GET /usuarios/registrar'       => 'sistemausuarios/UsuarioController@showRegistrationForm',
     'POST /usuarios/registrar'      => 'sistemausuarios/UsuarioController@handleRegistration',
     'GET /usuarios'                 => 'sistemausuarios/UsuarioController@listUsers',
@@ -30,19 +36,19 @@ return [
     'GET /usuarios/editar'          => 'sistemausuarios/UsuarioController@showEditForm',
     'POST /usuarios/actualizar'     => 'sistemausuarios/UsuarioController@handleUpdate',
     'POST /usuarios/cambiar-estado' => 'sistemausuarios/UsuarioController@handleChangeStatus',
-    
-    // ... (El resto de las rutas no cambia) ...
+
+    // ======================
+    // GESTIÓN DE PEDIDOS
+    // ======================
+
+    'GET /pedido'     => 'gestionpedidos/PedidoController@index',
+    'POST /pedido'    => 'gestionpedidos/PedidoController@crear',
     'GET /pedidos'              => 'gestionpedidos/PedidoController@listPedidos',
     'GET /pedidos/detalles'     => 'gestionpedidos/PedidoController@showPedidoDetails',
     'POST /pedidos/actualizar'  => 'gestionpedidos/PedidoController@handleUpdateStatus',
 
     // ======================
-    // Sistema y Usuarios
-    // ======================
-    
-
-    // ======================
-    // Experiencia de Usuario
+    // EXPERIENCIA DE USUARIO
     // ======================
 
     // Cliente (formulario de contacto)
@@ -53,21 +59,17 @@ return [
     "GET /admin/contactos"        => "experienciausuarios/GestionContactosController@listar",
     "POST /admin/contactos/update" => "experienciausuarios/GestionContactosController@actualizar",
     "POST /admin/contactos/delete" => "experienciausuarios/GestionContactosController@eliminar",
-
-
-    // ======================
-    // Gestión de Pedidos
-    // ======================
-    'GET /pedido'     => 'gestionpedidos/PedidoController@index',
-    'POST /pedido'    => 'gestionpedidos/PedidoController@crear',
+    
 
     // ======================
-    // Personalización de Joyas
+    // PERSONALIZACIÓN DE JOYAS
     // ======================
+
+    // Cliente 
     'GET /personalizar'          => 'personalizacionproductos/PersonalizacionController@mostrar',
     'POST /personalizar/guardar' => 'personalizacionproductos/PersonalizacionController@guardar',
 
+    // Admin (gestión de opciones y valores)
     'GET /admin/opciones'        => 'personalizacionproductos/GestionPersonalizacionController@listarOpciones',
     'GET /admin/valores'         => 'personalizacionproductos/GestionPersonalizacionController@listarValores',
-
 ];
