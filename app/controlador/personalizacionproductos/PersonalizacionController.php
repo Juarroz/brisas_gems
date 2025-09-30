@@ -17,22 +17,61 @@ class PersonalizacionController {
         $this->opcService = new OpcionPersonalizacionService();
         $this->valService = new ValorPersonalizacionService();
     }
-
+    
     // GET /personalizar
     public function mostrar() {
+        $opciones = $this->opcService->listar();
+        if ($opciones === false || !is_array($opciones)) $opciones = [];
+
+        $catalogo = [];
+
+        foreach ($opciones as $opc) {
+            $opcId   = (int)($opc['opc_id'] ?? $opc['id'] ?? 0);
+            $opcName = (string)($opc['opc_nombre'] ?? $opc['nombre'] ?? '');
+            if (!$opcId || !$opcName) continue;
+
+            // Crear slug para carpetas y data-atributos
+            $slug = $this->slug($opcName);
+
+            $valores = $this->valService->listar($opcId);
+            $vals = [];
+            if ($valores && is_array($valores)) {
+                foreach ($valores as $v) {
+                    $valId   = (int)($v['val_id'] ?? $v['id'] ?? 0);
+                    $valName = (string)($v['val_nombre'] ?? $v['nombre'] ?? '');
+                    if (!$valId || !$valName) continue;
+
+                    $valSlug = $this->slug($valName);
+
+                    $vals[] = [
+                        'id'     => $valId,
+                        'nombre' => $valName,
+                        'slug'   => $valSlug
+                    ];
+                }
+            }
+
+            $catalogo[] = [
+                'opc_id' => $opcId,
+                'nombre' => $opcName,
+                'slug'   => $slug,
+                'valores'=> $vals
+            ];
+        }
+
+        $CATALOGO = $catalogo;
         require __DIR__ . '/../../vista/personalizacionproductos/personalizar.php';
     }
 
+
     // POST /personalizar/guardar
     public function guardar() {
-        // 1) Entradas del form
         $gema     = trim($_POST['gema']     ?? '');
         $forma    = trim($_POST['forma']    ?? '');
         $material = trim($_POST['material'] ?? '');
         $tamano   = trim($_POST['tamano']   ?? '');
         $talla    = trim($_POST['talla']    ?? '');
 
-        // Validaciones mínimas
         $faltantes = [];
         foreach (['gema','forma','material','tamano','talla'] as $k) {
             if (empty($_POST[$k])) $faltantes[] = $k;
@@ -42,7 +81,6 @@ class PersonalizacionController {
             exit;
         }
 
-        // 2) Normaliza textos del UI a cómo están guardados en BD
         $seleccionNormalizada = [
             'gema'     => $this->norm($gema),
             'forma'    => $this->norm($forma),
@@ -51,60 +89,45 @@ class PersonalizacionController {
             'talla'    => str_starts_with($talla, 'talla') ? $this->norm($talla) : 'talla ' . $this->norm($talla),
         ];
 
-        // 3) Mapa opc_id
         $opcIds = $this->resolverOpcionesIds();
         if (!$opcIds) {
             header('Location: ' . BASE_URL . '/personalizar?msg=error_opciones');
             exit;
         }
 
-        // 4) Resolver val_id para cada selección del usuario
         $valIds = $this->resolverValoresIds($opcIds, $seleccionNormalizada);
         if (!$valIds || count($valIds) !== 5) {
+            if (defined('DEBUG_MODE') && DEBUG_MODE) {
+                echo "<pre>";
+                echo "⛔ No se pudieron resolver los 5 val_id\n\n";
+                print_r($seleccionNormalizada);
+                print_r($opcIds);
+                print_r($valIds);
+                echo "</pre>";
+                exit;
+            }
             header('Location: ' . BASE_URL . '/personalizar?msg=error_valores');
             exit;
         }
 
-        // 5) Crear personalización (un solo POST según tu API)
         $fecha = date('Y-m-d');
-        // tu DTO exige int; si el usuario no está logueado, decide:
-        // a) exigir login y redirigir, o b) usar 0 como invitado.
-        $usuarioClienteId = isset($_SESSION['usu_id'])
-            ? (int)$_SESSION['usu_id']
-            : (int)DEFAULT_CLIENTE_ID;
+        $usuarioClienteId = $_SESSION['usu_id'] ?? DEFAULT_CLIENTE_ID;
 
-        $creado = $this->perService->crear($fecha, $usuarioClienteId, $valIds);
+        $creado = $this->perService->crear($fecha, (int)$usuarioClienteId, $valIds);
 
-        // Debug temporal si falla
         if (!($creado['success'] ?? false)) {
-            if (defined('DEBUG_MODE') && DEBUG_MODE) {
-                echo "<pre style='white-space:pre-wrap'>";
-                echo "Fallo al crear personalización (POST /api/personalizaciones)\n\n";
-                echo htmlspecialchars(print_r($creado, true));
-                echo "\n\nPayload enviado:\n" . htmlspecialchars(print_r([
-                    'fecha'                => $fecha,
-                    'usuarioClienteId'     => $usuarioClienteId,
-                    'valoresSeleccionados' => $valIds,
-                ], true));
-                echo "\n\nURL: " . htmlspecialchars(rtrim(BASE_URL_API, '/') . '/personalizaciones');
-                echo "</pre>";
-                exit;
-            }
             header('Location: ' . BASE_URL . '/personalizar?msg=error_crear');
             exit;
         }
 
-        // La API responde con {"id": N, ...}
         $perId = $creado['data']['id'] ?? $creado['id'] ?? null;
         if (!$perId) {
             header('Location: ' . BASE_URL . '/personalizar?msg=error_perid');
             exit;
         }
 
-        // 6) OK → redirigir con per_id
         header('Location: ' . BASE_URL . '/contacto?per_id=' . urlencode($perId));
         exit;
-
     }
 
     // -------------------------
@@ -112,9 +135,22 @@ class PersonalizacionController {
     // -------------------------
 
     private function norm(string $s): string {
-        $s = strtolower(trim($s));
-        $s = str_replace(['  '], [' '], $s);
-        return $s;
+        $s = mb_strtolower(trim($s), 'UTF-8');
+        $sinAcentos = iconv('UTF-8', 'ASCII//TRANSLIT', $s);
+        if ($sinAcentos !== false) $s = $sinAcentos;
+        $s = str_replace(['_','-'], ' ', $s);
+        $s = preg_replace('/\s+/', ' ', $s);
+        return trim($s);
+    }
+
+    private function slug(string $s): string {
+        $s = mb_strtolower(trim($s), 'UTF-8');
+        $sinAcentos = iconv('UTF-8', 'ASCII//TRANSLIT', $s);
+        if ($sinAcentos !== false) $s = $sinAcentos;
+        $s = preg_replace('/[^a-z0-9\s\-\.]/', '', $s);
+        $s = str_replace([' ', '_'], '-', $s);
+        $s = preg_replace('/-+/', '-', $s);
+        return trim($s, '-');
     }
 
     private function resolverOpcionesIds(): ?array {
@@ -127,19 +163,9 @@ class PersonalizacionController {
         foreach ($opciones as $opc) {
             $id   = $opc['opc_id'] ?? $opc['id'] ?? null;
             $name = strtolower((string)(
-                $opc['opc_nombre']   // snake
-                ?? $opc['opcNombre'] // camel
-                ?? $opc['nombre']
-                ?? ''
+                $opc['opc_nombre'] ?? $opc['opcNombre'] ?? $opc['nombre'] ?? ''
             ));
-            $slug = strtolower((string)($opc['slug'] ?? ''));
-
             if (!$id) continue;
-
-            if ($slug && in_array($slug, $targets, true)) {
-                $map[$slug] = (int)$id;
-                continue;
-            }
 
             if (str_contains($name, 'gema'))     $map['gema']     = (int)$id;
             if (str_contains($name, 'forma'))    $map['forma']    = (int)$id;
@@ -167,10 +193,7 @@ class PersonalizacionController {
             $valId = null;
             foreach ($valores as $v) {
                 $nombre = $this->norm((string)(
-                    $v['val_nombre']   // snake
-                    ?? $v['valNombre'] // camel
-                    ?? $v['nombre']
-                    ?? ''
+                    $v['val_nombre'] ?? $v['valNombre'] ?? $v['nombre'] ?? ''
                 ));
                 if ($nombre === $buscado ||
                     str_replace(['-',' '], '', $nombre) === str_replace(['-',' '], '', $buscado)) {

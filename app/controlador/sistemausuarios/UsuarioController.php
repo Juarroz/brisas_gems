@@ -99,8 +99,11 @@ class UsuarioController {
             $response = $this->usuarioService->crearUsuario($userData);
             if ($response['code'] === 201) {
                 if (session_status() == PHP_SESSION_NONE) { session_start(); }
-                $_SESSION['flash_message'] = ['type' => 'success', 'text' => '¡Registro exitoso! Ya puedes iniciar sesión.'];
-                header('Location: /login');
+                $_SESSION['flash_message'] = [
+                    'type' => 'success',
+                    'text' => '¡Registro exitoso! Ya puedes iniciar sesión.'
+                ];
+                header('Location: ' . BASE_URL . '/login'); // ✅ corregido
                 exit();
             } else {
                 $error_message = "Error al registrar el usuario.";

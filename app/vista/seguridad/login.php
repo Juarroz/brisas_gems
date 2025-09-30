@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
-    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="<?= BASE_URL ?>/assets/icons/icono.png" />
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/main.css" />
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/header.css" />
     <style>
         :root { --bs-primary: #009688; }
         body { background-color: #f0f2f5; }
@@ -20,8 +23,7 @@
                         <h2 class="card-title text-center mb-4">Iniciar Sesión</h2>
 
                         <?php
-                        // --- CÓDIGO AÑADIDO ---
-                        // Muestra el mensaje flash si existe (ej: después de un registro exitoso)
+                        // --- MENSAJE FLASH ---
                         if (session_status() == PHP_SESSION_NONE) { session_start(); }
                         if (isset($_SESSION['flash_message'])):
                         ?>
@@ -32,16 +34,16 @@
                         <?php
                             unset($_SESSION['flash_message']); // Limpiamos el mensaje
                         endif;
-                        // --- FIN DEL CÓDIGO AÑADIDO ---
 
-                        // Muestra el mensaje de error si el login falla
+                        // --- ERROR DE LOGIN ---
                         if (isset($error_message)): ?>
                             <div class="alert alert-danger"><?php echo htmlspecialchars($error_message); ?></div>
                         <?php endif; ?>
 
-                        <form action="/login" method="POST">
+                        <!-- FORMULARIO -->
+                        <form action="<?= BASE_URL ?>/login" method="POST">
                             <div class="mb-3">
-                                <label for="email" class="form-label">Correo Electrónico</label>
+                                <label for="email" class="form-label">Correo electrónico</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="mb-3">
@@ -52,8 +54,9 @@
                                 <button type="submit" class="btn btn-primary">Ingresar</button>
                             </div>
                         </form>
+
                         <div class="text-center mt-3">
-                            <a href="/usuarios/registrar">¿No tienes una cuenta? Regístrate aquí</a>
+                            <a href="<?= BASE_URL ?>/usuarios/registrar">¿No tienes una cuenta? Regístrate aquí</a>
                         </div>
                     </div>
                 </div>
