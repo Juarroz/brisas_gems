@@ -55,21 +55,55 @@ INSERT INTO usuarios (usu_nombre, usu_correo, usu_telefono, usu_password, rol_id
 ('Santiago Morales', 'santiagomorales@gmail.com', '3001000008', '$2a$10$y.6276/Fz6kHmqO2I/O.7.9Wf2Tj0Gq3N9.tYyG2q2dG0q/c0S0mS', 1, 1, 1, 'registro', '1000008'),
 ('Laura Sánchez', 'laurasanchez@gmail.com', '3001000009', '$2a$10$y.6276/Fz6kHmqO2I/O.7.9Wf2Tj0Gq3N9.tYyG2q2dG0q/c0S0mS', 1, 2, 1, 'registro', '1000009');
 
--- tabla opcion_personalizacion
-INSERT INTO opcion_personalizacion (opc_nombre) VALUES
-('Gema Principal'),
-('Forma de la Gema'),
-('Material del Anillo'),
-('Tamaño de la Joya'),
-('Talla del Anillo');
 
--- tabla valor_personalizacion
+-- Opciones de personalización
+INSERT INTO opcion_personalizacion (opc_nombre) VALUES 
+('Gema central'),             -- opc_id = 1
+('Forma de la gema'),         -- opc_id = 2
+('Material'),      -- opc_id = 3
+('Tamaño de la gema'),        -- opc_id = 4
+('Talla del anillo');         -- opc_id = 5
+
+-- Valores de la gema (opc_id = 1)
 INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
-('Esmeralda', 1), ('Diamante', 1), ('Rubí', 1),
-('Redonda', 2), ('Cuadrada', 2), ('Ovalada', 2),
-('Oro Amarillo', 3), ('Oro Blanco', 3), ('Plata', 3), ('Platino', 3),
-('6 mm', 4), ('7 mm', 4), ('9 mm', 4),
-('Talla 6', 5), ('Talla 7', 5), ('Talla 8', 5), ('Talla 9', 5);
+('Diamante', 1),
+('Esmeralda', 1),
+('Zafiro',   1),
+('Rubi',     1);
+
+-- Formas de la gema (opc_id = 2)
+INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
+('Redonda',  2),
+('Ovalada',  2),
+('Cuadrada', 2),
+('Corazon',  2);
+
+-- Material del anillo (opc_id = 3)
+INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
+('Oro Amarillo', 3),
+('Oro Blanco',   3),
+('Oro Rosa',     3),
+('Platino',      3),
+('Plata',        3);
+
+-- Tamaño de la gema (opc_id = 4)
+INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
+('7 mm', 4),
+('8 mm', 4);
+
+-- Talla del anillo (opc_id = 5)
+INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
+('Talla 4',   5),
+('Talla 4.5', 5),
+('Talla 5',   5),
+('Talla 5.5', 5),
+('Talla 6',   5),
+('Talla 6.5', 5),
+('Talla 7',   5),
+('Talla 7.5', 5),
+('Talla 8',   5),
+('Talla 8.5', 5),
+('Talla 9',   5);
 
 -- tabla personalizacion (asociados a clientes)
 INSERT INTO personalizacion (per_fecha, usu_id_cliente) VALUES
