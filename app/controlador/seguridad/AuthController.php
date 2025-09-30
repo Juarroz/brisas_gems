@@ -19,11 +19,13 @@ class AuthController {
             $result = $this->authService->login($email, $password);
 
             if ($result && isset($result['token'])) {
-                if (session_status() == PHP_SESSION_NONE) { session_start(); }
+                if (session_status() == PHP_SESSION_NONE) { 
+                    session_start(); 
+                }
                 $_SESSION['jwt_token'] = $result['token'];
-                
-                // Redirigimos a la nueva ruta del dashboard
-                header('Location: /dashboard');
+
+                // Redirigir usando BASE_URL
+                header('Location: ' . BASE_URL . '/dashboard');
                 exit();
             } else {
                 $error_message = "Correo o contraseña incorrectos.";
@@ -35,10 +37,14 @@ class AuthController {
     }
 
     public function handleLogout() {
-        if (session_status() == PHP_SESSION_NONE) { session_start(); }
-        $_SESSION = array();
+        if (session_status() == PHP_SESSION_NONE) { 
+            session_start(); 
+        }
+        $_SESSION = [];
         session_destroy();
-        header('Location: /login');
+
+        // Redirigir usando BASE_URL
+        header('Location: ' . BASE_URL . '/login');
         exit();
     }
 }

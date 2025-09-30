@@ -15,30 +15,6 @@ INSERT INTO rol (rol_nombre) VALUES
 ('administrador'),
 ('diseñador');
 
-
--- Usuario "Guest" para personalizaciones sin registro
-INSERT INTO usuarios (
-    usu_nombre,
-    usu_correo,
-    usu_telefono,
-    usu_password,
-    usu_docnum,
-    usu_origen,
-    usu_activo,
-    tipdoc_id,
-    rol_id
-) VALUES (
-    'Usuario Invitado',
-    'guest@brisasgems.com',
-    '0000000000',
-    '12345678',        -- puede ser un hash o un dummy
-    'GUEST-9999',
-    'admin',             -- origen: creado por sistema/admin
-    true,                -- activo = 1
-    1,                   -- tipdoc_id válido (ejemplo: Cédula)
-    1                    -- rol_id = cliente (ajusta al id correcto de "cliente")
-);
-    
 -- tabla usuarios (contraseña para todos es: 12345678)
 -- La contraseña está hasheada con BCrypt
 INSERT INTO usuarios (usu_nombre, usu_correo, usu_telefono, usu_password, rol_id, tipdoc_id, usu_activo, usu_origen, usu_docnum) VALUES
