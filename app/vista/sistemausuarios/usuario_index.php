@@ -22,47 +22,60 @@
             --border-radius: 0.75rem;
             --font-family-sans-serif: 'Poppins', sans-serif;
         }
+        
+        :root {
+    --emerald-primary: #009b77;
+    --emerald-dark: #007a5f;
+    --emerald-light-bg: #f4f7f6;
+    --text-dark: #212529;
+    --text-light: #6c757d;
+    --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+    --border-radius: 0.75rem;
+    --font-family-sans-serif: 'Poppins', sans-serif;
+    }
 
-        body {
-            font-family: var(--font-family-sans-serif);
-            background-color: var(--emerald-light-bg);
-        }
+    body {
+        font-family: var(--font-family-sans-serif);
+        background-color: var(--emerald-light-bg);
+    }
 
-        .btn-emerald {
-            background-color: var(--emerald-primary);
-            border-color: var(--emerald-primary);
-            color: #fff;
-            font-weight: 600;
-        }
-        .btn-emerald:hover {
-            background-color: var(--emerald-dark);
-            border-color: var(--emerald-dark);
-            color: #fff;
-        }
+    .btn-emerald {
+        background-color: var(--emerald-primary);
+        border-color: var(--emerald-primary);
+        color: #fff;
+        font-weight: 600;
+    }
 
-        .card {
-            border: none;
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
-            overflow: hidden;
-        }
+    .btn-emerald:hover {
+        background-color: var(--emerald-dark);
+        border-color: var(--emerald-dark);
+        color: #fff;
+    }
 
-        .form-control:focus, .form-select:focus {
-            border-color: var(--emerald-primary);
-            box-shadow: 0 0 0 0.25rem rgba(0, 155, 119, 0.25);
-        }
+    .card {
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
+    }
 
-        .accordion-button:not(.collapsed) {
-            background-color: var(--emerald-light-bg);
-            color: var(--emerald-primary);
-            box-shadow: none;
-        }
+    .form-control:focus, .form-select:focus {
+        border-color: var(--emerald-primary);
+        box-shadow: 0 0 0 0.25rem rgba(0, 155, 119, 0.25);
+    }
 
-        .alert-custom {
-            background-color: #fff;
-            border-left: 5px solid var(--emerald-primary);
-            box-shadow: var(--card-shadow);
-        }
+    .accordion-button:not(.collapsed) {
+        background-color: var(--emerald-light-bg);
+        color: var(--emerald-primary);
+        box-shadow: none;
+    }
+
+    .alert-custom {
+        background-color: #fff;
+        border-left: 5px solid var(--emerald-primary);
+        box-shadow: var(--card-shadow);
+    }
+
     </style>
 </head>
 <body>
@@ -84,16 +97,17 @@
             </div>
         <?php endif; ?>
 
+        <!-- Filtros -->
         <section class="accordion mb-4" id="accordionFilters">
             <div class="accordion-item card">
                 <h2 class="accordion-header" id="headingOne">
-                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters" aria-expanded="false" aria-controls="collapseFilters">
+                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilters">
                         <i class="bi bi-funnel-fill me-2"></i>Filtros de Búsqueda
                     </button>
                 </h2>
                 <div id="collapseFilters" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionFilters">
                     <div class="accordion-body">
-                        <form method="GET">
+                        <form method="GET" action="<?= BASE_URL ?>/usuarios">
                             <div class="row g-3 align-items-end">
                                 <div class="col-md-4">
                                     <label for="filterRol" class="form-label">Rol</label>
@@ -114,7 +128,7 @@
                                 </div>
                                 <div class="col-md-4 d-flex gap-2">
                                     <button type="submit" class="btn btn-emerald w-100"><i class="bi bi-search me-2"></i>Aplicar</button>
-                                    <a href="./" class="btn btn-outline-secondary"><i class="bi bi-eraser"></i></a>
+                                    <a href="<?= BASE_URL ?>/usuarios" class="btn btn-outline-secondary"><i class="bi bi-eraser"></i></a>
                                 </div>
                             </div>
                         </form>
@@ -123,6 +137,7 @@
             </div>
         </section>
 
+        <!-- Listado -->
         <section class="mb-5" aria-labelledby="listado-heading">
             <h2 id="listado-heading" class="h4 fw-bold mb-3">Listado de Usuarios</h2>
             <?php if (is_array($usuarios) && isset($usuarios["content"])): ?>
@@ -146,8 +161,8 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="d-flex flex-wrap align-items-center justify-content-lg-end gap-2">
-                                            <form method="POST" class="d-flex gap-2 align-items-center">
-                                                <input type="hidden" name="accion" value="actualizar">
+                                            <!-- Actualizar -->
+                                            <form action="<?= BASE_URL ?>/usuarios/actualizar" method="POST" class="d-flex gap-2 align-items-center">
                                                 <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u["id"] ?? '')) ?>">
                                                 <select name="rolId" class="form-select form-select-sm" required style="min-width: 120px;">
                                                     <option value="1" <?= (($u["rolId"] ?? '') == 1) ? 'selected' : '' ?>>Usuario</option>
@@ -160,8 +175,8 @@
                                                 </select>
                                                 <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-save"></i></button>
                                             </form>
-                                            <form method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
-                                                <input type="hidden" name="accion" value="eliminar">
+                                            <!-- Eliminar -->
+                                            <form action="<?= BASE_URL ?>/usuarios/eliminar" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este usuario?');">
                                                 <input type="hidden" name="id" value="<?= htmlspecialchars((string)($u["id"] ?? '')) ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                                             </form>
@@ -179,6 +194,7 @@
             <?php endif; ?>
         </section>
 
+        <!-- Crear -->
         <section aria-labelledby="crear-heading">
             <div class="card">
                 <div class="card-header bg-white py-3">
@@ -187,7 +203,7 @@
                     </h2>
                 </div>
                 <div class="card-body p-4">
-                    <form method="POST">
+                    <form action="<?= BASE_URL ?>/usuarios" method="POST">
                         <input type="hidden" name="accion" value="crear">
                         <div class="row g-3">
                             <div class="col-md-6 col-lg-4">
