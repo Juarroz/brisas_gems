@@ -14,7 +14,6 @@ class UsuarioService {
     }
 
     public function listarUsuarios(string $token, ?bool $activo = true, ?int $rolId = null): ?array {
-        // Construimos la URL con los filtros que no sean nulos
         $queryParams = [];
         if ($activo !== null) {
             $queryParams['activo'] = $activo ? 'true' : 'false';
@@ -46,7 +45,13 @@ class UsuarioService {
 
     public function actualizarUsuario(int $id, array $userData, string $token): array {
         $endpoint = '/usuarios/' . $id;
-        return $this->apiClient->request('PUT', $endpoint, $userData, $token);
+        $updateData = [
+            'nombre' => $userData['nombre'] ?? null,
+            'correo' => $userData['correo'] ?? null,
+            'telefono' => $userData['telefono'] ?? null,
+            'rolId' => $userData['rolId'] ?? null
+        ];
+        return $this->apiClient->request('PUT', $endpoint, $updateData, $token);
     }
     
     public function cambiarEstadoUsuario(int $id, bool $nuevoEstado, string $token): array {
