@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../../core/ApiClient.php';
 // ================================
 // modelo/sistemausuarios/GestionUsuariosService.php
 // ================================

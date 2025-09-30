@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../core/ApiClient.php';
+
 $url = "http://localhost:8080/portafolio";
 
 $consumo = file_get_contents($url);

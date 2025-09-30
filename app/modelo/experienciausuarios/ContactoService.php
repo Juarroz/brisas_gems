@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../core/ApiClient.php';
+
 class ContactoService {
     
     private $apiUrl = "http://localhost:8080/api/contactos";
