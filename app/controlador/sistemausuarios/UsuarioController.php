@@ -38,8 +38,11 @@ class UsuarioController {
             if ($response['code'] === 201) {
                 // Si el registro es exitoso, redirigimos al login con un mensaje de éxito
                 if (session_status() == PHP_SESSION_NONE) { session_start(); }
-                $_SESSION['flash_message'] = ['type' => 'success', 'text' => '¡Registro exitoso! Ya puedes iniciar sesión.'];
-                header('Location: /login');
+                $_SESSION['flash_message'] = [
+                    'type' => 'success',
+                    'text' => '¡Registro exitoso! Ya puedes iniciar sesión.'
+                ];
+                header('Location: ' . BASE_URL . '/login'); // ✅ corregido
                 exit();
             } else {
                 // Si falla, volvemos a mostrar el formulario con un error
