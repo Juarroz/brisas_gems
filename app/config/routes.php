@@ -1,39 +1,80 @@
 <?php
+
+// app/config/routes.php
 // Definir las rutas: método + path => Controller@acción
 return [
 
     // ======================
-    // Autenticación (ejemplo)
+    // LANDING PAGE
     // ======================
-    'GET /'           => 'sistemausuarios/AuthController@showLogin',   // raíz = login
-    'POST /login'     => 'sistemausuarios/AuthController@login',
+    'GET /' => 'HomeController@index',
+
+    // ======================
+    // AUTENTICACIÓN
+    // ======================
+
     'POST /registro'  => 'sistemausuarios/AuthController@register',
+    'GET /login'    => 'seguridad/AuthController@showLogin',
+    'POST /login'   => 'seguridad/AuthController@handleLogin',
+    'GET /logout'   => 'seguridad/AuthController@handleLogout',
 
     // ======================
-    // Sistema y Usuarios
+    // DASHBOARD
     // ======================
-    'GET /usuarios'   => 'sistemausuarios/UsuarioController@index',
-    'GET /gestion-usuarios' => 'sistemausuarios/GestionUsuariosController@index',
+
+    'GET /dashboard' => 'dashboard/DashboardController@showDashboard',
+
+    // ✅ AGREGAR ESTAS RUTAS NUEVAS:
+    'GET /admin/dashboard' => 'dashboard/DashboardController@showDashboard',
+    'GET /designer/dashboard' => 'dashboard/DashboardController@showDashboard', 
+    'GET /user/dashboard' => 'dashboard/DashboardController@showDashboard',
 
     // ======================
-    // Experiencia de Usuario
+    // SISTEMA Y USUARIOS
     // ======================
-    'GET /contacto'   => 'experienciausuarios/ContactoController@manejarpeticion',
-    'POST /contacto'  => 'experienciausuarios/ContactoController@crear',
+
+    'GET /gestion-usuarios'         => 'sistemausuarios/GestionUsuariosController@index',
+    'GET /usuarios/registrar'       => 'sistemausuarios/UsuarioController@showRegistrationForm',
+    'POST /usuarios/registrar'      => 'sistemausuarios/UsuarioController@handleRegistration',
+    'GET /usuarios'                 => 'sistemausuarios/UsuarioController@listUsers',
+    'GET /usuarios/inactivos'       => 'sistemausuarios/UsuarioController@listInactiveUsers',
+    'GET /usuarios/editar'          => 'sistemausuarios/UsuarioController@showEditForm',
+    'POST /usuarios/actualizar'     => 'sistemausuarios/UsuarioController@handleUpdate',
+    'POST /usuarios/cambiar-estado' => 'sistemausuarios/UsuarioController@handleChangeStatus',
 
     // ======================
-    // Gestión de Pedidos
+    // GESTIÓN DE PEDIDOS
     // ======================
+
     'GET /pedido'     => 'gestionpedidos/PedidoController@index',
     'POST /pedido'    => 'gestionpedidos/PedidoController@crear',
+    'GET /pedidos'              => 'gestionpedidos/PedidoController@listPedidos',
+    'GET /pedidos/detalles'     => 'gestionpedidos/PedidoController@showPedidoDetails',
+    'POST /pedidos/actualizar'  => 'gestionpedidos/PedidoController@handleUpdateStatus',
 
+    // ======================
+    // EXPERIENCIA DE USUARIO
+    // ======================
 
-    // Vista del formulario de contacto (usuario)
-    'GET /contacto-usuario' => 'experienciausuarios/ContactoUsuarioController@manejarpeticion',
+    // Cliente (formulario de contacto)
+    "GET /contacto"        => "experienciausuarios/ContactoController@mostrar", // muestra el form
+    "POST /contacto"       => "experienciausuarios/ContactoController@crear",   // envía datos del form
 
-    // Envío del formulario de contacto (usuario)
-    'POST /contacto-usuario' => 'experienciausuarios/ContactoUsuarioController@guardar',
+    // Admin (gestión de contactos)
+    "GET /admin/contactos"        => "experienciausuarios/GestionContactosController@listar",
+    "POST /admin/contactos/update" => "experienciausuarios/GestionContactosController@actualizar",
+    "POST /admin/contactos/delete" => "experienciausuarios/GestionContactosController@eliminar",
+    
 
-        // Mostrar la vista con listado + formulario
-    'GET /portafolio-inspiracion' => 'experienciausuarios/PortafolioInspiracionController@index',
+    // ======================
+    // PERSONALIZACIÓN DE JOYAS
+    // ======================
+
+    // Cliente 
+    'GET /personalizar'          => 'personalizacionproductos/PersonalizacionController@mostrar',
+    'POST /personalizar/guardar' => 'personalizacionproductos/PersonalizacionController@guardar',
+
+    // Admin (gestión de opciones y valores)
+    'GET /admin/opciones'        => 'personalizacionproductos/GestionPersonalizacionController@listarOpciones',
+    'GET /admin/valores'         => 'personalizacionproductos/GestionPersonalizacionController@listarValores',
 ];

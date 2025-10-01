@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../core/ApiClient.php';
+
 $correo = readline("Ingrese su correo: ");
 
 $urlUsuarios = "http://localhost:8080/usuarios";

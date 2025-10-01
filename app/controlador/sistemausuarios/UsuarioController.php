@@ -1,74 +1,119 @@
 <?php
-// Inicia o reanuda la sesión de PHP para manejar el token
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
 require_once __DIR__ . '/../../modelo/sistemausuarios/UsuarioService.php';
+require_once __DIR__ . '/../../modelo/sistemausuarios/RolService.php';
+require_once __DIR__ . '/../../core/AuthGuard.php';
 
 class UsuarioController {
     private $usuarioService;
+    private $rolService;
 
     public function __construct() {
         $this->usuarioService = new UsuarioService();
+        $this->rolService = new RolService();
     }
 
-    public function manejarPeticion() {
-        // Variables que usará la vista
-        $mensajeLogin    = '';
-        $mensajeRegistro = '';
-        $usuarios        = [];
+    public function listUsers() {
+        requireLogin();
+        $token = $_SESSION['jwt_token'];
+        $usuarios = $this->usuarioService->listarUsuarios($token, true);
+        require_once __DIR__ . '/../../vista/sistemausuarios/listar_usuarios.php';
+    }
 
-        // ---------- LOGOUT ----------
-        if (isset($_GET['accion']) && $_GET['accion'] === 'logout') {
-            session_destroy();
-            header("Location: index.php?page=usuarios");
-            exit();
-        }
+    public function listInactiveUsers() {
+        requireLogin();
+        $token = $_SESSION['jwt_token'];
+        $usuarios = $this->usuarioService->listarUsuarios($token, false);
+        require_once __DIR__ . '/../../vista/sistemausuarios/listar_inactivos.php';
+    }
 
-        // ---------- POST: login / registrar ----------
+    public function showEditForm() {
+        requireLogin();
+        $userId = $_GET['id'] ?? null;
+        if (!$userId) { die("Error: No se ha especificado un ID de usuario."); }
+        $token = $_SESSION['jwt_token'];
+        
+        $usuario = $this->usuarioService->obtenerUsuarioPorId((int)$userId, $token);
+        $roles = $this->rolService->listarRoles($token);
+
+        if (!$usuario) { $error_message = "No se pudo encontrar al usuario con ID " . htmlspecialchars($userId); }
+        
+        require_once __DIR__ . '/../../vista/sistemausuarios/editar_usuario.php';
+    }
+
+    public function handleUpdate() {
+        requireLogin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $accion = $_POST['accion'] ?? '';
-
-            // Login
-            if ($accion === 'login') {
-                $resultado = $this->usuarioService->login($_POST['email'] ?? '', $_POST['password'] ?? '');
-                if ($resultado['success']) {
-                    $_SESSION['jwt_token'] = $resultado['token'];
-                } else {
-                    $mensajeLogin = "<p style='color:red;'>" . htmlspecialchars($resultado['error']) . "</p>";
-                }
-            }
-            // Registro
-            elseif ($accion === 'registrar') {
-                $userData = [
-                    "nombre"   => $_POST['nombre'] ?? '',
-                    "correo"   => $_POST['correo'] ?? '',
-                    "password" => $_POST['password'] ?? '',
-                    "rolId"    => 2,   // Rol por defecto
-                    "activo"   => true
-                ];
-                $resultado = $this->usuarioService->registrarUsuario($userData);
-                if ($resultado['success']) {
-                    $mensajeRegistro = "<p style='color:green;'>Usuario registrado correctamente.</p>";
-                } else {
-                    $mensajeRegistro = "<p style='color:red;'>" . htmlspecialchars($resultado['error']) . "</p>";
-                }
-            }
-        }
-
-        // ---------- LISTAR USUARIOS (si hay sesión activa) ----------
-        if (isset($_SESSION['jwt_token'])) {
-            $listaUsuarios = $this->usuarioService->obtenerUsuarios($_SESSION['jwt_token']);
-            if ($listaUsuarios !== false) {
-                $usuarios = $listaUsuarios;
+            $token = $_SESSION['jwt_token'];
+            $userId = (int)$_POST['id'];
+            $userData = [
+                'nombre' => $_POST['nombre'] ?? '',
+                'correo' => $_POST['correo'] ?? '',
+                'telefono' => $_POST['telefono'] ?? null,
+                'rolId' => (int)($_POST['rolId'] ?? null)
+            ];
+            $response = $this->usuarioService->actualizarUsuario($userId, $userData, $token);
+            if ($response['code'] === 200) {
+                $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Usuario actualizado correctamente.'];
             } else {
-                unset($_SESSION['jwt_token']);
-                $mensajeLogin = "<p style='color:red;'>Tu sesión ha expirado. Inicia sesión de nuevo.</p>";
+                $_SESSION['flash_message'] = ['type' => 'danger', 'text' => 'Error al actualizar el usuario.'];
             }
         }
+        header('Location: ' . BASE_URL . '/usuarios');
+        exit();
+    }
 
-        // ---------- Cargar vista ----------
-        require __DIR__ . '/../../vista/sistemausuarios/usuario_index.php';
+    public function handleChangeStatus() {
+        requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $token = $_SESSION['jwt_token'];
+            $userId = (int)$_POST['id'];
+            $nuevoEstado = (bool)$_POST['estado'];
+            $response = $this->usuarioService->cambiarEstadoUsuario($userId, $nuevoEstado, $token);
+            if ($response['code'] === 200) {
+                $accion = $nuevoEstado ? 'activado' : 'desactivado';
+                $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Usuario ' . $accion . ' correctamente.'];
+            } else {
+                $_SESSION['flash_message'] = ['type' => 'danger', 'text' => 'Error al cambiar el estado del usuario.'];
+            }
+        }
+        $redirectUrl = $_POST['estado'] ? (BASE_URL . '/usuarios/inactivos') : (BASE_URL . '/usuarios');
+        header('Location: ' . $redirectUrl);
+        exit();
+    }
+
+    public function showRegistrationForm() {
+        require_once __DIR__ . '/../../vista/sistemausuarios/registro.php';
+    }
+
+    public function handleRegistration() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userData = [
+                'nombre'   => $_POST['nombre'] ?? '',
+                'correo'   => $_POST['correo'] ?? '',
+                'password' => $_POST['password'] ?? '',
+                'telefono' => $_POST['telefono'] ?? null,
+                'rolId'    => 1,
+                'origen'   => 'registro',
+                'activo'   => true
+            ];
+            $response = $this->usuarioService->crearUsuario($userData);
+            if ($response['code'] === 201) {
+                if (session_status() == PHP_SESSION_NONE) { session_start(); }
+                $_SESSION['flash_message'] = [
+                    'type' => 'success',
+                    'text' => '¡Registro exitoso! Ya puedes iniciar sesión.'
+                ];
+                header('Location: ' . BASE_URL . '/login'); // ✅ corregido
+                exit();
+            } else {
+                $error_message = "Error al registrar el usuario.";
+                if (isset($response['body']['message'])) {
+                    $error_message .= " Detalle: " . $response['body']['message'];
+                }
+                require_once __DIR__ . '/../../vista/sistemausuarios/registro.php';
+            }
+        } else {
+            $this->showRegistrationForm();
+        }
     }
 }

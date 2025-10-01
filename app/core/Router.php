@@ -1,4 +1,5 @@
 <?php
+// app/core/Router.php
 class Router {
     private $routes;
 
@@ -10,7 +11,7 @@ class Router {
         $path = parse_url($uri, PHP_URL_PATH);
 
         // Quitar prefijo del proyecto (/brisas_gems/public)
-        $baseDir = '/brisas_gems/public';
+        $baseDir = BASE_URL;
         if (strpos($path, $baseDir) === 0) {
             $path = substr($path, strlen($baseDir));
         }

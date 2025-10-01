@@ -1,163 +1,148 @@
 -- ==================================
--- CREACIÓN DE BASE DE DATOS Y TABLAS
+-- CREACIÓN DE BASE DE DATOS Y TABLAS (VERSIÓN CORREGIDA)
 -- ==================================
 
-drop database if exists brisas_gems;
-create database brisas_gems;
-use brisas_gems;
+DROP DATABASE IF EXISTS brisas_gems;
+CREATE DATABASE brisas_gems;
+USE brisas_gems;
 
--- =====================
+-- =============================
 -- 1. SISTEMA Y USUARIOS
--- =====================
+-- =============================
 
--- Tipos de documento
-create table tipo_de_documento(
-	tipdoc_id 		int primary key auto_increment,
-	tipdoc_nombre 	varchar(100) not null
+CREATE TABLE tipo_de_documento(
+	tipdoc_id 		INT PRIMARY KEY AUTO_INCREMENT,
+	tipdoc_nombre 	VARCHAR(100) NOT NULL
 );
 
--- Roles de usuario
-create table rol(
-	rol_id 		int primary key auto_increment,
-	rol_nombre 	varchar(50) not null unique
+CREATE TABLE rol(
+	rol_id 		INT PRIMARY KEY AUTO_INCREMENT,
+	rol_nombre 	VARCHAR(50) NOT NULL
 );
 
--- Usuarios 
-create table usuarios (
-	usu_id 			int primary key auto_increment,
-	usu_nombre 		varchar(150) not null,
-	usu_correo 		varchar(100) not null unique,
-	usu_telefono 	varchar(20),
-	usu_password 	varchar(255) not null,
-    usu_docnum		varchar(20),
-    usu_origen 		enum('registro', 'formulario', 'admin') not null default 'formulario',
-    usu_activo      boolean not null default 0,
-    tipdoc_id 		int,
-	rol_id 			int,
-	foreign key (tipdoc_id) references tipo_de_documento (tipdoc_id),
-	foreign key (rol_id) references rol (rol_id)
+CREATE TABLE usuarios (
+	usu_id 			INT PRIMARY KEY AUTO_INCREMENT,
+	usu_nombre 		VARCHAR(150) NOT NULL,
+	usu_correo 		VARCHAR(100) NOT NULL UNIQUE,
+	usu_telefono 	VARCHAR(20),
+	usu_password 	VARCHAR(255) NOT NULL,
+    usu_docnum		VARCHAR(20) UNIQUE,
+	rol_id 			INT,
+	tipdoc_id 		INT,
+    usu_activo      BOOLEAN NOT NULL DEFAULT TRUE,
+    usu_origen      ENUM('registro', 'formulario', 'admin') NOT NULL DEFAULT 'registro',
+	FOREIGN KEY (tipdoc_id) REFERENCES tipo_de_documento (tipdoc_id),
+	FOREIGN KEY (rol_id) REFERENCES rol (rol_id)
 );
 
---  Token de activacion y recuperacion 
-create table tokens (
-    tok_id             		int primary key auto_increment,
-    tok_codigo              varchar(255) not null,
-    tok_tipo               	enum('activacion', 'recuperacion') not null default 'recuperacion', -- NUEVO
-    tok_fecha_expiracion 	datetime not null,
-    usu_id             		int,
-    foreign key (usu_id) references usuarios (usu_id)
+CREATE TABLE tokens (
+    tok_id             INT PRIMARY KEY AUTO_INCREMENT,
+    token              VARCHAR(255) NOT NULL,
+    tipo               ENUM('activacion', 'recuperacion') NOT NULL DEFAULT 'recuperacion',
+    fecha_expiracion   DATETIME NOT NULL,
+    usu_id             INT,
+    FOREIGN KEY (usu_id) REFERENCES usuarios (usu_id) ON DELETE CASCADE
 );
-
 
 -- =============================
 -- 2. PERSONALIZACIÓN DE PRODUCTOS
 -- =============================
 
--- Opciones de personalización (ej. Gema, Forma, Metal, Tamaño de piedra, Talla del anillo)
-create table opcion_personalizacion (
-	opc_id 		int primary key auto_increment,
-	opc_nombre 	varchar(100) not null unique
+CREATE TABLE opcion_personalizacion (
+	opc_id 		INT PRIMARY KEY AUTO_INCREMENT,
+	opc_nombre 	VARCHAR(100) NOT NULL UNIQUE
 );
 
--- Valores posibles para cada opción (ej. Rubí, Esmeralda, Redonda, Ovalada, Oro, Plata, etc.)
-create table valor_personalizacion (
-	val_id 		int primary key auto_increment,
-    val_nombre 	varchar(100) not null,
-    val_imagen 	varchar(250),
-    opc_id 		int,
-    foreign key (opc_id) references opcion_personalizacion (opc_id)
+CREATE TABLE valor_personalizacion (
+	val_id 		INT PRIMARY KEY AUTO_INCREMENT,
+    val_nombre 	VARCHAR(100) NOT NULL,
+    val_imagen 	VARCHAR(250),
+    opc_id 		INT,
+    FOREIGN KEY (opc_id) REFERENCES opcion_personalizacion (opc_id) ON DELETE CASCADE
 );
 
--- Personalizaciones realizadas por un cliente
-create table personalizacion (
-	per_id 			int primary key auto_increment,
-    per_fecha 		date not null,
-    usu_id 	int null ,
-    foreign key (usu_id) references usuarios (usu_id)
+CREATE TABLE personalizacion (
+	per_id 			INT PRIMARY KEY AUTO_INCREMENT,
+    per_fecha 		DATE NOT NULL,
+    usu_id_cliente 	INT,
+    FOREIGN KEY (usu_id_cliente) REFERENCES usuarios (usu_id) ON DELETE SET NULL
 );
 
--- Detalles de personalización seleccionados por el cliente
-create table detalle_personalizacion (
-	det_id 	int primary key auto_increment,
-    per_id 	int,
-    val_id 	int,
-    foreign key (per_id) references personalizacion (per_id),
-    foreign key (val_id) references valor_personalizacion (val_id)
+CREATE TABLE detalle_personalizacion (
+	det_id 	INT PRIMARY KEY AUTO_INCREMENT,
+    per_id 	INT,
+    val_id 	INT,
+    FOREIGN KEY (per_id) REFERENCES personalizacion (per_id) ON DELETE CASCADE,
+    FOREIGN KEY (val_id) REFERENCES valor_personalizacion (val_id)
 );
-
 
 -- =============================
 -- 3. GESTIÓN DE PEDIDOS
 -- =============================
 
--- Estados del pedido (ej. En diseño, En producción, Finalizado, etc.)
-create table estado_pedido(
-	est_id 		int primary key auto_increment,
-	est_nombre 	varchar(100) not null
+CREATE TABLE estado_pedido(
+	est_id 		INT PRIMARY KEY AUTO_INCREMENT,
+	est_nombre 	VARCHAR(100) NOT NULL UNIQUE
 );
 
--- Pedidos asociados a una personalización
-create table pedido (
-	ped_id 				int primary key auto_increment,
-    ped_codigo 			varchar(100) not null,
-    ped_fecha_creacion 	date not null,
-    ped_comentarios 	varchar(250),
-    est_id 				int,
-    per_id 				int,
-    usu_id			 	int,
-    foreign key (est_id) references estado_pedido (est_id),
-    foreign key (per_id) references personalizacion (per_id),
-    foreign key (usu_id) references usuarios (usu_id)
+CREATE TABLE pedido (
+	ped_id 				INT PRIMARY KEY AUTO_INCREMENT,
+    ped_codigo 			VARCHAR(100) NOT NULL UNIQUE,
+    ped_fecha_creacion 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ped_comentarios 	VARCHAR(250),
+    est_id 				INT,
+    per_id 				INT,
+    usu_id_empleado 	INT,
+    FOREIGN KEY (est_id) REFERENCES estado_pedido (est_id),
+    FOREIGN KEY (per_id) REFERENCES personalizacion (per_id),
+    FOREIGN KEY (usu_id_empleado) REFERENCES usuarios (usu_id) ON DELETE SET NULL
 );
 
--- Imagen final del producto terminado
-create table foto_producto_final (
-	fot_id 				int primary key auto_increment,
-    fot_imagen_final 	varchar(250) not null,
-    fot_fecha_subida 	date,
-    ped_id 				int,
-    foreign key (ped_id) references pedido (ped_id)
+CREATE TABLE foto_producto_final (
+	fot_id 				INT PRIMARY KEY AUTO_INCREMENT,
+    fot_imagen_final 	VARCHAR(250) NOT NULL,
+    fot_fecha_subida 	DATE,
+    ped_id 				INT,
+    FOREIGN KEY (ped_id) REFERENCES pedido (ped_id) ON DELETE CASCADE
 );
 
--- Render 3D del diseño personalizado
-create table render_3d (
-	ren_id 				int primary key auto_increment,
-	ren_imagen 			varchar(100) not null,
-	ren_fecha_aprobacion date,
-	ped_id 				int,
-	foreign key (ped_id) references pedido (ped_id)
+CREATE TABLE render_3d (
+	ren_id 				INT PRIMARY KEY AUTO_INCREMENT,
+	ren_imagen 			VARCHAR(100) NOT NULL,
+	ren_fecha_aprobacion DATE,
+	ped_id 				INT,
+	FOREIGN KEY (ped_id) REFERENCES pedido (ped_id) ON DELETE CASCADE
 );
 
 -- =============================
 -- 4. EXPERIENCIA DEL CLIENTE
 -- =============================
 
--- Contacto por formulario o WhatsApp
-create table contacto_formulario (
-    con_id          int primary key auto_increment,
-    con_nombre      varchar(150) not null,
-    con_correo      varchar(100),
-    con_telefono    varchar(30),
-    con_mensaje     text not null,
-    con_fecha_envio datetime not null default current_timestamp,
-    con_via         enum('formulario', 'whatsapp') default 'formulario',
-    con_terminos    boolean not null,
-    con_estado      enum('pendiente','atendido','archivado') not null default 'pendiente',
-    con_notas       varchar(500),
-    usu_id          int null,
-    usu_id_admin    int null,
-    foreign key (usu_id) references usuarios(usu_id) on delete set null,
-    foreign key (usu_id_admin) references usuarios(usu_id) on delete set null
+CREATE TABLE contacto_formulario (
+    con_id          INT PRIMARY KEY AUTO_INCREMENT,
+    usu_id          INT NULL,
+    con_nombre      VARCHAR(150) NOT NULL,
+    con_correo      VARCHAR(100),
+    con_telefono    VARCHAR(30),
+    con_mensaje     TEXT NOT NULL,
+    con_fecha_envio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    con_via         ENUM('formulario', 'whatsapp') DEFAULT 'formulario',
+    con_terminos    BOOLEAN NOT NULL,
+    con_estado      ENUM('pendiente','atendido','archivado') NOT NULL DEFAULT 'pendiente',
+    con_notas       TEXT,
+    usu_id_admin    INT NULL,
+    FOREIGN KEY (usu_id) REFERENCES usuarios(usu_id) ON DELETE SET NULL,
+    FOREIGN KEY (usu_id_admin) REFERENCES usuarios(usu_id) ON DELETE SET NULL
 );
 
-create table portafolio_inspiracion (
-    por_id           int primary key auto_increment,
-    por_titulo       varchar(150) not null,
-    por_descripcion  text,
-    por_imagen       varchar(250) not null,
-    por_video        varchar(250),
-    por_categoria    varchar(100),
-    por_fecha        datetime default current_timestamp,
-    usu_id           int,
-    foreign key 	 (usu_id) references usuarios(usu_id) on delete set null
+CREATE TABLE portafolio_inspiracion (
+    por_id           INT PRIMARY KEY AUTO_INCREMENT,
+    por_titulo       VARCHAR(150) NOT NULL,
+    por_descripcion  TEXT,
+    por_imagen       VARCHAR(250) NOT NULL,
+    por_video        VARCHAR(250),
+    por_categoria    VARCHAR(100),
+    por_fecha        DATETIME DEFAULT CURRENT_TIMESTAMP,
+    usu_id           INT,
+    FOREIGN KEY 	 (usu_id) REFERENCES usuarios(usu_id) ON DELETE SET NULL
 );
