@@ -26,4 +26,14 @@ return [
     // ======================
     'GET /pedido'     => 'gestionpedidos/PedidoController@index',
     'POST /pedido'    => 'gestionpedidos/PedidoController@crear',
+
+
+    // Vista del formulario de contacto (usuario)
+    'GET /contacto-usuario' => 'experienciausuarios/ContactoUsuarioController@manejarpeticion',
+
+    // Envío del formulario de contacto (usuario)
+    'POST /contacto-usuario' => 'experienciausuarios/ContactoUsuarioController@guardar',
+
+        // Mostrar la vista con listado + formulario
+    'GET /portafolio-inspiracion' => 'experienciausuarios/PortafolioInspiracionController@index',
 ];

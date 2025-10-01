@@ -8,7 +8,7 @@ class ContactoUsuarioController {
         $this->service = new ContactoUsuarioService();
     }
 
-    public function manejarPeticion() {
+    public function guardar() {
         $mensaje = "";
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
