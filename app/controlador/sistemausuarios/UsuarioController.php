@@ -58,7 +58,7 @@ class UsuarioController {
                 $_SESSION['flash_message'] = ['type' => 'danger', 'text' => 'Error al actualizar el usuario.'];
             }
         }
-        header('Location: /usuarios');
+        header('Location: ' . BASE_URL . '/usuarios');
         exit();
     }
 
@@ -76,7 +76,7 @@ class UsuarioController {
                 $_SESSION['flash_message'] = ['type' => 'danger', 'text' => 'Error al cambiar el estado del usuario.'];
             }
         }
-        $redirectUrl = $_POST['estado'] ? '/usuarios/inactivos' : '/usuarios';
+        $redirectUrl = $_POST['estado'] ? (BASE_URL . '/usuarios/inactivos') : (BASE_URL . '/usuarios');
         header('Location: ' . $redirectUrl);
         exit();
     }

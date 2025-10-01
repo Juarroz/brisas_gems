@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Brisas Gems</title>
+    <title>Dashboard Admin - Brisas Gems</title>
     <link href="<?= BASE_URL ?>/assets/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
@@ -20,7 +20,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="<?= BASE_URL ?>/dashboard">Brisas Gems</a>
+            <a class="navbar-brand" href="<?= BASE_URL ?>/dashboard">Brisas Gems - Admin</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" href="<?= BASE_URL ?>/usuarios">Usuarios</a></li>
@@ -36,7 +36,7 @@
     </nav>
 
     <main class="container mt-5">
-        <h1 class="h2 mb-4">Panel Principal</h1>
+        <h1 class="h2 mb-4">Panel de Administración</h1>
         
         <h5 class="mb-3 text-muted">Estado de la Producción</h5>
         <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
@@ -46,7 +46,7 @@
                         <div class="card-body">
                             <i class="bi bi-palette2 text-primary"></i>
                             <p class="card-text mt-2">En Diseño</p>
-                            <h2 class="display-4 text-primary"><?= $pedidosEnDiseño ?? 0; ?></h2>
+                            <h2 class="display-4 text-primary"><?= $data['pedidosEnDiseño'] ?? 0; ?></h2>
                         </div>
                     </div>
                 </a>
@@ -57,7 +57,7 @@
                         <div class="card-body">
                             <i class="bi bi-gem text-info"></i>
                             <p class="card-text mt-2">En Tallado</p>
-                            <h2 class="display-4 text-info"><?= $pedidosEnTallado ?? 0; ?></h2>
+                            <h2 class="display-4 text-info"><?= $data['pedidosEnTallado'] ?? 0; ?></h2>
                         </div>
                     </div>
                 </a>
@@ -68,7 +68,7 @@
                         <div class="card-body">
                             <i class="bi bi-gear text-secondary"></i>
                             <p class="card-text mt-2">En Engaste</p>
-                            <h2 class="display-4 text-secondary"><?= $pedidosEnEngaste ?? 0; ?></h2>
+                            <h2 class="display-4 text-secondary"><?= $data['pedidosEnEngaste'] ?? 0; ?></h2>
                         </div>
                     </div>
                 </a>
@@ -79,7 +79,7 @@
                         <div class="card-body">
                             <i class="bi bi-brightness-high text-warning"></i>
                             <p class="card-text mt-2">En Pulido</p>
-                            <h2 class="display-4 text-warning"><?= $pedidosEnPulido ?? 0; ?></h2>
+                            <h2 class="display-4 text-warning"><?= $data['pedidosEnPulido'] ?? 0; ?></h2>
                         </div>
                     </div>
                 </a>
@@ -90,7 +90,7 @@
                         <div class="card-body">
                             <i class="bi bi-x-circle text-danger"></i>
                             <p class="card-text mt-2">Cancelados</p>
-                            <h2 class="display-4 text-danger"><?= $pedidosCancelados ?? 0; ?></h2>
+                            <h2 class="display-4 text-danger"><?= $data['pedidosCancelados'] ?? 0; ?></h2>
                         </div>
                     </div>
                 </a>
@@ -107,7 +107,7 @@
                         <div class="card-body">
                             <i class="bi bi-envelope-exclamation text-danger"></i>
                             <p class="card-text mt-2">Mensajes Pendientes</p>
-                            <h2 class="display-4 text-danger"><?= $totalContactos ?? 0; ?></h2>
+                            <h2 class="display-4 text-danger"><?= $data['totalContactos'] ?? 0; ?></h2>
                         </div>
                     </div>
                 </a>
@@ -118,7 +118,7 @@
                         <div class="card-body">
                             <i class="bi bi-people text-success"></i>
                             <p class="card-text mt-2">Usuarios Activos</p>
-                            <h2 class="display-4 text-success"><?= $totalUsuariosActivos ?? 0; ?></h2>
+                            <h2 class="display-4 text-success"><?= $data['totalUsuariosActivos'] ?? 0; ?></h2>
                         </div>
                     </div>
                 </a>
@@ -129,12 +129,14 @@
                         <div class="card-body">
                             <i class="bi bi-person-slash text-secondary"></i>
                             <p class="card-text mt-2">Usuarios Inactivos</p>
-                            <h2 class="display-4 text-secondary"><?= $totalUsuariosInactivos ?? 0; ?></h2>
+                            <h2 class="display-4 text-secondary"><?= $data['totalUsuariosInactivos'] ?? 0; ?></h2>
                         </div>
                     </div>
                 </a>
             </div>
         </div>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
