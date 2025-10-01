@@ -43,10 +43,30 @@ class PersonalizacionController {
 
                     $valSlug = $this->slug($valName);
 
+                    // Detectar carpeta según el nombre de la opción
+                    $nombreLower = strtolower($opcName);
+                    $dir = null;
+
+                    if (str_contains($nombreLower, 'forma')) {
+                        $dir = 'forma';
+                    } elseif (str_contains($nombreLower, 'tama')) { // tamaño
+                        $dir = 'tamano';
+                    } elseif (str_contains($nombreLower, 'gema')) {
+                        $dir = 'gemas';
+                    } elseif (str_contains($nombreLower, 'material')) {
+                        $dir = 'material';
+                    } elseif (str_contains($nombreLower, 'talla')) {
+                        $dir = null;
+                    }
+
+                    // Si hay carpeta, armar la ruta de la imagen
+                    $img = $dir ? "$dir/$valSlug.png" : null;
+
                     $vals[] = [
                         'id'     => $valId,
                         'nombre' => $valName,
-                        'slug'   => $valSlug
+                        'slug'   => $valSlug,
+                        'img'    => $img
                     ];
                 }
             }
@@ -62,7 +82,6 @@ class PersonalizacionController {
         $CATALOGO = $catalogo;
         require __DIR__ . '/../../vista/personalizacionproductos/personalizar.php';
     }
-
 
     // POST /personalizar/guardar
     public function guardar() {
@@ -143,14 +162,14 @@ class PersonalizacionController {
         return trim($s);
     }
 
-    private function slug(string $s): string {
-        $s = mb_strtolower(trim($s), 'UTF-8');
-        $sinAcentos = iconv('UTF-8', 'ASCII//TRANSLIT', $s);
-        if ($sinAcentos !== false) $s = $sinAcentos;
-        $s = preg_replace('/[^a-z0-9\s\-\.]/', '', $s);
-        $s = str_replace([' ', '_'], '-', $s);
-        $s = preg_replace('/-+/', '-', $s);
-        return trim($s, '-');
+    // ✅ Slug corregido
+    private function slug(string $text): string {
+        $text = strtolower(trim($text));
+        $text = iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+        $text = preg_replace('/[\s_]+/', '-', $text);
+        $text = preg_replace('/[^a-z0-9\-]/', '', $text);
+        $text = preg_replace('/-+/', '-', $text);
+        return trim($text, '-');
     }
 
     private function resolverOpcionesIds(): ?array {
