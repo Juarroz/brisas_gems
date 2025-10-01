@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/../../modelo/dashboard/DashboardService.php';
-require_once __DIR__ . '/../../core/AuthGuard.php';
 
 class DashboardController {
     private $dashboardService;
@@ -10,22 +9,51 @@ class DashboardController {
     }
 
     public function showDashboard() {
-        requireLogin();
-        $token = $_SESSION['jwt_token'];
+        if (session_status() == PHP_SESSION_NONE) { 
+            session_start(); 
+        }
 
-        // Obtenemos todas las estadísticas llamando al servicio
-        $totalUsuariosActivos = $this->dashboardService->contarUsuariosActivos($token);
-        $totalUsuariosInactivos = $this->dashboardService->contarUsuariosInactivos($token);
-        $totalContactos = $this->dashboardService->contarContactosNuevos($token);
+        // Verificar si el usuario está autenticado
+        if (!isset($_SESSION['jwt_token'])) {
+            header('Location: ' . BASE_URL . '/login');
+            exit();
+        }
+
+        // Obtener el rol del usuario para mostrar el dashboard correcto
+        $userRole = $_SESSION['user_role'] ?? 'ROLE_USUARIO';
         
-        $pedidosEnDiseño = $this->dashboardService->contarPedidosPorEstado('diseño', $token);
-        $pedidosEnTallado = $this->dashboardService->contarPedidosPorEstado('tallado', $token);
-        $pedidosEnEngaste = $this->dashboardService->contarPedidosPorEstado('engaste', $token);
-        $pedidosEnPulido = $this->dashboardService->contarPedidosPorEstado('pulido', $token);
-        $pedidosCancelados = $this->dashboardService->contarPedidosPorEstado('cancelado', $token);
+        // Redirigir al dashboard específico según el rol
+        switch ($userRole) {
+            case 'ROLE_ADMINISTRADOR':
+                $this->showAdminDashboard();
+                break;
+            case 'ROLE_DISEÑADOR':
+                $this->showDesignerDashboard();
+                break;
+            case 'ROLE_USUARIO':
+                $this->showUserDashboard();
+                break;
+            default:
+                $this->showUserDashboard();
+        }
+    }
 
-        // --- RUTA CORREGIDA Y FINAL ---
-        // Se asegura de cargar la vista desde la ubicación correcta.
+    private function showAdminDashboard() {
+        // ✅ RUTA CORREGIDA
         require_once __DIR__ . '/../../vista/dashboard/dashboard.php';
+    }
+
+    private function showDesignerDashboard() {
+        // Cargar datos específicos para diseñador
+        $data = $this->dashboardService->getDesignerStats();
+        // ✅ RUTA CORREGIDA
+        require_once __DIR__ . '/../../vista/dashboard/designer_dashboard.php';
+    }
+
+    private function showUserDashboard() {
+        // Cargar datos específicos para usuario
+        $data = $this->dashboardService->getUserStats();
+        // ✅ RUTA CORREGIDA
+        require_once __DIR__ . '/../../vista/dashboard/user_dashboard.php';
     }
 }

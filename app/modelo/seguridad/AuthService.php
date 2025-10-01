@@ -1,5 +1,4 @@
 <?php
-// Requerimos el cliente de API una sola vez
 require_once __DIR__ . '/../../core/ApiClient.php';
 
 class AuthService {
@@ -14,7 +13,7 @@ class AuthService {
      *
      * @param string $email
      * @param string $password
-     * @return array|null Retorna los datos del usuario (incluido el token) si es exitoso, o null si falla.
+     * @return array|null Retorna los datos del usuario (incluido el token y dashboardUrl) si es exitoso, o null si falla.
      */
     public function login(string $email, string $password): ?array {
         $endpoint = '/auth/login';
@@ -28,7 +27,7 @@ class AuthService {
 
         // Si el código de respuesta es 200 (OK), significa que el login fue exitoso
         if ($response['code'] === 200) {
-            return $response['body']; // Devolvemos el cuerpo de la respuesta, que contiene el token
+            return $response['body']; // Devolvemos el cuerpo de la respuesta, que contiene token Y dashboardUrl
         }
 
         // En cualquier otro caso, el login falló
