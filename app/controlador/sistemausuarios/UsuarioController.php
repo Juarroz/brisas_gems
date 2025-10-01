@@ -1,5 +1,4 @@
 <?php
-// Rutas actualizadas para la nueva estructura
 require_once __DIR__ . '/../../modelo/sistemausuarios/UsuarioService.php';
 require_once __DIR__ . '/../../modelo/sistemausuarios/RolService.php';
 require_once __DIR__ . '/../../core/AuthGuard.php';
@@ -13,10 +12,76 @@ class UsuarioController {
         $this->rolService = new RolService();
     }
 
-    // --- MÉTODOS PARA EL REGISTRO ---
+    public function listUsers() {
+        requireLogin();
+        $token = $_SESSION['jwt_token'];
+        $usuarios = $this->usuarioService->listarUsuarios($token, true);
+        require_once __DIR__ . '/../../vista/sistemausuarios/listar_usuarios.php';
+    }
+
+    public function listInactiveUsers() {
+        requireLogin();
+        $token = $_SESSION['jwt_token'];
+        $usuarios = $this->usuarioService->listarUsuarios($token, false);
+        require_once __DIR__ . '/../../vista/sistemausuarios/listar_inactivos.php';
+    }
+
+    public function showEditForm() {
+        requireLogin();
+        $userId = $_GET['id'] ?? null;
+        if (!$userId) { die("Error: No se ha especificado un ID de usuario."); }
+        $token = $_SESSION['jwt_token'];
+        
+        $usuario = $this->usuarioService->obtenerUsuarioPorId((int)$userId, $token);
+        $roles = $this->rolService->listarRoles($token);
+
+        if (!$usuario) { $error_message = "No se pudo encontrar al usuario con ID " . htmlspecialchars($userId); }
+        
+        require_once __DIR__ . '/../../vista/sistemausuarios/editar_usuario.php';
+    }
+
+    public function handleUpdate() {
+        requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $token = $_SESSION['jwt_token'];
+            $userId = (int)$_POST['id'];
+            $userData = [
+                'nombre' => $_POST['nombre'] ?? '',
+                'correo' => $_POST['correo'] ?? '',
+                'telefono' => $_POST['telefono'] ?? null,
+                'rolId' => (int)($_POST['rolId'] ?? null)
+            ];
+            $response = $this->usuarioService->actualizarUsuario($userId, $userData, $token);
+            if ($response['code'] === 200) {
+                $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Usuario actualizado correctamente.'];
+            } else {
+                $_SESSION['flash_message'] = ['type' => 'danger', 'text' => 'Error al actualizar el usuario.'];
+            }
+        }
+        header('Location: /usuarios');
+        exit();
+    }
+
+    public function handleChangeStatus() {
+        requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $token = $_SESSION['jwt_token'];
+            $userId = (int)$_POST['id'];
+            $nuevoEstado = (bool)$_POST['estado'];
+            $response = $this->usuarioService->cambiarEstadoUsuario($userId, $nuevoEstado, $token);
+            if ($response['code'] === 200) {
+                $accion = $nuevoEstado ? 'activado' : 'desactivado';
+                $_SESSION['flash_message'] = ['type' => 'success', 'text' => 'Usuario ' . $accion . ' correctamente.'];
+            } else {
+                $_SESSION['flash_message'] = ['type' => 'danger', 'text' => 'Error al cambiar el estado del usuario.'];
+            }
+        }
+        $redirectUrl = $_POST['estado'] ? '/usuarios/inactivos' : '/usuarios';
+        header('Location: ' . $redirectUrl);
+        exit();
+    }
 
     public function showRegistrationForm() {
-        // Apunta a la nueva ubicación de la vista de registro
         require_once __DIR__ . '/../../vista/sistemausuarios/registro.php';
     }
 
@@ -27,16 +92,12 @@ class UsuarioController {
                 'correo'   => $_POST['correo'] ?? '',
                 'password' => $_POST['password'] ?? '',
                 'telefono' => $_POST['telefono'] ?? null,
-                'rolId'    => 1, // Por defecto, el rol de 'usuario' es 1
+                'rolId'    => 1,
                 'origen'   => 'registro',
                 'activo'   => true
             ];
-
-            // La creación de usuario es pública, no necesita token
             $response = $this->usuarioService->crearUsuario($userData);
-
             if ($response['code'] === 201) {
-                // Si el registro es exitoso, redirigimos al login con un mensaje de éxito
                 if (session_status() == PHP_SESSION_NONE) { session_start(); }
                 $_SESSION['flash_message'] = [
                     'type' => 'success',
@@ -45,18 +106,14 @@ class UsuarioController {
                 header('Location: ' . BASE_URL . '/login'); // ✅ corregido
                 exit();
             } else {
-                // Si falla, volvemos a mostrar el formulario con un error
-                $errorMessage = "Error al registrar el usuario.";
+                $error_message = "Error al registrar el usuario.";
                 if (isset($response['body']['message'])) {
-                    $errorMessage .= " Detalle: " . $response['body']['message'];
+                    $error_message .= " Detalle: " . $response['body']['message'];
                 }
-                $error_message = $errorMessage;
                 require_once __DIR__ . '/../../vista/sistemausuarios/registro.php';
             }
         } else {
             $this->showRegistrationForm();
         }
     }
-    
-    // --- (Aquí irían los otros métodos que migraremos después: listUsers, showEditForm, etc.) ---
 }
