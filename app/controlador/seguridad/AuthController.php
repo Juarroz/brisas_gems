@@ -23,9 +23,13 @@ class AuthController {
                     session_start(); 
                 }
                 $_SESSION['jwt_token'] = $result['token'];
+                $_SESSION['user_role'] = $result['userRole'] ?? 'ROLE_USUARIO';
+                $_SESSION['user_name'] = $result['userName'] ?? 'Usuario';
+                $_SESSION['user_email'] = $result['email'] ?? $email;
 
-                // Redirigir usando BASE_URL
-                header('Location: ' . BASE_URL . '/dashboard');
+                // ✅ REDIRECCIÓN INTELIGENTE - Usa dashboardUrl del backend
+                $dashboardUrl = $result['dashboardUrl'] ?? '/dashboard';
+                header('Location: ' . BASE_URL . $dashboardUrl);
                 exit();
             } else {
                 $error_message = "Correo o contraseña incorrectos.";
@@ -43,8 +47,7 @@ class AuthController {
         $_SESSION = [];
         session_destroy();
 
-        // Redirigir usando BASE_URL
-        header('Location: ' . BASE_URL . '/login');
+        header('Location: ' . BASE_URL . '/');
         exit();
     }
 }

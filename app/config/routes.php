@@ -24,6 +24,11 @@ return [
 
     'GET /dashboard' => 'dashboard/DashboardController@showDashboard',
 
+    // ✅ AGREGAR ESTAS RUTAS NUEVAS:
+    'GET /admin/dashboard' => 'dashboard/DashboardController@showDashboard',
+    'GET /designer/dashboard' => 'dashboard/DashboardController@showDashboard', 
+    'GET /user/dashboard' => 'dashboard/DashboardController@showDashboard',
+
     // ======================
     // SISTEMA Y USUARIOS
     // ======================
