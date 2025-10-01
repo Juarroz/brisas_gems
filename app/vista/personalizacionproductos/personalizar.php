@@ -79,8 +79,8 @@ $cat = $CATALOGO ?? [];
                           class="btn-opcion btn-<?= e($slug) ?> <?= $i===0 ? 'active' : '' ?>"
                           data-valor="<?= e($v['slug']) ?>">
                     <?php if (!empty($v['img'])): ?>
-                      <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/<?= e($slug) ?>/<?= e($v['slug']) ?>.png"
-                           alt="<?= e($v['nombre']) ?>" width="40"><br>
+                      <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/<?= e($v['img']) ?>"
+                          alt="<?= e($v['nombre']) ?>" width="40"><br>
                     <?php endif; ?>
                     <?= e($v['nombre']) ?>
                   </button>

@@ -3,10 +3,10 @@ const BASE_URL = document.querySelector("body").getAttribute("data-base-url") ||
 // Estado de selección
 let seleccion = {};
 
-// Construir ruta de vistas dinámicas
+// Construir ruta de vistas dinámicas (solo gema, forma y material)
 function rutaVista(valores, vista) {
-  // Ejemplo: vistas-anillos/gema/forma/material/vista.jpg
-  return `${BASE_URL}/assets/img/personalizacionproductos/vistas-anillos/${valores.join("/")}/${vista}.jpg`;
+  // valores[0] = gema, valores[1] = forma, valores[2] = material
+  return `${BASE_URL}/assets/img/personalizacionproductos/vistas-anillos/${valores[0]}/${valores[1]}/${valores[2]}/${vista}.jpg`;
 }
 
 // Manejar cambio de vista (miniaturas)
@@ -56,7 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // Cambiar imágenes de vista previa
 function actualizarVistas() {
   const valores = Object.values(seleccion);
-  if (valores.includes("")) return; // faltan selecciones
+
+  // Necesitamos al menos gema, forma y material para mostrar vistas
+  if (!valores[0] || !valores[1] || !valores[2]) return;
 
   ["superior", "frontal", "perfil"].forEach(v => {
     const img = document.getElementById("vista-" + v);
