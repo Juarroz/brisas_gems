@@ -18,72 +18,70 @@ class PersonalizacionController {
         $this->valService = new ValorPersonalizacionService();
     }
     
-// GET /personalizar
-public function mostrar() {
-    $opciones = $this->opcService->listar();
-    if ($opciones === false || !is_array($opciones)) $opciones = [];
+    // GET /personalizar
+    public function mostrar() {
+        $opciones = $this->opcService->listar();
+        if ($opciones === false || !is_array($opciones)) $opciones = [];
 
-    $catalogo = [];
+        $catalogo = [];
 
-    foreach ($opciones as $opc) {
-        $opcId   = (int)($opc['opc_id'] ?? $opc['id'] ?? 0);
-        $opcName = (string)($opc['opc_nombre'] ?? $opc['nombre'] ?? '');
-        if (!$opcId || !$opcName) continue;
+        foreach ($opciones as $opc) {
+            $opcId   = (int)($opc['opc_id'] ?? $opc['id'] ?? 0);
+            $opcName = (string)($opc['opc_nombre'] ?? $opc['nombre'] ?? '');
+            if (!$opcId || !$opcName) continue;
 
-        // Crear slug para carpetas y data-atributos
-        $slug = $this->slug($opcName);
+            // Crear slug para carpetas y data-atributos
+            $slug = $this->slug($opcName);
 
-        $valores = $this->valService->listar($opcId);
-        $vals = [];
-        if ($valores && is_array($valores)) {
-            foreach ($valores as $v) {
-                $valId   = (int)($v['val_id'] ?? $v['id'] ?? 0);
-                $valName = (string)($v['val_nombre'] ?? $v['nombre'] ?? '');
-                if (!$valId || !$valName) continue;
+            $valores = $this->valService->listar($opcId);
+            $vals = [];
+            if ($valores && is_array($valores)) {
+                foreach ($valores as $v) {
+                    $valId   = (int)($v['val_id'] ?? $v['id'] ?? 0);
+                    $valName = (string)($v['val_nombre'] ?? $v['nombre'] ?? '');
+                    if (!$valId || !$valName) continue;
 
-                $valSlug = $this->slug($valName);
+                    $valSlug = $this->slug($valName);
 
-                // Detectar carpeta según el nombre de la opción
-                $nombreLower = strtolower($opcName);
-                $dir = null;
+                    // Detectar carpeta según el nombre de la opción
+                    $nombreLower = strtolower($opcName);
+                    $dir = null;
 
-                if (str_contains($nombreLower, 'forma')) {
-                    $dir = 'forma';
-                } elseif (str_contains($nombreLower, 'gema')) {
-                    $dir = 'gemas';
-                } elseif (str_contains($nombreLower, 'material')) {
-                    $dir = 'material';
-                } elseif (str_contains($nombreLower, 'tama')) { // tamaño
-                    $dir = 'tama-piedra-central';
-                } elseif (str_contains($nombreLower, 'talla')) {
-                    $dir = null; // no hay imágenes de tallas
+                    if (str_contains($nombreLower, 'forma')) {
+                        $dir = 'forma';
+                    } elseif (str_contains($nombreLower, 'tama')) { // tamaño
+                        $dir = 'tamano';
+                    } elseif (str_contains($nombreLower, 'gema')) {
+                        $dir = 'gemas';
+                    } elseif (str_contains($nombreLower, 'material')) {
+                        $dir = 'material';
+                    } elseif (str_contains($nombreLower, 'talla')) {
+                        $dir = null;
+                    }
+
+                    // Si hay carpeta, armar la ruta de la imagen
+                    $img = $dir ? "$dir/$valSlug.png" : null;
+
+                    $vals[] = [
+                        'id'     => $valId,
+                        'nombre' => $valName,
+                        'slug'   => $valSlug,
+                        'img'    => $img
+                    ];
                 }
-
-                // Si hay carpeta, armar la ruta de la imagen
-                $img = $dir ? "$dir/$valSlug.png" : null;
-
-                $vals[] = [
-                    'id'     => $valId,
-                    'nombre' => $valName,
-                    'slug'   => $valSlug,
-                    'img'    => $img
-                ];
             }
+
+            $catalogo[] = [
+                'opc_id' => $opcId,
+                'nombre' => $opcName,
+                'slug'   => $slug,
+                'valores'=> $vals
+            ];
         }
 
-        $catalogo[] = [
-            'opc_id' => $opcId,
-            'nombre' => $opcName,
-            'slug'   => $slug,
-            'valores'=> $vals
-        ];
+        $CATALOGO = $catalogo;
+        require __DIR__ . '/../../vista/personalizacionproductos/personalizar.php';
     }
-
-    $CATALOGO = $catalogo;
-    require __DIR__ . '/../../vista/personalizacionproductos/personalizar.php';
-}
-
-
 
     // POST /personalizar/guardar
     public function guardar() {
@@ -164,14 +162,14 @@ public function mostrar() {
         return trim($s);
     }
 
-    private function slug(string $s): string {
-        $s = mb_strtolower(trim($s), 'UTF-8');
-        $sinAcentos = iconv('UTF-8', 'ASCII//TRANSLIT', $s);
-        if ($sinAcentos !== false) $s = $sinAcentos;
-        $s = preg_replace('/[^a-z0-9\s\-\.]/', '', $s);
-        $s = str_replace([' ', '_'], '-', $s);
-        $s = preg_replace('/-+/', '-', $s);
-        return trim($s, '-');
+    // ✅ Slug corregido
+    private function slug(string $text): string {
+        $text = strtolower(trim($text));
+        $text = iconv('UTF-8', 'ASCII//TRANSLIT', $text);
+        $text = preg_replace('/[\s_]+/', '-', $text);
+        $text = preg_replace('/[^a-z0-9\-]/', '', $text);
+        $text = preg_replace('/-+/', '-', $text);
+        return trim($text, '-');
     }
 
     private function resolverOpcionesIds(): ?array {

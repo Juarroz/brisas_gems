@@ -20,7 +20,7 @@ $cat = $CATALOGO ?? [];
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/header.css" />
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/personalizar.css" />
 </head>
-<body>
+<body data-base-url="<?= BASE_URL ?>">
 
 <?php include BASE_PATH . '/public/includes/header.php'; ?>
 
@@ -70,17 +70,37 @@ $cat = $CATALOGO ?? [];
       <div class="container-opciones">
         <form method="post" action="<?= BASE_URL ?>/personalizar/guardar" id="form-personalizar">
 
-          <?php foreach ($cat as $slug => $opc): ?>
+          <?php foreach ($cat as $opc): ?>
+            <?php
+              $nombreLower = strtolower($opc['nombre'] ?? '');
+              $key = 'otros';
+              if (str_contains($nombreLower, 'forma')) {
+                  $key = 'forma';
+              } elseif (str_contains($nombreLower, 'gema')) {
+                  $key = 'gema';
+              } elseif (str_contains($nombreLower, 'material')) {
+                  $key = 'material';
+              } elseif (str_contains($nombreLower, 'tama')) { // tamaño
+                  $key = 'tamano';
+              } elseif (str_contains($nombreLower, 'talla')) {
+                  $key = 'talla';
+              }
+
+              $slugView = $opc['slug'];
+            ?>
+
             <section class="mb-4">
               <h3 class="h5 seccion-titulo"><?= e($opc['nombre']) ?></h3>
-              <div class="d-flex flex-wrap gap-2" id="grupo-<?= e($slug) ?>">
+              <div class="d-flex flex-wrap gap-2"
+                   id="grupo-<?= e($slugView) ?>"
+                   data-key="<?= e($key) ?>">
                 <?php foreach ($opc['valores'] as $i => $v): ?>
                   <button type="button"
-                          class="btn-opcion btn-<?= e($slug) ?> <?= $i===0 ? 'active' : '' ?>"
+                          class="btn-opcion btn-<?= e($key) ?> <?= $i===0 ? 'active' : '' ?>"
                           data-valor="<?= e($v['slug']) ?>">
                     <?php if (!empty($v['img'])): ?>
                       <img src="<?= BASE_URL ?>/assets/img/personalizacionproductos/opciones/<?= e($v['img']) ?>"
-                          alt="<?= e($v['nombre']) ?>" width="40"><br>
+                           alt="<?= e($v['nombre']) ?>" width="40"><br>
                     <?php endif; ?>
                     <?= e($v['nombre']) ?>
                   </button>
@@ -89,9 +109,24 @@ $cat = $CATALOGO ?? [];
             </section>
           <?php endforeach; ?>
 
-          <!-- Hidden inputs dinámicos -->
-          <?php foreach ($cat as $slug => $opc): ?>
-            <input type="hidden" name="<?= e($slug) ?>" id="f-<?= e($slug) ?>">
+          <!-- Hidden inputs dinámicos (misma key que los grupos) -->
+          <?php foreach ($cat as $opc): ?>
+            <?php
+              $nombreLower = strtolower($opc['nombre'] ?? '');
+              $key = 'otros';
+              if (str_contains($nombreLower, 'forma')) {
+                  $key = 'forma';
+              } elseif (str_contains($nombreLower, 'gema')) {
+                  $key = 'gema';
+              } elseif (str_contains($nombreLower, 'material')) {
+                  $key = 'material';
+              } elseif (str_contains($nombreLower, 'tama')) {
+                  $key = 'tamano';
+              } elseif (str_contains($nombreLower, 'talla')) {
+                  $key = 'talla';
+              }
+            ?>
+            <input type="hidden" name="<?= e($key) ?>" id="f-<?= e($key) ?>">
           <?php endforeach; ?>
 
           <div class="text-center contenedor-boton">
