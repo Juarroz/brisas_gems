@@ -94,19 +94,6 @@ INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
 ('7 mm', 4),
 ('8 mm', 4);
 
--- Talla del anillo (opc_id = 5)
-INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
-('Talla 4',   5),
-('Talla 4.5', 5),
-('Talla 5',   5),
-('Talla 5.5', 5),
-('Talla 6',   5),
-('Talla 6.5', 5),
-('Talla 7',   5),
-('Talla 7.5', 5),
-('Talla 8',   5),
-('Talla 8.5', 5),
-('Talla 9',   5);
 
 -- Talla del anillo (opc_id = 5)
 INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
