@@ -46,11 +46,11 @@ return [
     // GESTIÓN DE PEDIDOS
     // ======================
 
-    'GET /pedido'     => 'gestionpedidos/PedidoController@index',
-    'POST /pedido'    => 'gestionpedidos/PedidoController@crear',
-    'GET /pedidos'              => 'gestionpedidos/PedidoController@listPedidos',
-    'GET /pedidos/detalles'     => 'gestionpedidos/PedidoController@showPedidoDetails',
-    'POST /pedidos/actualizar'  => 'gestionpedidos/PedidoController@handleUpdateStatus',
+    'GET /pedido'                   => 'gestionpedidos/PedidoController@index',
+    'POST /pedido'                  => 'gestionpedidos/PedidoController@crear',
+    'GET /pedidos'                  => 'gestionpedidos/PedidoController@listPedidos',
+    'GET /pedidos/detalles'         => 'gestionpedidos/PedidoController@showPedidoDetails',
+    'POST /pedidos/actualizar'      => 'gestionpedidos/PedidoController@handleUpdateStatus',
 
     // ======================
     // EXPERIENCIA DE USUARIO

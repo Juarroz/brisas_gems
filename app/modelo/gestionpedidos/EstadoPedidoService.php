@@ -1,76 +1,84 @@
 <?php
 
-require_once __DIR__ . '/../../core/ApiClient.php';
+require_once __DIR__ . '/EstadoActualPedido.php';
 
-$correo = readline("Ingrese su correo: ");
+class EstadoPedidoService {
+    private $estadoService;
 
-$urlUsuarios = "http://localhost:8080/usuarios";
-$usuariosJson = @file_get_contents($urlUsuarios);
+    public function __construct() {
+        $this->estadoService = new EstadoActualPedido();
+    }
 
-if ($usuariosJson === FALSE) {
-    die("Error al consumir el servicio de usuarios.\n");
-}
+    public function obtenerEstadosParaSelect() {
+        $estados = $this->estadoService->listarEstados();
+        
+        if (isset($estados['error'])) {
+            error_log("ERROR obtenerEstadosParaSelect: " . $estados['error']);
+            return "<option value=''>Error al cargar estados</option>";
+        }
+        
+        $options = '<option value="">Seleccionar estado</option>';
+        
+        foreach ($estados as $estado) {
+            $id = $estado['est_id'] ?? '';
+            $nombre = $estado['estNombre'] ?? '';
+            $descripcion = $estado['estDescripcion'] ?? '';
+            $title = $descripcion ? " title='$descripcion'" : "";
+            
+            $options .= "<option value='$id'$title>$nombre</option>";
+        }
+        
+        return $options;
+    }
 
-$usuarios = json_decode($usuariosJson, true);
+    public function obtenerNombreEstado($estadoId) {
+        if (empty($estadoId)) {
+            return 'No asignado';
+        }
+        
+        $estado = $this->estadoService->obtenerEstadoPorId($estadoId);
+        
+        if (isset($estado['error'])) {
+            error_log("ERROR obtenerNombreEstado: " . $estado['error']);
+            return 'Error';
+        }
+        
+        return $estado['estNombre'] ?? 'Desconocido';
+    }
 
-$usuario = null;
-foreach ($usuarios as $u) {
-    if ($u['usuCorreo'] == $correo) {
-        $usuario = $u;
-        break;
+    public function listarTodosLosEstados() {
+        $estados = $this->estadoService->listarEstados();
+        
+        if (isset($estados['error'])) {
+            error_log("ERROR listarTodosLosEstados: " . $estados['error']);
+            return [];
+        }
+        
+        return $estados;
+    }
+
+    public function obtenerEstado($id) {
+        return $this->estadoService->obtenerEstadoPorId($id);
+    }
+
+    public function crearEstado($nombre, $descripcion = '') {
+        $datos = [
+            'estNombre' => $nombre,
+            'estDescripcion' => $descripcion
+        ];
+        
+        return $this->estadoService->crearEstado($datos);
+    }
+
+    public function actualizarEstado($id, $nombre, $descripcion = '') {
+        $datos = [
+            'estNombre' => $nombre,
+            'estDescripcion' => $descripcion
+        ];
+        return $this->estadoService->actualizarEstado($id, $datos);
+    }
+
+    public function eliminarEstado($id) {
+        return $this->estadoService->eliminarEstado($id);
     }
 }
-
-if (!$usuario) {
-    die("Usuario no encontrado.\n");
-}
-
-if ($usuario['rol']['rolNombre'] != "administrador") {
-    die("Acceso denegado. Solo los administradores pueden consultar pedidos.\n");
-}
-
-echo "Bienvenido administrador {$usuario['usuNombre']}.\n";
-
-
-// Mostrar pedidos en un estado específico
-
-$estadoIngresado = strtolower(readline("Ingrese el estado (pendiente, diseño, tallado, engaste, pulido, finalizado): "));
-
-
-$urlPedidos = "http://localhost:8080/pedidos";
-$pedidosJson = @file_get_contents($urlPedidos);
-
-if ($pedidosJson === FALSE) {
-    die("Error al consumir el servicio de pedidos.\n");
-}
-
-$pedidos = json_decode($pedidosJson, true);
-
-// Mapear estId a nombre de estado
-$estados = [
-    1 => "pendiente",
-    2 => "diseño",
-    3 => "tallado",
-    4 => "engaste",
-    5 => "pulido",
-    6 => "finalizado"
-];
-
-// Buscar pedidos en el estado ingresado
-$encontrados = [];
-foreach ($pedidos as $p) {
-    $estadoReal = $estados[$p['estId']] ?? "desconocido";
-    if ($estadoIngresado == strtolower($estadoReal)) {
-        $encontrados[] = $p;
-    }
-}
-
-if (empty($encontrados)) {
-    echo "No hay pedidos en estado {$estadoIngresado}.\n";
-} else {
-    echo "Pedidos en estado {$estadoIngresado}:\n";
-    foreach ($encontrados as $p) {
-        echo "- {$p['pedCodigo']} ({$p['pedComentarios']})\n";
-    }
-}
-?>

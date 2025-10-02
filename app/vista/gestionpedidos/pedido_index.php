@@ -66,6 +66,17 @@
             color: var(--emerald-primary);
             box-shadow: inset 0 -1px 0 rgba(0,0,0,.125);
         }
+
+        .badge-estado {
+            font-size: 0.75em;
+            padding: 0.35em 0.65em;
+        }
+
+        .nav-link.active {
+            background-color: var(--emerald-primary) !important;
+            border-color: var(--emerald-primary) !important;
+            color: white !important;
+        }
     </style>
 </head>
 <body>
@@ -79,6 +90,36 @@
     </header>
 
     <main class="container">
+        <!-- Navegación entre módulos -->
+        <nav class="mb-4">
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" href="?vista=pedidos">
+                        <i class="bi bi-box-seam me-1"></i>Gestión de Pedidos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="?vista=estados">
+                        <i class="bi bi-tags me-1"></i>Gestión de Estados
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- DEBUG TEMPORAL - Eliminar después de verificar -->
+        <div class="container mb-4">
+            <div class="card">
+                <div class="card-header bg-warning">
+                    <h6 class="mb-0">DEBUG Info</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>Total pedidos:</strong> <?= is_array($pedidos) ? count($pedidos) : '0' ?></p>
+                    <p><strong>Backend URL:</strong> http://localhost:8080/api/pedidos</p>
+                    <pre class="bg-light p-3 small"><?= htmlspecialchars(print_r($pedidos, true)) ?></pre>
+                </div>
+            </div>
+        </div>
+
         <div class="row g-4">
             
             <aside class="col-lg-4">
@@ -97,24 +138,37 @@
                                     <label for="pedCodigo" class="form-label">Código *</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
-                                        <input id="pedCodigo" class="form-control" type="text" name="pedCodigo" required>
+                                        <input id="pedCodigo" class="form-control" type="text" name="pedCodigo" required 
+                                               placeholder="Ej: PED-001">
                                     </div>
+                                    <small class="text-muted">Dejar vacío para generar automáticamente</small>
                                 </div>
                                 <div class="col-12">
                                     <label for="pedComentarios" class="form-label">Comentarios *</label>
-                                    <textarea id="pedComentarios" class="form-control" name="pedComentarios" rows="3" required></textarea>
+                                    <textarea id="pedComentarios" class="form-control" name="pedComentarios" rows="3" 
+                                              placeholder="Descripción del pedido..." required></textarea>
                                 </div>
                                 <div class="col-md-12">
-                                    <label for="estId" class="form-label">Estado ID</label>
-                                    <input id="estId" type="number" name="estId" class="form-control">
+                                    <label for="estId" class="form-label">Estado</label>
+                                    <select id="estId" name="estId" class="form-select">
+                                        <option value="">Seleccionar estado</option>
+                                        <?php
+                                        // Cargar estados dinámicamente
+                                        require_once __DIR__ . '/../../modelo/gestionpedidos/EstadoPedidoService.php';
+                                        $estadoService = new EstadoPedidoService();
+                                        echo $estadoService->obtenerEstadosParaSelect();
+                                        ?>
+                                    </select>
                                 </div>
                                 <div class="col-md-12">
                                     <label for="perId" class="form-label">Personalización ID</label>
-                                    <input id="perId" type="number" name="perId" class="form-control">
+                                    <input id="perId" type="number" name="perId" class="form-control" 
+                                           placeholder="ID de personalización">
                                 </div>
                                 <div class="col-md-12">
                                     <label for="usuId" class="form-label">Usuario ID</label>
-                                    <input id="usuId" type="number" name="usuId" class="form-control">
+                                    <input id="usuId" type="number" name="usuId" class="form-control" 
+                                           placeholder="ID del usuario">
                                 </div>
                                 <div class="col-12">
                                     <button class="btn btn-emerald w-100" type="submit">
@@ -128,14 +182,20 @@
             </aside>
 
             <section class="col-lg-8" aria-labelledby="listado-pedidos-heading">
-                <h2 id="listado-pedidos-heading" class="h4 fw-bold mb-3">Listado de Pedidos</h2>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 id="listado-pedidos-heading" class="h4 fw-bold mb-0">Listado de Pedidos</h2>
+                    <span class="badge bg-secondary"><?= is_array($pedidos) ? count($pedidos) : '0' ?> pedidos</span>
+                </div>
+                
                 <?= (!empty($mensaje) && strpos($mensaje, 'creado') === false) ? $mensaje : '' ?>
 
-                <?php if (!empty($pedidos)): ?>
+                <?php if (is_array($pedidos) && !empty($pedidos) && !isset($pedidos['error'])): ?>
                     <div class="accordion" id="accordionPedidos">
                         <?php foreach ($pedidos as $p): 
                             $id = htmlspecialchars((string)($p["ped_id"] ?? ''));
                             $collapseId = "collapse-{$id}";
+                            $estadoId = $p["estId"] ?? '';
+                            $estadoNombre = $estadoService->obtenerNombreEstado($estadoId);
                         ?>
                             <div class="accordion-item card mb-3">
                                 <h3 class="accordion-header">
@@ -143,47 +203,67 @@
                                         <span class="flex-grow-1">
                                             <?= htmlspecialchars($p["pedCodigo"] ?? '') ?> 
                                             <small class="text-muted fw-normal">(ID: <?= $id ?>)</small>
+                                            <span class="badge bg-primary badge-estado ms-2"><?= htmlspecialchars($estadoNombre) ?></span>
                                         </span>
-                                        <small class="text-muted fw-normal me-3"><?= htmlspecialchars($p["pedFechaCreacion"] ?? '') ?></small>
+                                        <small class="text-muted fw-normal me-3">
+                                            <?= !empty($p["pedFechaCreacion"]) ? date('d/m/Y', strtotime($p["pedFechaCreacion"])) : 'Sin fecha' ?>
+                                        </small>
                                     </button>
                                 </h3>
                                 <div id="<?= $collapseId ?>" class="accordion-collapse collapse" data-bs-parent="#accordionPedidos">
                                     <div class="accordion-body">
-                                        <p class="border-start border-4 border-secondary-subtle ps-3 mb-4">
-                                            <?= nl2br(htmlspecialchars($p["pedComentarios"] ?? '')) ?>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <small class="text-muted">Fecha creación:</small><br>
+                                                <strong><?= !empty($p["pedFechaCreacion"]) ? date('d/m/Y H:i', strtotime($p["pedFechaCreacion"])) : 'No disponible' ?></strong>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <small class="text-muted">Estado actual:</small><br>
+                                                <strong><?= htmlspecialchars($estadoNombre) ?></strong>
+                                            </div>
+                                        </div>
+
+                                        <p class="border-start border-4 border-primary ps-3 mb-4 py-2 bg-light">
+                                            <strong>Comentarios:</strong><br>
+                                            <?= nl2br(htmlspecialchars($p["pedComentarios"] ?? 'Sin comentarios')) ?>
                                         </p>
+                                        
                                         <form method="POST">
                                             <input type="hidden" name="accion" value="actualizar">
                                             <input type="hidden" name="id" value="<?= $id ?>">
                                             <div class="row g-3">
                                                 <div class="col-md-6">
-                                                    <label class="form-label form-label-sm">Código</label>
-                                                    <input class="form-control" type="text" name="pedCodigo" value="<?= htmlspecialchars($p["pedCodigo"] ?? '') ?>" required>
+                                                    <label class="form-label form-label-sm">Código *</label>
+                                                    <input class="form-control" type="text" name="pedCodigo" 
+                                                           value="<?= htmlspecialchars($p["pedCodigo"] ?? '') ?>" required>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <label class="form-label form-label-sm">Estado ID</label>
-                                                    <input class="form-control" type="number" name="estId" value="<?= htmlspecialchars($p["estId"] ?? '') ?>">
+                                                    <label class="form-label form-label-sm">Estado</label>
+                                                    <select class="form-select form-select-sm" name="estId">
+                                                        <option value="">Sin estado</option>
+                                                        <?= $estadoService->obtenerEstadosParaSelect() ?>
+                                                    </select>
+                                                    <small class="text-muted">Actual: <?= htmlspecialchars($estadoNombre) ?></small>
                                                 </div>
                                                 <div class="col-12">
-                                                    <label class="form-label form-label-sm">Comentarios</label>
+                                                    <label class="form-label form-label-sm">Comentarios *</label>
                                                     <textarea class="form-control" name="pedComentarios" rows="3" required><?= htmlspecialchars($p["pedComentarios"] ?? '') ?></textarea>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label form-label-sm">Personalización ID</label>
-                                                    <input class="form-control" type="number" name="perId" value="<?= htmlspecialchars($p["perId"] ?? '') ?>">
+                                                    <input class="form-control" type="number" name="perId" 
+                                                           value="<?= htmlspecialchars($p["perId"] ?? '') ?>">
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label form-label-sm">Usuario ID</label>
-                                                    <input class="form-control" type="number" name="usuId" value="<?= htmlspecialchars($p["usuId"] ?? '') ?>">
+                                                    <input class="form-control" type="number" name="usuId" 
+                                                           value="<?= htmlspecialchars($p["usuId"] ?? '') ?>">
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-end align-items-center gap-2 mt-3">
-                                                    <form method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este pedido?');" class="d-inline">
-                                                        <input type="hidden" name="accion" value="eliminar">
-                                                        <input type="hidden" name="id" value="<?= $id ?>">
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                            <i class="bi bi-trash-fill me-1"></i>Eliminar
-                                                        </button>
-                                                    </form>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                            onclick="confirmarEliminacion(<?= $id ?>, '<?= htmlspecialchars($p["pedCodigo"] ?? '') ?>')">
+                                                        <i class="bi bi-trash-fill me-1"></i>Eliminar
+                                                    </button>
                                                     <button type="submit" class="btn btn-sm btn-success">
                                                         <i class="bi bi-save-fill me-1"></i>Guardar Cambios
                                                     </button>
@@ -196,14 +276,51 @@
                         <?php endforeach; ?>
                     </div>
                 <?php else: ?>
-                    <div class="card card-body text-center">
-                        <p class="mb-0 text-muted">Aún no hay pedidos registrados.</p>
+                    <div class="card card-body text-center py-5">
+                        <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+                        <p class="mb-0 text-muted">
+                            <?php 
+                            if (isset($pedidos['error'])) {
+                                echo "<strong>Error:</strong> " . htmlspecialchars($pedidos['error']);
+                            } else {
+                                echo "Aún no hay pedidos registrados. Crea el primero usando el formulario.";
+                            }
+                            ?>
+                        </p>
                     </div>
                 <?php endif; ?>
             </section>
         </div>
     </main>
 
+    <!-- Formulario oculto para eliminación -->
+    <form id="formEliminar" method="POST" style="display: none;">
+        <input type="hidden" name="accion" value="eliminar">
+        <input type="hidden" name="id" id="eliminarId">
+    </form>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function confirmarEliminacion(id, codigo) {
+            if (confirm(`¿Estás seguro de que deseas eliminar el pedido "${codigo}"? Esta acción no se puede deshacer.`)) {
+                document.getElementById('eliminarId').value = id;
+                document.getElementById('formEliminar').submit();
+            }
+        }
+
+        // Navegación entre pestañas
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (!this.classList.contains('active')) {
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
