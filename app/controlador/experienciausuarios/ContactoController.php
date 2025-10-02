@@ -63,7 +63,12 @@ class ContactoController {
         $res = $this->service->crearContacto($payload);
 
         if ($res["success"]) {
-            header("Location: " . BASE_URL . "/contacto?msg=creado");
+            // Mensaje flash opcional para mostrar en index
+            $_SESSION['flash_message'] = [
+                'type' => 'success',
+                'text' => '¡Gracias por contactarnos! Nos pondremos en contacto contigo pronto.'
+            ];
+            header("Location: " . BASE_URL . "/");
         } else {
             header("Location: " . BASE_URL . "/contacto?msg=error");
         }
