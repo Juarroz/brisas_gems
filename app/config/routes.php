@@ -64,6 +64,10 @@ return [
     "GET /admin/contactos"        => "experienciausuarios/GestionContactosController@listar",
     "POST /admin/contactos/update" => "experienciausuarios/GestionContactosController@actualizar",
     "POST /admin/contactos/delete" => "experienciausuarios/GestionContactosController@eliminar",
+
+    // Portafolio de inspiración (cliente y gestión básica)
+    "GET /inspiracion"         => "experienciausuarios/PortafolioInspiracionController@index",
+    "POST /inspiracion"        => "experienciausuarios/PortafolioInspiracionController@index",
     
 
     // ======================
