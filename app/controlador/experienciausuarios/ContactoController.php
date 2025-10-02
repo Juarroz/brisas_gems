@@ -14,9 +14,9 @@ class ContactoController {
         $this->service = new ContactoService();
     }
 
-    // =========================
+   
     // GET /contacto → mostrar formulario
-    // =========================
+    
     public function mostrar() {
     $resumenPersonalizacion = null;
 
@@ -31,9 +31,9 @@ class ContactoController {
     }
 
 
-    // =========================
+   
     // POST /contacto → enviar formulario
-    // =========================
+
     public function crear() {
         $nombre   = trim($_POST["nombre"]   ?? "");
         $correo   = trim($_POST["correo"]   ?? "");

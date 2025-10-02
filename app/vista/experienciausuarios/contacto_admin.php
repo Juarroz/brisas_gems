@@ -42,7 +42,7 @@
               <?= $mensaje ?>
           <?php endif; ?>
 
-          <!-- 🔎 Formulario de filtros -->
+          <!-- Formulario de filtros -->
           <form method="GET" action="<?= BASE_URL ?>/admin/contactos" class="row g-3 mb-4">
               <div class="col-md-2">
                   <label class="form-label">Estado</label>
