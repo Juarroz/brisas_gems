@@ -39,8 +39,11 @@ class DashboardController {
     }
 
     private function showAdminDashboard() {
-        // ✅ RUTA CORREGIDA
-        require_once __DIR__ . '/../../vista/dashboard/dashboard.php';
+    // Traer estadísticas reales desde el servicio
+    $data = $this->dashboardService->getAdminStats();
+
+    // Pasar $data a la vista
+    require __DIR__ . '/../../vista/dashboard/dashboard.php';
     }
 
     private function showDesignerDashboard() {
