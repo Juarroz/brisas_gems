@@ -42,6 +42,31 @@
               <?= $mensaje ?>
           <?php endif; ?>
 
+          <!-- 🔎 Formulario de filtros -->
+          <form method="GET" action="<?= BASE_URL ?>/admin/contactos" class="row g-3 mb-4">
+              <div class="col-md-2">
+                  <label class="form-label">Estado</label>
+                  <select name="estado" class="form-select form-select-sm">
+                      <option value="">Todos</option>
+                      <option value="pendiente" <?= ($_GET['estado'] ?? '') === 'pendiente' ? 'selected' : '' ?>>Pendiente</option>
+                      <option value="atendido" <?= ($_GET['estado'] ?? '') === 'atendido' ? 'selected' : '' ?>>Atendido</option>
+                      <option value="archivado" <?= ($_GET['estado'] ?? '') === 'archivado' ? 'selected' : '' ?>>Archivado</option>
+                  </select>
+              </div>
+              <div class="col-md-3">
+                  <label class="form-label">Fecha desde</label>
+                  <input type="datetime-local" name="fechaDesde" class="form-control form-control-sm" value="<?= htmlspecialchars($_GET['fechaDesde'] ?? '') ?>">
+              </div>
+              <div class="col-md-3">
+                  <label class="form-label">Fecha hasta</label>
+                  <input type="datetime-local" name="fechaHasta" class="form-control form-control-sm" value="<?= htmlspecialchars($_GET['fechaHasta'] ?? '') ?>">
+              </div>
+              <div class="col-12 text-end">
+                  <button type="submit" class="btn btn-sm btn-primary">Aplicar filtros</button>
+                  <a href="<?= BASE_URL ?>/admin/contactos" class="btn btn-sm btn-secondary">Limpiar</a>
+              </div>
+          </form>
+
           <div class="table-responsive">
               <table class="table table-striped align-middle">
                   <thead class="table-dark">
@@ -87,4 +112,11 @@
                           <td colspan="5" class="text-center">No hay contactos registrados.</td>
                       </tr>
                   <?php endif; ?>
-                  </t
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+</main>
+</body>
+</html>
