@@ -1,12 +1,8 @@
 <?php
-// app/vista/personalizacionproductos/personalizar.php
-
 if (!function_exists('e')) { 
   function e($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); } 
 }
-
-// Recibe $CATALOGO dinámico desde el controller
-$cat = $CATALOGO ?? [];
+// Catálogo fijo enviado por el controller
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -65,12 +61,12 @@ $cat = $CATALOGO ?? [];
       </section>
     </div>
 
-    <!-- Columna derecha: Categorías dinámicas -->
+    <!-- Columna derecha: Opciones -->
     <div class="col-md-6">
       <div class="container-opciones">
         <form method="post" action="<?= BASE_URL ?>/personalizar/guardar" id="form-personalizar">
 
-          <?php foreach ($cat as $opc): ?>
+          <?php foreach ($CATALOGO as $opc): ?>
             <?php
               $nombreLower = strtolower($opc['nombre'] ?? '');
               $key = 'otros';
@@ -80,12 +76,11 @@ $cat = $CATALOGO ?? [];
                   $key = 'gema';
               } elseif (str_contains($nombreLower, 'material')) {
                   $key = 'material';
-              } elseif (str_contains($nombreLower, 'tama')) { // tamaño
+              } elseif (str_contains($nombreLower, 'tama')) {
                   $key = 'tamano';
               } elseif (str_contains($nombreLower, 'talla')) {
                   $key = 'talla';
               }
-
               $slugView = $opc['slug'];
             ?>
 
@@ -109,8 +104,8 @@ $cat = $CATALOGO ?? [];
             </section>
           <?php endforeach; ?>
 
-          <!-- Hidden inputs dinámicos (misma key que los grupos) -->
-          <?php foreach ($cat as $opc): ?>
+          <!-- Hidden inputs -->
+          <?php foreach ($CATALOGO as $opc): ?>
             <?php
               $nombreLower = strtolower($opc['nombre'] ?? '');
               $key = 'otros';
