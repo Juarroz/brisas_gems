@@ -8,6 +8,7 @@ class PortafolioInspiracionController {
         $this->service = new PortafolioInspiracionService();
     }
 
+    // --- CRUD para administrador ---
     public function index() {
         $mensaje = '';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -49,7 +50,13 @@ class PortafolioInspiracionController {
             }
         }
 
-        $portafolios = $this->service->listar();
+        $inspiraciones = $this->service->listar();
         require __DIR__ . '/../../vista/experienciausuarios/portafolio_inspiracion_index.php';
+    }
+
+    
+    public function publico() {
+        $inspiraciones = $this->service->listar();
+        require __DIR__ . '/../../vista/experienciausuarios/portafolio_inspiracion_publico.php';
     }
 }
