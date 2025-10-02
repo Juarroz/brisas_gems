@@ -8,7 +8,7 @@ class GestionContactosController {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        $this->restringirRoles(['administrador', 'diseñador']); // ajusta según tus roles
+        //$this->restringirRoles(['administrador', 'diseñador', 'admin']); // ajusta según tus roles
         $this->service = new ContactoService();
     }
 
@@ -44,7 +44,7 @@ class GestionContactosController {
             }
         }
 
-        require __DIR__ . '/../../vista/experienciausuarios/contactos_admin.php';
+        require __DIR__ . '/../../vista/experienciausuarios/contacto_admin.php';
     }
 
     // =========================
@@ -60,9 +60,14 @@ class GestionContactosController {
             exit;
         }
 
+        $estado = strtolower(trim($_POST["estado"] ?? ""));
+
+        // 🚀 Ajuste: mandar todos los campos que el backend espera
         $payload = [
-            "estado" => $estado,
-            "notas"  => $notas
+            "estado"        => $estado, 
+            "notas"         => $notas,
+            "usuarioIdAdmin"=> $_SESSION["usu_id"] ?? null, // el admin que atiende
+            "via"           => "formulario" // fijo por ahora, o cámbialo según el contacto
         ];
 
         $res = $this->service->actualizarContacto($id, $payload);
@@ -70,10 +75,13 @@ class GestionContactosController {
         if ($res["success"]) {
             header("Location: " . BASE_URL . "/admin/contactos?msg=actualizado");
         } else {
-            header("Location: " . BASE_URL . "/admin/contactos?msg=error");
+            echo "<pre>";
+            print_r($res);
+            echo "</pre>";
+            exit;
         }
-        exit;
     }
+
 
     // =========================
     // POST /admin/contactos/delete

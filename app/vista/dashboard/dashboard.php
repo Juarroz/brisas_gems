@@ -107,7 +107,7 @@
                         <div class="card-body">
                             <i class="bi bi-envelope-exclamation text-danger"></i>
                             <p class="card-text mt-2">Mensajes Pendientes</p>
-                            <h2 class="display-4 text-danger"><?= $data['totalContactos'] ?? 0; ?></h2>
+                            <h2 class="display-4 text-danger"><?= $data['totalContactosPendientes'] ?? 0; ?></h2>
                         </div>
                     </div>
                 </a>
