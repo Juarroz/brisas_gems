@@ -56,29 +56,32 @@ INSERT INTO usuarios (usu_nombre, usu_correo, usu_telefono, usu_password, rol_id
 ('Laura Sánchez', 'laurasanchez@gmail.com', '3001000009', '$2a$10$y.6276/Fz6kHmqO2I/O.7.9Wf2Tj0Gq3N9.tYyG2q2dG0q/c0S0mS', 1, 2, 1, 'registro', '1000009');
 
 
--- Opciones de personalización
 INSERT INTO opcion_personalizacion (opc_nombre) VALUES 
-('Gema central'),             -- opc_id = 1
-('Forma de la gema'),         -- opc_id = 2
-('Material'),      -- opc_id = 3
-('Tamaño de la gema'),        -- opc_id = 4
-('Talla del anillo');         -- opc_id = 5
+('Forma de la gema'),       -- opc_id = 1
+('Gema central'),           -- opc_id = 2
+('Material'),               -- opc_id = 3
+('Tamaño de la gema'),      -- opc_id = 4
+('Talla del anillo');       -- opc_id = 5
 
--- Valores de la gema (opc_id = 1)
+-- ====================
+-- VALORES DE OPCIONES
+-- ====================
+
+-- Forma de la gema (opc_id = 1)
 INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
-('Diamante', 1),
-('Esmeralda', 1),
-('Zafiro',   1),
-('Rubi',     1);
+('Redonda',   1),
+('Ovalada',   1),
+('Cuadrada',  1),
+('Corazón',   1);
 
--- Formas de la gema (opc_id = 2)
+-- Gema central (opc_id = 2)
 INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
-('Redonda',  2),
-('Ovalada',  2),
-('Cuadrada', 2),
-('Corazon',  2);
+('Diamante',  2),
+('Esmeralda', 2),
+('Zafiro',    2),
+('Rubí',      2);
 
--- Material del anillo (opc_id = 3)
+-- Material (opc_id = 3)
 INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
 ('Oro Amarillo', 3),
 ('Oro Blanco',   3),
@@ -90,6 +93,20 @@ INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
 INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
 ('7 mm', 4),
 ('8 mm', 4);
+
+-- Talla del anillo (opc_id = 5)
+INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
+('Talla 4',   5),
+('Talla 4.5', 5),
+('Talla 5',   5),
+('Talla 5.5', 5),
+('Talla 6',   5),
+('Talla 6.5', 5),
+('Talla 7',   5),
+('Talla 7.5', 5),
+('Talla 8',   5),
+('Talla 8.5', 5),
+('Talla 9',   5);
 
 -- Talla del anillo (opc_id = 5)
 INSERT INTO valor_personalizacion (val_nombre, opc_id) VALUES
