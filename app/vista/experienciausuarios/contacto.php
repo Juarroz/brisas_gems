@@ -8,54 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/contacto.css">
 
-    <style>
-        :root {
-            --emerald-primary: #009b77;
-            --emerald-dark: #007a5f;
-            --emerald-light-bg: #f4f7f6;
-            --text-dark: #212529;
-            --text-light: #6c757d;
-            --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
-            --border-radius: 0.75rem;
-            --font-family-sans-serif: 'Poppins', sans-serif;
-        }
-
-        body {
-            font-family: var(--font-family-sans-serif);
-            background-color: var(--emerald-light-bg);
-        }
-
-        .btn-emerald {
-            background-color: var(--emerald-primary);
-            border-color: var(--emerald-primary);
-            color: #fff;
-            font-weight: 600;
-        }
-        .btn-emerald:hover {
-            background-color: var(--emerald-dark);
-            border-color: var(--emerald-dark);
-            color: #fff;
-        }
-
-        .card {
-            border: none;
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
-        }
-
-        .form-control:focus {
-            border-color: var(--emerald-primary);
-            box-shadow: 0 0 0 0.25rem rgba(0, 155, 119, 0.25);
-        }
-
-        .card-header-custom {
-            background-color: var(--emerald-primary);
-            color: #fff;
-            font-weight: 600;
-            border-bottom: none;
-        }
-    </style>
 </head>
 <body>
 

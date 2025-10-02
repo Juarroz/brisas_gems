@@ -64,12 +64,7 @@ return [
     "GET /admin/contactos"        => "experienciausuarios/GestionContactosController@listar",
     "POST /admin/contactos/update" => "experienciausuarios/GestionContactosController@actualizar",
     "POST /admin/contactos/delete" => "experienciausuarios/GestionContactosController@eliminar",
-
-
-    // Portafolio de inspiración (CRUD completo)
-    'GET /portafolio' => 'experienciausuarios/PortafolioInspiracionController@index',
-    'POST /portafolio' => 'experienciausuarios/PortafolioInspiracionController@index',
-    'GET /portafolio-usuario' => 'experienciausuarios/PortafolioInspiracionController@publico',
+    
 
     // ======================
     // PERSONALIZACIÓN DE JOYAS
