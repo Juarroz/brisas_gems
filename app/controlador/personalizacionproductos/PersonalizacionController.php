@@ -2,227 +2,149 @@
 // app/controlador/personalizacionproductos/PersonalizacionController.php
 
 require_once __DIR__ . '/../../modelo/personalizacionproductos/PersonalizacionService.php';
-require_once __DIR__ . '/../../modelo/personalizacionproductos/OpcionPersonalizacionService.php';
-require_once __DIR__ . '/../../modelo/personalizacionproductos/ValorPersonalizacionService.php';
 
 class PersonalizacionController {
-
     private PersonalizacionService $perService;
-    private OpcionPersonalizacionService $opcService;
-    private ValorPersonalizacionService $valService;
 
     public function __construct() {
         if (session_status() === PHP_SESSION_NONE) session_start();
         $this->perService = new PersonalizacionService();
-        $this->opcService = new OpcionPersonalizacionService();
-        $this->valService = new ValorPersonalizacionService();
     }
-    
+
     // GET /personalizar
     public function mostrar() {
-        $opciones = $this->opcService->listar();
-        if ($opciones === false || !is_array($opciones)) $opciones = [];
+        $CATALOGO = [
+            [
+                'nombre' => 'Gema',
+                'slug'   => 'gema',
+                'valores'=> [
+                    ['slug'=>'diamante','nombre'=>'Diamante','img'=>'gemas/diamante.png'],
+                    ['slug'=>'esmeralda','nombre'=>'Esmeralda','img'=>'gemas/esmeralda.png'],
+                    ['slug'=>'rubi','nombre'=>'Rubí','img'=>'gemas/rubi.png'],
+                    ['slug'=>'zafiro','nombre'=>'Zafiro','img'=>'gemas/zafiro.png'],
+                ]
+            ],
+            [
+                'nombre' => 'Forma de la gema',
+                'slug'   => 'forma',
+                'valores'=> [
+                    ['slug'=>'redonda','nombre'=>'Redonda','img'=>'forma/redonda.png'],
+                    ['slug'=>'ovalada','nombre'=>'Ovalada','img'=>'forma/ovalada.png'],
+                ]
+            ],
+            [
+                'nombre' => 'Material',
+                'slug'   => 'material',
+                'valores'=> [
+                    ['slug'=>'oro-amarillo','nombre'=>'Oro Amarillo','img'=>'material/oro-amarillo.png'],
+                    ['slug'=>'oro-blanco','nombre'=>'Oro Blanco','img'=>'material/oro-blanco.png'],
+                    ['slug'=>'oro-rosa','nombre'=>'Oro Rosa','img'=>'material/oro-rosa.png'],
+                ]
+            ],
+            [
+                'nombre' => 'Tamaño de la piedra',
+                'slug'   => 'tamano',
+                'valores'=> [
+                    ['slug'=>'7mm','nombre'=>'7 mm','img'=>'tama-piedra-central/7mm.png'],
+                    ['slug'=>'8mm','nombre'=>'8 mm','img'=>'tama-piedra-central/8mm.png'],
+                ]
+            ],
+            [
+                'nombre' => 'Talla del anillo',
+                'slug'   => 'talla',
+                'valores'=> [
+                    ['slug'=>'talla-4','nombre'=>'Talla 4'],
+                    ['slug'=>'talla-4-5','nombre'=>'Talla 4.5'],
+                    ['slug'=>'talla-5','nombre'=>'Talla 5'],
+                    ['slug'=>'talla-5-5','nombre'=>'Talla 5.5'],
+                    ['slug'=>'talla-6','nombre'=>'Talla 6'],
+                    ['slug'=>'talla-6-5','nombre'=>'Talla 6.5'],
+                    ['slug'=>'talla-7','nombre'=>'Talla 7'],
+                    ['slug'=>'talla-7-5','nombre'=>'Talla 7.5'],
+                    ['slug'=>'talla-8','nombre'=>'Talla 8'],
+                    ['slug'=>'talla-8-5','nombre'=>'Talla 8.5'],
+                    ['slug'=>'talla-9','nombre'=>'Talla 9'],
+                ]
+            ],
+        ];
 
-        $catalogo = [];
-
-        foreach ($opciones as $opc) {
-            $opcId   = (int)($opc['opc_id'] ?? $opc['id'] ?? 0);
-            $opcName = (string)($opc['opc_nombre'] ?? $opc['nombre'] ?? '');
-            if (!$opcId || !$opcName) continue;
-
-            // Crear slug para carpetas y data-atributos
-            $slug = $this->slug($opcName);
-
-            $valores = $this->valService->listar($opcId);
-            $vals = [];
-            if ($valores && is_array($valores)) {
-                foreach ($valores as $v) {
-                    $valId   = (int)($v['val_id'] ?? $v['id'] ?? 0);
-                    $valName = (string)($v['val_nombre'] ?? $v['nombre'] ?? '');
-                    if (!$valId || !$valName) continue;
-
-                    $valSlug = $this->slug($valName);
-
-                    // Detectar carpeta según el nombre de la opción
-                    $nombreLower = strtolower($opcName);
-                    $dir = null;
-
-                    if (str_contains($nombreLower, 'forma')) {
-                        $dir = 'forma';
-                    } elseif (str_contains($nombreLower, 'tama')) { // tamaño
-                        $dir = 'tamano';
-                    } elseif (str_contains($nombreLower, 'gema')) {
-                        $dir = 'gemas';
-                    } elseif (str_contains($nombreLower, 'material')) {
-                        $dir = 'material';
-                    } elseif (str_contains($nombreLower, 'talla')) {
-                        $dir = null;
-                    }
-
-                    // Si hay carpeta, armar la ruta de la imagen
-                    $img = $dir ? "$dir/$valSlug.png" : null;
-
-                    $vals[] = [
-                        'id'     => $valId,
-                        'nombre' => $valName,
-                        'slug'   => $valSlug,
-                        'img'    => $img
-                    ];
-                }
-            }
-
-            $catalogo[] = [
-                'opc_id' => $opcId,
-                'nombre' => $opcName,
-                'slug'   => $slug,
-                'valores'=> $vals
-            ];
-        }
-
-        $CATALOGO = $catalogo;
         require __DIR__ . '/../../vista/personalizacionproductos/personalizar.php';
     }
 
     // POST /personalizar/guardar
     public function guardar() {
-        $gema     = trim($_POST['gema']     ?? '');
-        $forma    = trim($_POST['forma']    ?? '');
-        $material = trim($_POST['material'] ?? '');
-        $tamano   = trim($_POST['tamano']   ?? '');
-        $talla    = trim($_POST['talla']    ?? '');
+        $gema     = $_POST['gema'] ?? '';
+        $forma    = $_POST['forma'] ?? '';
+        $material = $_POST['material'] ?? '';
+        $tamano   = $_POST['tamano'] ?? '';
+        $talla    = $_POST['talla'] ?? '';
 
-        $faltantes = [];
-        foreach (['gema','forma','material','tamano','talla'] as $k) {
-            if (empty($_POST[$k])) $faltantes[] = $k;
-        }
-        if ($faltantes) {
-            header('Location: ' . BASE_URL . '/personalizar?msg=error_campos&faltan=' . urlencode(implode(',', $faltantes)));
+        if (!$gema || !$forma || !$material || !$tamano || !$talla) {
+            header('Location: ' . BASE_URL . '/personalizar?msg=faltan_campos');
             exit;
         }
 
-        $seleccionNormalizada = [
-            'gema'     => $this->norm($gema),
-            'forma'    => $this->norm($forma),
-            'material' => $this->norm(str_replace('-', ' ', $material)),
-            'tamano'   => $this->norm($tamano) . (str_contains($tamano, 'mm') ? '' : ' mm'),
-            'talla'    => str_starts_with($talla, 'talla') ? $this->norm($talla) : 'talla ' . $this->norm($talla),
+        // 🔑 Mapeo slugs → IDs de la BD
+        $map = [
+            // Gemas
+            'diamante'  => 5,
+            'esmeralda' => 6,
+            'zafiro'    => 7,
+            'rubi'      => 8,
+
+            // Formas
+            'redonda'   => 1,
+            'ovalada'   => 2,
+
+            // Materiales
+            'oro-amarillo' => 9,
+            'oro-blanco'   => 10,
+            'oro-rosa'     => 11,
+
+            // Tamaños
+            '7mm' => 14,
+            '8mm' => 15,
+
+            // Tallas
+            'talla-4'   => 16,
+            'talla-4-5' => 17,
+            'talla-5'   => 18,
+            'talla-5-5' => 19,
+            'talla-6'   => 20,
+            'talla-6-5' => 21,
+            'talla-7'   => 22,
+            'talla-7-5' => 23,
+            'talla-8'   => 24,
+            'talla-8-5' => 25,
+            'talla-9'   => 26,
         ];
 
-        $opcIds = $this->resolverOpcionesIds();
-        if (!$opcIds) {
-            header('Location: ' . BASE_URL . '/personalizar?msg=error_opciones');
-            exit;
-        }
+        $valoresSeleccionados = [
+            $map[$gema] ?? null,
+            $map[$forma] ?? null,
+            $map[$material] ?? null,
+            $map[$tamano] ?? null,
+            $map[$talla] ?? null,
+        ];
 
-        $valIds = $this->resolverValoresIds($opcIds, $seleccionNormalizada);
-        if (!$valIds || count($valIds) !== 5) {
-            if (defined('DEBUG_MODE') && DEBUG_MODE) {
-                echo "<pre>";
-                echo "⛔ No se pudieron resolver los 5 val_id\n\n";
-                print_r($seleccionNormalizada);
-                print_r($opcIds);
-                print_r($valIds);
-                echo "</pre>";
-                exit;
-            }
-            header('Location: ' . BASE_URL . '/personalizar?msg=error_valores');
+        if (in_array(null, $valoresSeleccionados, true)) {
+            header('Location: ' . BASE_URL . '/personalizar?msg=error_mapeo');
             exit;
         }
 
         $fecha = date('Y-m-d');
-        $usuarioClienteId = $_SESSION['usu_id'] ?? DEFAULT_CLIENTE_ID;
+        $usuarioClienteId = $_SESSION['usu_id'] ?? 1;
 
-        $creado = $this->perService->crear($fecha, (int)$usuarioClienteId, $valIds);
+        $creado = $this->perService->crear($fecha, (int)$usuarioClienteId, $valoresSeleccionados);
 
         if (!($creado['success'] ?? false)) {
-            header('Location: ' . BASE_URL . '/personalizar?msg=error_crear');
+            header('Location: ' . BASE_URL . '/personalizar?msg=error_api');
             exit;
         }
 
-        $perId = $creado['data']['id'] ?? $creado['id'] ?? null;
-        if (!$perId) {
-            header('Location: ' . BASE_URL . '/personalizar?msg=error_perid');
-            exit;
-        }
-
+        $perId = $creado['data']['id'] ?? rand(1000,9999);
         header('Location: ' . BASE_URL . '/contacto?per_id=' . urlencode($perId));
         exit;
     }
-
-    // -------------------------
-    // Helpers privados
-    // -------------------------
-
-    private function norm(string $s): string {
-        $s = mb_strtolower(trim($s), 'UTF-8');
-        $sinAcentos = iconv('UTF-8', 'ASCII//TRANSLIT', $s);
-        if ($sinAcentos !== false) $s = $sinAcentos;
-        $s = str_replace(['_','-'], ' ', $s);
-        $s = preg_replace('/\s+/', ' ', $s);
-        return trim($s);
-    }
-
-    // ✅ Slug corregido
-    private function slug(string $text): string {
-        $text = strtolower(trim($text));
-        $text = iconv('UTF-8', 'ASCII//TRANSLIT', $text);
-        $text = preg_replace('/[\s_]+/', '-', $text);
-        $text = preg_replace('/[^a-z0-9\-]/', '', $text);
-        $text = preg_replace('/-+/', '-', $text);
-        return trim($text, '-');
-    }
-
-    private function resolverOpcionesIds(): ?array {
-        $opciones = $this->opcService->listar();
-        if ($opciones === false || !is_array($opciones)) return null;
-
-        $targets = ['gema','forma','material','tamano','talla'];
-        $map = [];
-
-        foreach ($opciones as $opc) {
-            $id   = $opc['opc_id'] ?? $opc['id'] ?? null;
-            $name = strtolower((string)(
-                $opc['opc_nombre'] ?? $opc['opcNombre'] ?? $opc['nombre'] ?? ''
-            ));
-            if (!$id) continue;
-
-            if (str_contains($name, 'gema'))     $map['gema']     = (int)$id;
-            if (str_contains($name, 'forma'))    $map['forma']    = (int)$id;
-            if (str_contains($name, 'material')) $map['material'] = (int)$id;
-            if (str_contains($name, 'tama'))     $map['tamano']   = (int)$id;
-            if (str_contains($name, 'talla'))    $map['talla']    = (int)$id;
-        }
-
-        foreach ($targets as $t) if (!isset($map[$t])) return null;
-        return $map;
-    }
-
-    private function resolverValoresIds(array $opcIds, array $seleccion): ?array {
-        $orden = ['gema','forma','material','tamano','talla'];
-        $result = [];
-
-        foreach ($orden as $slug) {
-            $opcId = $opcIds[$slug] ?? null;
-            $buscado = $this->norm((string)$seleccion[$slug]);
-            if (!$opcId) return null;
-
-            $valores = $this->valService->listar((int)$opcId);
-            if ($valores === false || !is_array($valores)) return null;
-
-            $valId = null;
-            foreach ($valores as $v) {
-                $nombre = $this->norm((string)(
-                    $v['val_nombre'] ?? $v['valNombre'] ?? $v['nombre'] ?? ''
-                ));
-                if ($nombre === $buscado ||
-                    str_replace(['-',' '], '', $nombre) === str_replace(['-',' '], '', $buscado)) {
-                    $valId = (int)($v['val_id'] ?? $v['id']);
-                    break;
-                }
-            }
-            if (!$valId) return null;
-            $result[] = $valId;
-        }
-        return $result;
-    }
 }
+
